@@ -6,32 +6,30 @@ Download a copy of PRISM from GitHub and build it
 * ``cd prism/prism``
 * ``make``
 
-Download the ``stamina`` repo and build the source
+Download the ``stamina`` repo and build the source.
 
 * ``git clone https://github.com/thakurneupane/stamina.git``
 * ``cd stamina/stamina``
-* ``make``
-
-This assumes that PRISM is in ``../prism``. You can specify other PRISM location and build with:
-
 * ``make PRISM_DIR=/path/to/prism/directory``
 
+## Running STAMINA
 
-## Running Examples
+``stamina/stamina/bin`` contains the executable ``stamina``. You can run using following command: 
 
-``stamina/stamina/bin`` contains the executable ``stamina``. From ``stamina/stamina``:   
+``/path/to/stamina/executable <model-file> <properties-file> [options]``
 
-``PRISM_DIR=/path/to/prism/directory bin/stamina <model-file> <properties-file> [options]``
+There are few case studies form different domain included with the source. You can run the toggle example from ``stamina/stamina`` directory using ``bin/stamina ../case-studies/Toggle/toggle.prism ../case-studies/Toggle/toggle.csl -kappa 1.0e-3 -const IPTG=100 -const T=800``. Please refer to the description of case studies for details about the parameters. 
+
+## Genaral usage 
 
 ```
-Usage: InfModelCheck <model-file> <properties-file> [options]
+Usage: stamina <model-file> <properties-file> [options]
 
 <model-file> .................... Prism model file. Extensions: .prism, .sm
 <properties-file> ............... Property file. Extensions: .csl
 
 Options:
 ========
-
 -kappa <k>.......................... ReachabilityThreshold [default: 1.0e-6]
 -reducekappa <f>.................... Reduction factor for ReachabilityThreshold(kappa) for refinement step.  [default: 1000.0]
 -pbwin <e>.......................... Probability window between lower and upperbound for termination. [default: 1.0e-3]
@@ -43,7 +41,6 @@ Options:
 
 Other Options:
 ========
-
 -power .......................... Power method
 -jacobi ......................... Jacobi method
 -gaussseidel .................... Gauss-Seidel method

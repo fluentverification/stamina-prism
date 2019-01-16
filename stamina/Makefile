@@ -1,5 +1,7 @@
 # Need to link to a PRISM distribution
-PRISM_HOME = ""
+ifndef PRISM_HOME
+$(error PRISM_HOME not set. Use "make PRISM_HOME=/path/to/prism/directory")
+endif
 
 # environment setup file
 STAMINA_RC = ~/.staminarc
