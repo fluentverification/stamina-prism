@@ -1,0 +1,25 @@
+ctmc
+
+const int aTc = 0;
+
+const int IPTG;
+
+module TetR_def
+
+	TetR : [0..1000] init 0;
+
+	[] TetR=0 -> (0.099/(0.25*pow((LacI/(0.0496277915632754*IPTG + 1)),2.0) + 1.99)):(TetR'=TetR+10);
+	
+	[] TetR>0 -> (0.099/(0.25*pow((LacI/(0.0496277915632754*IPTG + 1)),2.0) + 1.99)):(TetR'=TetR+10) + (0.0075*TetR):(TetR'=TetR-1);
+	
+endmodule
+
+module LacI_def
+
+	LacI : [0..1000] init 60;
+
+	[] LacI=0 -> (0.099/(0.25*pow((TetR/(0.0496277915632754*aTc + 1)),2.0) + 1.99)):(LacI'=LacI+10);
+
+	[] LacI>0 -> (0.099/(0.25*pow((TetR/(0.0496277915632754*aTc + 1)),2.0) + 1.99)):(LacI'=LacI+10) + (0.0075*LacI):(LacI'=LacI-1);
+	
+endmodule
