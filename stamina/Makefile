@@ -9,7 +9,7 @@ PRISM_CLASSPATH = "$(PRISM_DIR)/classes:$(PRISM_DIR)/lib/*:$(PRISM_DIR)/prism/cl
 
 # This Makefile just builds all java files in src and puts the class files in classes
 
-JAVA_FILES := $(shell cd src && find ./ctmc -name '*.java')
+JAVA_FILES := $(shell cd src && find . -name '*.java')
 CLASS_FILES = $(JAVA_FILES:%.java=classes/%.class)
 
 default: all

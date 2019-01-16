@@ -7,7 +7,7 @@ fi
 
 # Class to run
 if [ "$PRISM_MAINCLASS" = "" ]; then
-	PRISM_MAINCLASS=ctmc.VerificationCL
+	PRISM_MAINCLASS=stamina.StaminaCL
 fi
 
 # Set up CLASSPATH:
