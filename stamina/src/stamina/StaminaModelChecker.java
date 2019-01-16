@@ -117,15 +117,15 @@ public class StaminaModelChecker extends Prism {
 	 */
 	public Result modelCheck(PropertiesFile propertiesFile, Property prop) throws PrismException
 	{
+		Result[] res_min_max = new Result[2];
 		
 		double reachTh = Options.getReachabilityThreshold();
 		
-		Result[] res_min_max = new Result[2];
-		
+		// Instantiate and load model generator
 		infModelGen = new InfCTMCModelGenerator(getPRISMModel(), this);
-		infModelGen.setReachabilityThreshold(reachTh);
-		
 		super.loadModelGenerator(infModelGen);
+		
+		// Split property into 2 to find P_min and P_max
 		
 		String propName = prop.getName()==null ? "Prob" : prop.getName();
 		
@@ -137,15 +137,37 @@ public class StaminaModelChecker extends Prism {
 		prop_max.setName(propName+"_max");
 		modifyExpression(prop_max.getExpression(), false);
 		
+		
+		//////////////////////////Approximation Step///////////////////////////
+		mainLog.println();
+		mainLog.println("========================================================================");
+		mainLog.println("Approximation: kappa = " + reachTh);
+		mainLog.println("========================================================================");
+		infModelGen.setReachabilityThreshold(reachTh);
+		
+		// Explicitely invoke model build
+		super.buildModel();
+		
+		mainLog.println();
+		mainLog.println("---------------------------------------------------------------------");
+		mainLog.println();
+		mainLog.println("Verifying Lower Bound for " + prop_min.getName() + " .....");
 		res_min_max[0] = super.modelCheck(propertiesFile, prop_min);
+		
+		mainLog.println();
+		mainLog.println("---------------------------------------------------------------------");
+		mainLog.println();
+		mainLog.println("Verifying Upper Bound for " + prop_max.getName() + " .....");
 		res_min_max[1] = super.modelCheck(propertiesFile, prop_max);
 	
-			
+		
+		int numRefineIteration = 0;
+		
 		Expression exprProp = prop.getExpression();
 		if(exprProp instanceof ExpressionProb) {
 			
 		
-			while(!terminateModelCheck(res_min_max[0].getResult(), res_min_max[1].getResult(), 1.0e-3)) {
+			while((!terminateModelCheck(res_min_max[0].getResult(), res_min_max[1].getResult(), Options.getProbErrorWindow())) && (numRefineIteration < Options.getMaxRefinementCount())) {
 				
 				Expression expr = ((ExpressionProb) exprProp).getExpression();
 				if(expr instanceof ExpressionTemporal) {
@@ -153,27 +175,55 @@ public class StaminaModelChecker extends Prism {
 					expr = Expression.convertSimplePathFormulaToCanonicalForm(expr);
 					ExpressionTemporal exprTemp = (ExpressionTemporal) expr.deepCopy();
 					
-					if(exprTemp.isPathFormula(false)) {
+					if(exprTemp.isPathFormula(false) && (exprTemp.getOperator()==ExpressionTemporal.P_U)) {
 						infModelGen.setPropertyExpression(exprTemp);
 					}
 					
-							
+					// Reduce kapp for refinement
 					reachTh /= Options.getKappaReductionFactor();
-					mainLog.println("\n\n\nReachability Threshold(kappa) is: " + reachTh);
+										
+					//////////////////////////Approximation Step///////////////////////////
+					mainLog.println();
+					mainLog.println("========================================================================");
+					mainLog.println("Refinement<" + (numRefineIteration+1) + "> : kappa = " + reachTh);
+					mainLog.println("========================================================================");
 					infModelGen.setReachabilityThreshold(reachTh);
 					
 					// Explicitely invoke model build
 					super.buildModel();
 					
-					
+					mainLog.println();
+					mainLog.println("---------------------------------------------------------------------");
+					mainLog.println();
+					mainLog.println("Verifying Lower Bound for " + prop_min.getName() + " .....");
 					res_min_max[0] = super.modelCheck(propertiesFile, prop_min);
+					
+					mainLog.println();
+					mainLog.println("---------------------------------------------------------------------");
+					mainLog.println();
+					mainLog.println("Verifying Upper Bound for " + prop_max.getName() + " .....");
 					res_min_max[1] = super.modelCheck(propertiesFile, prop_max);
+					
+					// increment refinement count
+					++numRefineIteration;
 					
 				}
 			}
 			
 		}
 		
+		
+		// Print the final result
+		mainLog.println();
+		mainLog.println("========================================================================");
+		mainLog.println();
+		mainLog.println("Property: " + prop);
+		mainLog.println();
+		mainLog.println("ProbMin: " + res_min_max[0].getResultString());
+		mainLog.println();
+		mainLog.println("ProbMax: " + res_min_max[1].getResultString());
+		mainLog.println();
+		mainLog.println("========================================================================");
 		
 		return res_min_max[0];
 		
@@ -189,20 +239,11 @@ public class StaminaModelChecker extends Prism {
 		// Kappa reduction factor
 		private static double kappaReductionFactor = 1000.0;
 			
-		// max number of approx-refinement limit 
-		private static int maxApproxRefineCount = 10;
+		// max number of refinement count 
+		private static int maxRefinementCount = 10;
 		
 		// termination Error window
 		private static double probErrorWindow = 1.0e-3;
-		
-		//////////////////////////////////// Command lines args to pass to prism ///////////////////
-		// Solutions method max iteration
-		//private static int maxLinearSolnIter;
-		
-		// Solution method
-		//private static int solutionMethod;
-		
-		//private  Options() {}
 		
 		
 		public static double getReachabilityThreshold() {
@@ -217,16 +258,16 @@ public class StaminaModelChecker extends Prism {
 			return kappaReductionFactor;
 		}
 		
-		public static void setgetKappaReductionFactor(double fac) {
+		public static void setKappaReductionFactor(double fac) {
 			kappaReductionFactor = fac;
 		}
 		
-		public static int getMaxApproxRefineCount() {
-			return maxApproxRefineCount;
+		public static int getMaxRefinementCount() {
+			return maxRefinementCount;
 		}
 		
-		public static void setMaxApproxRefineCount(int arc) {
-			maxApproxRefineCount = arc;
+		public static void setMaxRefinementCount(int rc) {
+			maxRefinementCount = rc;
 		}
 		
 		public static double getProbErrorWindow() {

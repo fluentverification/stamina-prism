@@ -821,6 +821,10 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		progress.update(globalStateSet.size()+1);
 		progress.end(" states");
 		
+		
+		/////////////////reset proprty expression
+		propertyExpression = null;
+		
 	}
 	
 }

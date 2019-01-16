@@ -51,16 +51,16 @@ public class StaminaCL {
 	private String constSwitch = null;
 	
 	//Probabilistic state search termination value : Defined by kappa in command line argument
-	private double reachabilityThreshold = -1.0;
+	private static double reachabilityThreshold = -1.0;
 	
 	// Kappa reduction factor
-	private double kappaReductionFactor = -1.0;
-	
-	// max number of approx-refinement limit 
-	private int maxApproxRefineCount = -1;
+	private static double kappaReductionFactor = -1;
+		
+	// max number of refinement count 
+	private static int maxRefinementCount = -1;
 	
 	// termination Error window
-	private double probErrorWindow = -1.0;
+	private static double probErrorWindow = -1.0;
 	
 	
 	//////////////////////////////////// Command lines args to pass to prism ///////////////////
@@ -87,6 +87,8 @@ public class StaminaCL {
 		
 		Result res;
 		mainLog = new PrismFileLog("stdout");
+		
+		printHelp();
 		
 		//Initialize
 		initializeSTAMINA();
@@ -142,8 +144,6 @@ public class StaminaCL {
 					}
 					continue;
 				}
-
-				//modelBuildFail = false;
 				
 				// Work through list of properties to be checked
 				for (int j = 0; j < numPropertiesToCheck; j++) {
@@ -221,7 +221,8 @@ public class StaminaCL {
 			
 			// Configure options
 			if (reachabilityThreshold >= 0.0 )	StaminaModelChecker.Options.setReachabilityThreshold(reachabilityThreshold);
-			if (maxApproxRefineCount >= 0) StaminaModelChecker.Options.setMaxApproxRefineCount(maxApproxRefineCount);
+			if (kappaReductionFactor >= 0.0 )	StaminaModelChecker.Options.setKappaReductionFactor(kappaReductionFactor);
+			if (maxRefinementCount >= 0) StaminaModelChecker.Options.setMaxRefinementCount(maxRefinementCount);
 			if (probErrorWindow >= 0.0) StaminaModelChecker.Options.setProbErrorWindow(probErrorWindow);
 			if (maxLinearSolnIter >= 0) staminaMC.setMaxIters(maxLinearSolnIter);
 			
@@ -307,9 +308,9 @@ public class StaminaCL {
 					}
 					
 				}
-				else if (sw.equals("maxappref")) {
+				else if (sw.equals("maxrefinecount")) {
 					
-					maxApproxRefineCount = Integer.parseInt(args[++i].trim());
+					maxRefinementCount = Integer.parseInt(args[++i].trim());
 					
 				}
 				else if (sw.equals("maxiters")) {
@@ -432,7 +433,7 @@ public class StaminaCL {
 		mainLog.println("-kappa <k>.......................... ReachabilityThreshold [default: 1.0e-6]");
 		mainLog.println("-reducekappa <f>.................... Reduction factor for ReachabilityThreshold(kappa) for refinement step.  [default: 1000.0]");
 		mainLog.println("-pbwin <e>.......................... Probability window between lower and upperbound for termination. [default: 1.0e-3]");
-		mainLog.println("-maxappref <n>...................... Maximum number of approximation and refinement iteration. [default: 10]");
+		mainLog.println("-maxrefinecount <n>................. Maximum number of refinement iteration. [default: 10]");
 		mainLog.println("-maxiters <n>....................... Maximum iteration for solution. [default: 10000]");
 		mainLog.println("-const <vals> ...................... Comma separated values for constants");
 		mainLog.println("\tExamples:");
