@@ -42,7 +42,6 @@ Options:
 -reducekappa <f>.................... Reduction factor for ReachabilityThreshold(kappa) for refinement step.  [default: 1000.0]
 -pbwin <e>.......................... Probability window between lower and upperbound for termination. [default: 1.0e-3]
 -maxrefinecount <n>................. Maximum number of refinement iteration. [default: 10]
--maxiters <n>....................... Maximum iteration for solution. [default: 10000]
 -const <vals> ...................... Comma separated values for constants
 	Examples:
 	-const a=1,b=5.6,c=true
@@ -50,10 +49,11 @@ Options:
 Other Options:
 ========
 
--power .......................... Power method
--jacobi ......................... Jacobi method
--gaussseidel .................... Gauss-Seidel method
--bgaussseidel ................... Backward Gauss-Seidel method
+-maxiters <n> ...................... Maximum iteration for solution. [default: 10000]
+-power ............................. Power method
+-jacobi ............................ Jacobi method
+-gaussseidel ....................... Gauss-Seidel method
+-bgaussseidel ...................... Backward Gauss-Seidel method
 ```
 
 ## Running case studies
