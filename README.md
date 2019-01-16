@@ -1,7 +1,7 @@
 STAMINA - STochastic Approximate Model-checker for INfinite-state Analysis
 TODO: Description
 
-##### Contact: Thakur Neupane (@thakurneupane) thakur.neupane@aggiemail.usu.edu , Zhen Zhang (@zgzn) zhen.zhang@usu.edu
+##### Contact: Thakur Neupane (@thakurneupane) thakur.neupane@aggiemail.usu.edu Zhen Zhang (@zgzn) zhen.zhang@usu.edu
                
 
 Contributor(s): Thakur Neupane, Zhen Zhang 
@@ -13,7 +13,7 @@ Contributor(s): Thakur Neupane, Zhen Zhang
   	* ``cd prism/prism``
   	* ``make``
 
-  More details about installing PRISM can be found [here](http://www.prismmodelchecker.org/).
+  	More details about installing PRISM can be found [here](http://www.prismmodelchecker.org/).
 
 2. Download the STAMINA from GitHub and build 
   	* ``git clone https://github.com/thakurneupane/stamina.git``
@@ -24,7 +24,7 @@ Contributor(s): Thakur Neupane, Zhen Zhang
 
 ``stamina/stamina/bin`` contains the executable ``stamina``. You can run STAMINA using following command: 
 
-``/path/to/stamina/executable <model-file> <properties-file> [options]``. Please refer to the All command line options section for detail about all the options. 
+``/path/to/stamina/executable <model-file> <properties-file> [options]``. Please refer to the following section for details about all the options. 
 
 
 ## All command line options
