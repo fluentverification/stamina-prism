@@ -1,23 +1,18 @@
 #!/bin/bash
 
-# PRISM directory to link to
-if [ "$PRISM_DIR" = "" ]; then
-	PRISM_DIR="../prism"
-fi
+source ~/.staminarc
 
-# Class to run
-if [ "$PRISM_MAINCLASS" = "" ]; then
-	PRISM_MAINCLASS=stamina.StaminaCL
-fi
+STAMINA_CLASSPATH="$STAMINA_HOME"/classes
+STAMINA_MAINCLASS=stamina.StaminaCL
 
 # Set up CLASSPATH:
 # We look in both the top-level and the prism sub-directory
 # (currently svn/git repos and downloaded distributions differ in structure)
-PRISM_CLASSPATH=classes:"$PRISM_DIR":"$PRISM_DIR"/classes:"$PRISM_DIR"/lib/*:"$PRISM_DIR"/prism:"$PRISM_DIR"/prism/classes:"$PRISM_DIR"/prism/lib/*
+PRISM_CLASSPATH="$PRISM_HOME":"$PRISM_HOME"/classes:"$PRISM_HOME"/lib/*:"$PRISM_HOME"/prism:"$PRISM_HOME"/prism/classes:"$PRISM_HOME"/prism/lib/*
 
 # Set up pointers to libraries
 # As above, we look in both the top-level and the prism sub-directory
-PRISM_LIB_PATH="$PRISM_DIR"/lib:"$PRISM_DIR"/prism/lib
+PRISM_LIB_PATH="$PRISM_HOME"/lib:"$PRISM_HOME"/prism/lib
 if [[ "$OSTYPE" == "darwin"* ]]; then
 	export DYLD_LIBRARY_PATH="$PRISM_LIB_PATH"
 else
@@ -36,4 +31,4 @@ if [ "$PRISM_JAVA" = "" ]; then
 fi
 
 # Run PRISM through Java
-"$PRISM_JAVA" -Djava.library.path="$PRISM_LIB_PATH" -classpath "$PRISM_CLASSPATH" $PRISM_MAINCLASS "$@"
+"$PRISM_JAVA" -Djava.library.path="$PRISM_LIB_PATH" -classpath "$STAMINA_CLASSPATH":"$PRISM_CLASSPATH" $STAMINA_MAINCLASS "$@"
