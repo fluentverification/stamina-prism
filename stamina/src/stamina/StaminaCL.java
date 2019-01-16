@@ -422,7 +422,7 @@ public class StaminaCL {
 	 */
 	private void printHelp()
 	{
-		mainLog.println("Usage: " + "InfModelCheck" + " <model-file> <properties-file> [options]");
+		mainLog.println("Usage: " + "stamina" + " <model-file> <properties-file> [options]");
 		mainLog.println();
 		mainLog.println("<model-file> .................... Prism model file. Extensions: .prism, .sm");
 		mainLog.println("<properties-file> ............... Property file. Extensions: .csl");
