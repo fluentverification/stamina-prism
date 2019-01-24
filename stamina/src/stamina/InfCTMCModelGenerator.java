@@ -63,11 +63,11 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	// Reachability threshold
 	private double reachabilityThreshold = 1.0e-6;
 	
+	// optimization flag
+	private boolean noOptimize = false;
+	
 	//private TreeMap<ProbState, Integer> globalStateSet = null;
 	private HashMap<State, ProbState> globalStateSet = null;
-	
-	// Explicit model storage
-	//private CTMCSimple ctmcModel = null;
 	
 	// Absorbing state
 	private State absorbingState = null;
@@ -149,6 +149,10 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	 */
 	public void setReachabilityThreshold(double th) {
 		reachabilityThreshold = th;
+	}
+	
+	public void setNoOptimize(boolean o) {
+		noOptimize = o;
 	}
 	
 	
@@ -617,7 +621,10 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		
 		int globalIterationCount = 1;
 		
-		if(globalStateSet.isEmpty()) {
+		
+		if(globalStateSet.isEmpty() || noOptimize) {
+			
+			globalStateSet.clear();
 			
 			//Get initial state and set reach_prob
 			State initState = modelGen.getInitialState();
@@ -801,7 +808,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 			
 			//Prepare for next itr or terminate
 			int curStateCount = globalStateSet.size();
-			if(curStateCount==prevStateCount) {
+			if(((double)(curStateCount-prevStateCount)/(double)prevStateCount) <= 0) {
 				break;
 			}
 			

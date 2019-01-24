@@ -62,6 +62,9 @@ public class StaminaCL {
 	// termination Error window
 	private static double probErrorWindow = -1.0;
 	
+	// No optimze while model exploring: starts from initial state with est(s_0) = 1
+	private static boolean noOptimize = false;
+	
 	
 	//////////////////////////////////// Command lines args to pass to prism ///////////////////
 	// Solutions method max iteration
@@ -87,8 +90,6 @@ public class StaminaCL {
 		
 		Result res;
 		mainLog = new PrismFileLog("stdout");
-		
-		printHelp();
 		
 		//Initialize
 		initializeSTAMINA();
@@ -224,6 +225,9 @@ public class StaminaCL {
 			if (kappaReductionFactor >= 0.0 )	StaminaModelChecker.Options.setKappaReductionFactor(kappaReductionFactor);
 			if (maxRefinementCount >= 0) StaminaModelChecker.Options.setMaxRefinementCount(maxRefinementCount);
 			if (probErrorWindow >= 0.0) StaminaModelChecker.Options.setProbErrorWindow(probErrorWindow);
+			
+			StaminaModelChecker.Options.setNoOptimize(noOptimize);
+			
 			if (maxLinearSolnIter >= 0) staminaMC.setMaxIters(maxLinearSolnIter);
 			
 			if (solutionMethod != null) {
@@ -306,6 +310,11 @@ public class StaminaCL {
 					else {
 						mainLog.println("Probability error window not given.");
 					}
+					
+				}
+				else if (sw.equals("nooptimize")) {
+					
+					noOptimize = true;
 					
 				}
 				else if (sw.equals("maxrefinecount")) {
@@ -434,7 +443,7 @@ public class StaminaCL {
 		mainLog.println("-reducekappa <f>.................... Reduction factor for ReachabilityThreshold(kappa) for refinement step.  [default: 1000.0]");
 		mainLog.println("-pbwin <e>.......................... Probability window between lower and upperbound for termination. [default: 1.0e-3]");
 		mainLog.println("-maxrefinecount <n>................. Maximum number of refinement iteration. [default: 10]");
-		mainLog.println("-maxiters <n>....................... Maximum iteration for solution. [default: 10000]");
+		mainLog.println("-nooptimize ........................ No-Optimization flag for model exploration. If given, model exploration will start from initial state everytime . [default: off]");
 		mainLog.println("-const <vals> ...................... Comma separated values for constants");
 		mainLog.println("\tExamples:");
 		mainLog.println("\t-const a=1,b=5.6,c=true");
@@ -442,10 +451,11 @@ public class StaminaCL {
 		mainLog.println("Other Options:");
 		mainLog.println("========");
 		mainLog.println();
-		mainLog.println("-power .......................... Power method");
-		mainLog.println("-jacobi ......................... Jacobi method");
-		mainLog.println("-gaussseidel .................... Gauss-Seidel method");
-		mainLog.println("-bgaussseidel ................... Backward Gauss-Seidel method");
+		mainLog.println("-maxiters <n> ...................... Maximum iteration for solution. [default: 10000]");
+		mainLog.println("-power ............................. Power method");
+		mainLog.println("-jacobi ............................ Jacobi method");
+		mainLog.println("-gaussseidel ....................... Gauss-Seidel method");
+		mainLog.println("-bgaussseidel ...................... Backward Gauss-Seidel method");
 		mainLog.println();
 	}
 }

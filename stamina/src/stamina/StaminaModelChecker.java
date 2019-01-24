@@ -12,6 +12,7 @@ import parser.ast.ExpressionVar;
 import parser.ast.PropertiesFile;
 import parser.ast.Property;
 import parser.type.TypeInt;
+import prism.NondetModelTransformationOperator;
 import prism.Prism;
 import prism.PrismException;
 import prism.PrismLangException;
@@ -120,6 +121,7 @@ public class StaminaModelChecker extends Prism {
 		Result[] res_min_max = new Result[2];
 		
 		double reachTh = Options.getReachabilityThreshold();
+		boolean optimize = Options.getNoOptimize();
 		
 		// Instantiate and load model generator
 		infModelGen = new InfCTMCModelGenerator(getPRISMModel(), this);
@@ -144,6 +146,7 @@ public class StaminaModelChecker extends Prism {
 		mainLog.println("Approximation: kappa = " + reachTh);
 		mainLog.println("========================================================================");
 		infModelGen.setReachabilityThreshold(reachTh);
+		infModelGen.setNoOptimize(optimize);
 		
 		// Explicitely invoke model build
 		super.buildModel();
@@ -245,6 +248,9 @@ public class StaminaModelChecker extends Prism {
 		// termination Error window
 		private static double probErrorWindow = 1.0e-3;
 		
+		// No optimze while model exploring: starts from initial state with est(s_0) = 1
+		private static boolean noOptimize = false;
+		
 		
 		public static double getReachabilityThreshold() {
 			return reachabilityThreshold;
@@ -276,6 +282,14 @@ public class StaminaModelChecker extends Prism {
 		
 		public static void setProbErrorWindow(double w) {
 			probErrorWindow = w;
+		}
+		
+		public static void setNoOptimize(boolean o) {
+			noOptimize = o;
+		}
+		
+		public static boolean getNoOptimize() {
+			return noOptimize;
 		}
 	}
 

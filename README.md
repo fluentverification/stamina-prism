@@ -32,8 +32,8 @@ Contributor(s): Thakur Neupane, Zhen Zhang
 ```
 Usage: stamina <model-file> <properties-file> [options]
 
-<model-file> .................... Prism model file. Extensions: .prism, .sm
-<properties-file> ............... Property file. Extensions: .csl
+<model-file> ....................... Prism model file. Extensions: .prism, .sm
+<properties-file> .................. Property file. Extensions: .csl
 
 Options:
 ========
