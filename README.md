@@ -4,7 +4,7 @@ TODO: Description
 ##### Contact: Thakur Neupane (@thakurneupane) thakur.neupane@aggiemail.usu.edu Zhen Zhang (@zgzn) zhen.zhang@usu.edu
                
 
-Contributor(s): Thakur Neupane, Zhen Zhang 
+Contributor(s): Thakur Neupane, Chris Myers, Curtis Madsen, Hao Zheng, Zhen Zhang
 
 ## Installing STAMINA
 
