@@ -176,7 +176,7 @@ public class StaminaModelChecker extends Prism {
 					expr = Expression.convertSimplePathFormulaToCanonicalForm(expr);
 					ExpressionTemporal exprTemp = (ExpressionTemporal) expr.deepCopy();
 					
-					if(exprTemp.isPathFormula(false) && (exprTemp.getOperator()==ExpressionTemporal.P_U)) {
+					if(exprTemp.isPathFormula(false) && (exprTemp.getOperator()==ExpressionTemporal.P_U) && (!Options.getNoPropRefine())) {
 						infModelGen.setPropertyExpression(exprTemp);
 					}
 					
