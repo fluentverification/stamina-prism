@@ -62,8 +62,8 @@ public class StaminaCL {
 	// termination Error window
 	private static double probErrorWindow = -1.0;
 	
-	// No optimze while model exploring: starts from initial state with est(s_0) = 1
-	private static boolean noOptimize = false;
+	// Use property based refinement
+	private static boolean noPropRefine = false;
 	
 	
 	//////////////////////////////////// Command lines args to pass to prism ///////////////////
@@ -226,7 +226,7 @@ public class StaminaCL {
 			if (maxRefinementCount >= 0) StaminaModelChecker.Options.setMaxRefinementCount(maxRefinementCount);
 			if (probErrorWindow >= 0.0) StaminaModelChecker.Options.setProbErrorWindow(probErrorWindow);
 			
-			StaminaModelChecker.Options.setNoOptimize(noOptimize);
+			StaminaModelChecker.Options.setNoPropRefine(noPropRefine);
 			
 			if (maxLinearSolnIter >= 0) staminaMC.setMaxIters(maxLinearSolnIter);
 			
@@ -312,9 +312,9 @@ public class StaminaCL {
 					}
 					
 				}
-				else if (sw.equals("nooptimize")) {
+				else if (sw.equals("noproprefine")) {
 					
-					noOptimize = true;
+					noPropRefine = true;
 					
 				}
 				else if (sw.equals("maxrefinecount")) {
@@ -443,7 +443,7 @@ public class StaminaCL {
 		mainLog.println("-reducekappa <f>.................... Reduction factor for ReachabilityThreshold(kappa) for refinement step.  [default: 1000.0]");
 		mainLog.println("-pbwin <e>.......................... Probability window between lower and upperbound for termination. [default: 1.0e-3]");
 		mainLog.println("-maxrefinecount <n>................. Maximum number of refinement iteration. [default: 10]");
-		mainLog.println("-nooptimize ........................ No-Optimization flag for model exploration. If given, model exploration will start from initial state everytime . [default: off]");
+		mainLog.println("-noproprefine ...................... Do not use property based refinement. If given, model exploration method will reduce the kappa and do the property independent refinement. [default: off]");
 		mainLog.println("-const <vals> ...................... Comma separated values for constants");
 		mainLog.println("\tExamples:");
 		mainLog.println("\t-const a=1,b=5.6,c=true");

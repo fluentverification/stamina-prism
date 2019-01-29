@@ -32,8 +32,8 @@ Contributor(s): Thakur Neupane, Chris Myers, Curtis Madsen, Hao Zheng, Zhen Zhan
 ```
 Usage: stamina <model-file> <properties-file> [options]
 
-<model-file> ....................... Prism model file. Extensions: .prism, .sm
-<properties-file> .................. Property file. Extensions: .csl
+<model-file> .................... Prism model file. Extensions: .prism, .sm
+<properties-file> ............... Property file. Extensions: .csl
 
 Options:
 ========
@@ -42,6 +42,7 @@ Options:
 -reducekappa <f>.................... Reduction factor for ReachabilityThreshold(kappa) for refinement step.  [default: 1000.0]
 -pbwin <e>.......................... Probability window between lower and upperbound for termination. [default: 1.0e-3]
 -maxrefinecount <n>................. Maximum number of refinement iteration. [default: 10]
+-noproprefine ...................... Do not use property based refinement. If given, model exploration method will reduce the kappa and do the property independent refinement. [default: off]
 -const <vals> ...................... Comma separated values for constants
 	Examples:
 	-const a=1,b=5.6,c=true

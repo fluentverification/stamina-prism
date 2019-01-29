@@ -121,7 +121,6 @@ public class StaminaModelChecker extends Prism {
 		Result[] res_min_max = new Result[2];
 		
 		double reachTh = Options.getReachabilityThreshold();
-		boolean optimize = Options.getNoOptimize();
 		
 		// Instantiate and load model generator
 		infModelGen = new InfCTMCModelGenerator(getPRISMModel(), this);
@@ -146,7 +145,6 @@ public class StaminaModelChecker extends Prism {
 		mainLog.println("Approximation: kappa = " + reachTh);
 		mainLog.println("========================================================================");
 		infModelGen.setReachabilityThreshold(reachTh);
-		infModelGen.setNoOptimize(optimize);
 		
 		// Explicitely invoke model build
 		super.buildModel();
@@ -248,8 +246,8 @@ public class StaminaModelChecker extends Prism {
 		// termination Error window
 		private static double probErrorWindow = 1.0e-3;
 		
-		// No optimze while model exploring: starts from initial state with est(s_0) = 1
-		private static boolean noOptimize = false;
+		// Use property based refinement
+		private static boolean noPropRefine = false;
 		
 		
 		public static double getReachabilityThreshold() {
@@ -284,12 +282,12 @@ public class StaminaModelChecker extends Prism {
 			probErrorWindow = w;
 		}
 		
-		public static void setNoOptimize(boolean o) {
-			noOptimize = o;
+		public static void setNoPropRefine(boolean o) {
+			noPropRefine = o;
 		}
 		
-		public static boolean getNoOptimize() {
-			return noOptimize;
+		public static boolean getNoPropRefine() {
+			return noPropRefine;
 		}
 	}
 
