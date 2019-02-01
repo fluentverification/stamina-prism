@@ -1,8 +1,0 @@
-const double T;
-
-
-// probability network becomes full in T time units
-P=? [ true U<=T sc=c & sm=c & ph=2 ]
-
-// probability first queue becomes full in T time units
-P=? [ true U<=T sc=c ]

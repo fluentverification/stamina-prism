@@ -1,8 +1,0 @@
-// time bound
-const double T;
-
-// probability that from the inital state station 1 is served before station 2 is ...
-//P=? [ !(s=2 & a=1) U (s=1 & a=1) ]
-
-// once a station becomes full, probability it will be polled within T time units is ...
-P=?[ true U<=T (s=1 & a=0) ]
