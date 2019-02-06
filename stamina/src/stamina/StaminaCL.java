@@ -221,12 +221,12 @@ public class StaminaCL {
 		try {
 			
 			// Configure options
-			if (reachabilityThreshold >= 0.0 )	StaminaModelChecker.Options.setReachabilityThreshold(reachabilityThreshold);
-			if (kappaReductionFactor >= 0.0 )	StaminaModelChecker.Options.setKappaReductionFactor(kappaReductionFactor);
-			if (maxRefinementCount >= 0) StaminaModelChecker.Options.setMaxRefinementCount(maxRefinementCount);
-			if (probErrorWindow >= 0.0) StaminaModelChecker.Options.setProbErrorWindow(probErrorWindow);
+			if (reachabilityThreshold >= 0.0 )	Options.setReachabilityThreshold(reachabilityThreshold);
+			if (kappaReductionFactor >= 0.0 )	Options.setKappaReductionFactor(kappaReductionFactor);
+			if (maxRefinementCount >= 0) Options.setMaxRefinementCount(maxRefinementCount);
+			if (probErrorWindow >= 0.0) Options.setProbErrorWindow(probErrorWindow);
 			
-			StaminaModelChecker.Options.setNoPropRefine(noPropRefine);
+			Options.setNoPropRefine(noPropRefine);
 			
 			if (maxLinearSolnIter >= 0) staminaMC.setMaxIters(maxLinearSolnIter);
 			
