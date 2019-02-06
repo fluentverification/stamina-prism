@@ -1,4 +1,4 @@
-STAMINA - STochastic Approximate Model-checker for INfinite-state Analysis
+## STAMINA - STochastic Approximate Model-checker for INfinite-state Analysis
 STAMINA is a new infinite-state CTMC model-checker integrated with PRISM. During state space exploration, it estimates path probabilities of reaching each state on-the-fly and terminates exploration of a path when the cumulative estimated probability along such a path drops below a predefined value. Each terminated path is routed to an absorbing state, which is used to accumulate probability leakage for the truncated state space in the subsequent CTMC analysis. The resulting finite state space is analyzed using stochastic model checking for CTMCs provided by the PRISM to determine the satisfiability probability for a given CSL property. 
 
 ##### Contact: Thakur Neupane (@thakurneupane) thakur.neupane@aggiemail.usu.edu Zhen Zhang (@zgzn) zhen.zhang@usu.edu
