@@ -39,11 +39,11 @@ Usage: stamina <model-file> <properties-file> [options]
 Options:
 ========
 
--kappa <k>.......................... ReachabilityThreshold [default: 1.0e-6]
--reducekappa <f>.................... Reduction factor for ReachabilityThreshold(kappa) for refinement step.  [default: 1000.0]
--pbwin <e>.......................... Probability window between lower and upperbound for termination. [default: 1.0e-3]
+-kappa <k>.......................... Probability estimate threshold [default: 1.0e-6]
+-reducekappa <f>.................... Reduction factor for probability estimate threshold for refinement step.  [default: 1000.0]
+-pbwin <e>.......................... Probability precision - probability window between lower and upper bound. [default: 1.0e-3]
 -maxrefinecount <n>................. Maximum number of refinement iteration. [default: 10]
--noproprefine ...................... Do not use property based refinement. If given, model exploration method will reduce the kappa and do the property independent refinement. [default: off]
+-noproprefine ...................... Do not use property-guided refinement. State exploration reduces the probability estimate threshold and performs property-agnostic state expansion. [default: off]
 -const <vals> ...................... Comma separated values for constants
 	Examples:
 	-const a=1,b=5.6,c=true
