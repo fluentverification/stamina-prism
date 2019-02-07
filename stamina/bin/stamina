@@ -5,6 +5,11 @@ source ~/.staminarc
 STAMINA_CLASSPATH="$STAMINA_HOME"/classes
 STAMINA_MAINCLASS=stamina.StaminaCL
 
+# Configure JAVA_MEM
+if [ -z $JAVA_MAX_MEM ]; then
+	JAVA_MAX_MEM=2g
+fi
+
 # Set up CLASSPATH:
 # We look in both the top-level and the prism sub-directory
 # (currently svn/git repos and downloaded distributions differ in structure)
