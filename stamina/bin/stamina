@@ -36,4 +36,4 @@ if [ "$PRISM_JAVA" = "" ]; then
 fi
 
 # Run PRISM through Java
-"$PRISM_JAVA" -Djava.library.path="$PRISM_LIB_PATH" -classpath "$STAMINA_CLASSPATH":"$PRISM_CLASSPATH" $STAMINA_MAINCLASS "$@"
+"$PRISM_JAVA" -Xmx$JAVA_MAX_MEM -Djava.library.path="$PRISM_LIB_PATH" -classpath "$STAMINA_CLASSPATH":"$PRISM_CLASSPATH" $STAMINA_MAINCLASS "$@"
