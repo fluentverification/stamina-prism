@@ -25,7 +25,7 @@ Contributor(s): Thakur Neupane, Chris Myers, Curtis Madsen, Hao Zheng, Zhen Zhan
 
 ``stamina/stamina/bin`` contains the executable ``stamina``. You can run STAMINA using following command: 
 
-``/path/to/stamina/executable <model-file> <properties-file> [options]``. Please refer to the following section for details about all the options. 
+``/path/to/stamina/executable <model-file> <properties-file> [options]``. Please refer to the following section for details about all the options. Please see the [Prism Language Manual page](https://www.prismmodelchecker.org/manual/ThePRISMLanguage/Introduction) for information about how to create Prism model files and the [Property Specification Manual page](https://www.prismmodelchecker.org/manual/PropertySpecification/Introduction) for information about creating property files.
 
 
 ## All command line options
