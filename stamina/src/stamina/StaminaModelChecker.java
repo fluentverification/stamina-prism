@@ -261,7 +261,7 @@ public class StaminaModelChecker extends Prism {
 						res_min_max[1].setExplanation("Maximum Bound".toLowerCase());
 						
 						// Print result to log
-						mainLog.print("\nnResult: " + res_min_max[1].getResultString() + "\n");
+						mainLog.print("\nResult: " + res_min_max[1].getResultString() + "\n");
 						
 						
 						
