@@ -9,7 +9,7 @@ public class Options {
 	private static double kappaReductionFactor = 1000.0;
 	
 	// max number of refinement count 
-	private static int maxRefinementCount = 10;
+	private static int maxApproxCount = 10;
 	
 	// termination Error window
 	private static double probErrorWindow = 1.0e-3;
@@ -34,12 +34,12 @@ public class Options {
 	kappaReductionFactor = fac;
 	}
 	
-	public static int getMaxRefinementCount() {
-	return maxRefinementCount;
+	public static int getMaxApproxCount() {
+	return maxApproxCount;
 	}
 	
 	public static void setMaxRefinementCount(int rc) {
-	maxRefinementCount = rc;
+		maxApproxCount = rc;
 	}
 	
 	public static double getProbErrorWindow() {

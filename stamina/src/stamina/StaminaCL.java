@@ -57,7 +57,7 @@ public class StaminaCL {
 	private static double kappaReductionFactor = -1;
 		
 	// max number of refinement count 
-	private static int maxRefinementCount = -1;
+	private static int maxApproxCount = -1;
 	
 	// termination Error window
 	private static double probErrorWindow = -1.0;
@@ -159,7 +159,7 @@ public class StaminaCL {
 								propertiesFile.setSomeUndefinedConstants(definedPFConstants);
 							}
 							
-							res = staminaMC.modelCheck(propertiesFile, propertiesToCheck.get(j));
+							res = staminaMC.modelCheckStamina(propertiesFile, propertiesToCheck.get(j));
 							
 							
 						
@@ -223,7 +223,7 @@ public class StaminaCL {
 			// Configure options
 			if (reachabilityThreshold >= 0.0 )	Options.setReachabilityThreshold(reachabilityThreshold);
 			if (kappaReductionFactor >= 0.0 )	Options.setKappaReductionFactor(kappaReductionFactor);
-			if (maxRefinementCount >= 0) Options.setMaxRefinementCount(maxRefinementCount);
+			if (maxApproxCount >= 0) Options.setMaxRefinementCount(maxApproxCount);
 			if (probErrorWindow >= 0.0) Options.setProbErrorWindow(probErrorWindow);
 			
 			Options.setNoPropRefine(noPropRefine);
@@ -317,9 +317,9 @@ public class StaminaCL {
 					noPropRefine = true;
 					
 				}
-				else if (sw.equals("maxrefinecount")) {
+				else if (sw.equals("maxapproxcount")) {
 					
-					maxRefinementCount = Integer.parseInt(args[++i].trim());
+					maxApproxCount = Integer.parseInt(args[++i].trim());
 					
 				}
 				else if (sw.equals("maxiters")) {
@@ -442,7 +442,7 @@ public class StaminaCL {
 		mainLog.println("-kappa <k>.......................... ReachabilityThreshold [default: 1.0e-6]");
 		mainLog.println("-reducekappa <f>.................... Reduction factor for ReachabilityThreshold(kappa) for refinement step.  [default: 1000.0]");
 		mainLog.println("-pbwin <e>.......................... Probability window between lower and upperbound for termination. [default: 1.0e-3]");
-		mainLog.println("-maxrefinecount <n>................. Maximum number of refinement iteration. [default: 10]");
+		mainLog.println("-maxapproxcount <n>................. Maximum number of approximation iteration. [default: 10]");
 		mainLog.println("-noproprefine ...................... Do not use property based refinement. If given, model exploration method will reduce the kappa and do the property independent refinement. [default: off]");
 		mainLog.println("-const <vals> ...................... Comma separated values for constants");
 		mainLog.println("\tExamples:");

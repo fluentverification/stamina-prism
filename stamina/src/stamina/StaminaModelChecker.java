@@ -1,6 +1,10 @@
 package stamina;
 
 import java.io.FileNotFoundException;
+import java.util.BitSet;
+
+import explicit.CTMC;
+import explicit.CTMCModelChecker;
 import parser.State;
 import parser.ast.Expression;
 import parser.ast.ExpressionBinaryOp;
@@ -115,8 +119,9 @@ public class StaminaModelChecker extends Prism {
 	 * @param prop The property to check
 	 * @throws FileNotFoundException 
 	 */
-	public Result modelCheck(PropertiesFile propertiesFile, Property prop) throws PrismException
+	public Result modelCheckStamina(PropertiesFile propertiesFile, Property prop) throws PrismException
 	{
+		
 		Result[] res_min_max = new Result[2];
 		
 		double reachTh = Options.getReachabilityThreshold();
@@ -124,6 +129,9 @@ public class StaminaModelChecker extends Prism {
 		// Instantiate and load model generator
 		infModelGen = new InfCTMCModelGenerator(getPRISMModel(), this);
 		super.loadModelGenerator(infModelGen);
+		
+		// Time bounds		
+		double lTime, uTime;
 		
 		// Split property into 2 to find P_min and P_max
 		
@@ -138,36 +146,20 @@ public class StaminaModelChecker extends Prism {
 		modifyExpression(prop_max.getExpression(), false);
 		
 		
-		//////////////////////////Approximation Step///////////////////////////
-		mainLog.println();
-		mainLog.println("========================================================================");
-		mainLog.println("Approximation: kappa = " + reachTh);
-		mainLog.println("========================================================================");
-		infModelGen.setReachabilityThreshold(reachTh);
+		// timer 
+		long timer = 0;
 		
-		// Explicitely invoke model build
-		super.buildModel();
-		
-		mainLog.println();
-		mainLog.println("---------------------------------------------------------------------");
-		mainLog.println();
-		mainLog.println("Verifying Lower Bound for " + prop_min.getName() + " .....");
-		res_min_max[0] = super.modelCheck(propertiesFile, prop_min);
-		
-		mainLog.println();
-		mainLog.println("---------------------------------------------------------------------");
-		mainLog.println();
-		mainLog.println("Verifying Upper Bound for " + prop_max.getName() + " .....");
-		res_min_max[1] = super.modelCheck(propertiesFile, prop_max);
-	
-		
+		// iteration count
 		int numRefineIteration = 0;
+		
+		// flag to switch optimized CTMC analysis
+		boolean switchToCombinedCTMC = false;
 		
 		Expression exprProp = prop.getExpression();
 		if(exprProp instanceof ExpressionProb) {
 			
 		
-			while((!terminateModelCheck(res_min_max[0].getResult(), res_min_max[1].getResult(), Options.getProbErrorWindow())) && (numRefineIteration < Options.getMaxRefinementCount())) {
+			while(numRefineIteration==0 || ((!terminateModelCheck(res_min_max[0].getResult(), res_min_max[1].getResult(), Options.getProbErrorWindow())) && (numRefineIteration < Options.getMaxApproxCount()))) {
 				
 				Expression expr = ((ExpressionProb) exprProp).getExpression();
 				if(expr instanceof ExpressionTemporal) {
@@ -179,30 +171,131 @@ public class StaminaModelChecker extends Prism {
 						infModelGen.setPropertyExpression(exprTemp);
 					}
 					
-					// Reduce kapp for refinement
+					if(exprTemp.isPathFormula(false) && (exprTemp.getOperator()==ExpressionTemporal.P_U)) {
+						switchToCombinedCTMC = true;
+					}
+					
+					if(switchToCombinedCTMC) {
+						
+						//////////////////////////Approximation Step///////////////////////////
+						mainLog.println();
+						mainLog.println("========================================================================");
+						mainLog.println("Approximation<" + (numRefineIteration+1) + "> : kappa = " + reachTh);
+						mainLog.println("========================================================================");
+						infModelGen.setReachabilityThreshold(reachTh);
+						
+						
+						// Explicitely invoke model build
+						super.buildModel();
+
+						// model check operands first for all states
+						explicit.CTMCModelChecker mcCTMC = new CTMCModelChecker(this);
+						BitSet b1 = mcCTMC.checkExpression(super.getBuiltModelExplicit(), exprTemp.getOperand1(), null).getBitSet();
+						BitSet b2 = mcCTMC.checkExpression(super.getBuiltModelExplicit(), exprTemp.getOperand2(), null).getBitSet();
+						
+						BitSet minStatesNeg = (BitSet) b1.clone();
+						minStatesNeg.andNot(b2);
+						
+						// lower bound is 0 if not specified
+						// (i.e. if until is of form U<=t)
+						Expression timeExpr = exprTemp.getLowerBound();
+						if (timeExpr != null) {
+							lTime = timeExpr.evaluateDouble(mcCTMC.getConstantValues());
+							if (lTime < 0) {
+								throw new PrismException("Invalid lower bound " + lTime + " in time-bounded until formula");
+							}
+						} else {
+							lTime = 0;
+						}
+						// upper bound is -1 if not specified
+						// (i.e. if until is of form U>=t)
+						timeExpr = exprTemp.getUpperBound();
+						if (timeExpr != null) {
+							uTime = timeExpr.evaluateDouble(mcCTMC.getConstantValues());
+							if (uTime < 0 || (uTime == 0 && exprTemp.upperBoundIsStrict())) {
+								String bound = (exprTemp.upperBoundIsStrict() ? "<" : "<=") + uTime;
+								throw new PrismException("Invalid upper bound " + bound + " in time-bounded until formula");
+							}
+							if (uTime < lTime) {
+								throw new PrismException("Upper bound must exceed lower bound in time-bounded until formula");
+							}
+						} else {
+							uTime = -1;
+						}
+						
+						if(lTime>0.0) throw new PrismException("Currently only supports [0,t] time bound.");
+						
+						// verification step
+						mainLog.println();
+						mainLog.println("---------------------------------------------------------------------");
+						mainLog.println();
+						mainLog.println("Verifying " + propName + " .....");
+						
+						timer = System.currentTimeMillis();
+						
+						// run transient analysis
+						explicit.StateValues probsExpl = mcCTMC.doTransient((CTMC) super.getBuiltModelExplicit(), uTime);
+						
+						double ans_min = 0.0;
+						
+						for(int i=0; i<super.getBuiltModelExplicit().getNumStates(); ++i) {
+							
+							if(!minStatesNeg.get(i)) ans_min += (double) probsExpl.getValue(i);
+							
+						}
+						
+						// TODO: need the index of absorbing state 
+						double ans_max =  ans_min + (double) probsExpl.getValue(0);
+						
+						timer = System.currentTimeMillis() - timer;
+						mainLog.println("\nTime for model checking: " + timer / 1000.0 + " seconds.");
+						
+						// set results
+						res_min_max[0] = new Result(ans_min);
+						res_min_max[0].setExplanation("Minimum Bound".toLowerCase());
+						
+						// Print result to log
+						mainLog.print("\nResult: " + res_min_max[0].getResultString() + "\n");
+						
+						res_min_max[1] = new Result(ans_max);
+						res_min_max[1].setExplanation("Maximum Bound".toLowerCase());
+						
+						// Print result to log
+						mainLog.print("\nnResult: " + res_min_max[1].getResultString() + "\n");
+						
+						
+						
+					}
+					
+					else {
+					
+						//////////////////////////Approximation Step///////////////////////////
+						mainLog.println();
+						mainLog.println("========================================================================");
+						mainLog.println("Approximation<" + (numRefineIteration+1) + "> : kappa = " + reachTh);
+						mainLog.println("========================================================================");
+						infModelGen.setReachabilityThreshold(reachTh);
+						
+						// Explicitely invoke model build
+						super.buildModel();
+					
+						
+						mainLog.println();
+						mainLog.println("---------------------------------------------------------------------");
+						mainLog.println();
+						mainLog.println("Verifying Lower Bound for " + prop_min.getName() + " .....");
+						res_min_max[0] = super.modelCheck(propertiesFile, prop_min);
+						
+						mainLog.println();
+						mainLog.println("---------------------------------------------------------------------");
+						mainLog.println();
+						mainLog.println("Verifying Upper Bound for " + prop_max.getName() + " .....");
+						res_min_max[1] = super.modelCheck(propertiesFile, prop_max);
+					}
+					
+					
+					// Reduce kappa for refinement
 					reachTh /= Options.getKappaReductionFactor();
-										
-					//////////////////////////Approximation Step///////////////////////////
-					mainLog.println();
-					mainLog.println("========================================================================");
-					mainLog.println("Refinement<" + (numRefineIteration+1) + "> : kappa = " + reachTh);
-					mainLog.println("========================================================================");
-					infModelGen.setReachabilityThreshold(reachTh);
-					
-					// Explicitely invoke model build
-					super.buildModel();
-					
-					mainLog.println();
-					mainLog.println("---------------------------------------------------------------------");
-					mainLog.println();
-					mainLog.println("Verifying Lower Bound for " + prop_min.getName() + " .....");
-					res_min_max[0] = super.modelCheck(propertiesFile, prop_min);
-					
-					mainLog.println();
-					mainLog.println("---------------------------------------------------------------------");
-					mainLog.println();
-					mainLog.println("Verifying Upper Bound for " + prop_max.getName() + " .....");
-					res_min_max[1] = super.modelCheck(propertiesFile, prop_max);
 					
 					// increment refinement count
 					++numRefineIteration;
@@ -211,7 +304,6 @@ public class StaminaModelChecker extends Prism {
 			}
 			
 		}
-		
 		
 		// Print the final result
 		mainLog.println();

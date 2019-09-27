@@ -404,12 +404,11 @@ public class InfCTMCModelGenerator implements ModelGenerator
 			
 			ProbState prbSt = globalStateSet.get(st);
 			
-			// Is dst state is explored then return, otherwise return absorbingState
-			if(prbSt == null) {
-				st = absorbingState;
+			if(globalStateSet.get(exploreState).isStateAbsorbing()) return exploreState;
+			else {
+				if(prbSt == null) return absorbingState;
+				else return st;
 			}
-			
-			return st;
 		}
 		else {
 			
@@ -839,5 +838,194 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		propertyExpression = null;
 		
 	}
+	
+	
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//	@Deprecated
+//	public void doCrudeReachabilityAnalysis() throws PrismException {
+//		
+//	 	
+//		// Model gen from file
+//	 	ModulesFileModelGenerator modelGen = new ModulesFileModelGenerator(modulesFile, parent);
+//	
+//		//VarList varList = modelGen.createVarList();
+//		if (modelGen.containsUnboundedVariables())
+//			parent.getLog().printWarning("Infinite State system: Reachability analysis based on reachabilityThreshold=" + reachabilityThreshold);
+//	
+//		ProgressDisplay progress = new ProgressDisplay(parent.getLog());
+//		progress.start();
+//		
+//		
+//		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//		// Initia;ize set
+//		if (modelType != ModelType.CTMC) {
+//			throw new PrismNotSupportedException("Probabilistic model construction not supported for " + modelType + "s");
+//		}
+//		
+//		
+//		StateStorage<ProbState> statesK = new IndexedSet<ProbState>(true);
+//		LinkedList<ProbState> exploredK = new LinkedList<ProbState>();
+//		
+//		int globalIterationCount = 1;
+//		
+//		
+//		//Get initial state and set reach_prob
+//		State initState = modelGen.getInitialState();
+//		ProbState probInitState = null;
+//		if(globalStateSet.containsKey(initState)) {
+//			probInitState = globalStateSet.get(initState);
+//		}
+//		else {
+//			probInitState = new ProbState(initState);
+//			probInitState.setCurReachabilityProb(1.0);
+//			// Add initial state(s) to 'explore', 'states' and to the model
+//			globalStateSet.put(initState, probInitState);
+//		}
+//		
+//		// Add state to exploration queue
+//		exploredK.add(probInitState);
+//		statesK.add(probInitState);
+//		
+//		
+//		// Start the exploration
+//		// Explore...
+//		
+//		while (!exploredK.isEmpty()) {
+//			
+//			// Pick next state to explore
+//			ProbState curProbState = exploredK.removeFirst();
+//			
+//			// Explore all choices/transitions from this state
+//			modelGen.exploreState(curProbState);
+//			
+//			
+//			/////////////////////////////////////////////
+//			
+//			if(propertyExpression!=null) {
+//				
+//				ExpressionTemporal tempProp = (ExpressionTemporal) propertyExpression;
+//				
+//				
+//				boolean b1 = (boolean) tempProp.getOperand1().evaluate(mfConstants, curProbState);
+//				boolean b2 = (boolean) tempProp.getOperand2().evaluate(mfConstants, curProbState);
+//				
+//				if(!(b1&&(!b2))) {
+//					curProbState.setStateAbsorbing(true);
+//					
+//				}
+//				
+//				
+//			}
+//			
+//			////////////////////////////////////////////
+//			
+//			double exitRateSum = 0.0;
+//			int numEnabledTrans = 0;
+//			int numFiredTrans = 0;
+//			
+//			// Look at each outgoing choice in turn
+//			int nc = modelGen.getNumChoices();
+//			for (int i = 0; i < nc; i++) {
+//				// Look at each transition in the choice
+//				int nt = modelGen.getNumTransitions(i);
+//				for (int j = 0; j < nt; j++) {
+//					++numEnabledTrans;
+//					exitRateSum += modelGen.getTransitionProbability(i, j);
+//				}
+//			}
+//			
+//			for (int i = 0; i < nc; i++) {
+//				// Look at each transition in the choice
+//				int nt = modelGen.getNumTransitions(i);
+//				for (int j = 0; j < nt; j++) {
+//					
+//					State nxtSt = modelGen.computeTransitionTarget(i, j);
+//					ProbState nxtProbState = new ProbState(nxtSt);
+//					
+//					boolean stateIsExisting = globalStateSet.containsKey(nxtSt);
+//					
+//					
+//					if(stateIsExisting) {
+//						
+//						//Map.Entry<ProbState, Integer> key_v = globalStateSet.ceilingEntry(nxtState);
+//						nxtProbState = globalStateSet.get(nxtSt);
+//						
+//						double tranRate = modelGen.getTransitionProbability(i, j);
+//						
+//						//compute next reachability probability for nextState
+//						double tranProb = tranRate/exitRateSum;
+//						nxtProbState.updatePredecessorProbMap(curProbState, tranProb);
+//						//nxtProbState.computeNextReachabilityProb();
+//						//nxtProbState.setNextReachabilityProbToCurrent();
+//						
+//						// Is this a new state?
+//						if (statesK.add(nxtProbState)) {
+//							// If so, add to the explore list
+//							exploredK.add(nxtProbState);
+//						}
+//						
+//						// Increment fired tran
+//						++numFiredTrans;
+//					}
+//					else {
+//						
+//						if(!curProbState.isStateAbsorbing()) {
+//							
+//							if(curProbState.getCurReachabilityProb() >= reachabilityThreshold) {
+//								
+//								double tranRate = modelGen.getTransitionProbability(i, j);
+//								//compute next reachability probability for nextState
+//								double tranProb = tranRate/exitRateSum;
+//								nxtProbState.updatePredecessorProbMap(curProbState, tranProb);
+//								nxtProbState.computeNextReachabilityProb();
+//								nxtProbState.setNextReachabilityProbToCurrent();
+//								
+//								//Update the global state graph
+//								globalStateSet.put(nxtSt, nxtProbState);
+//								
+//								// Is this a new state?
+//								if (statesK.add(nxtProbState)) {
+//									// If so, add to the explore list
+//									exploredK.add(nxtProbState);
+//								}
+//								
+//								// Increment fired tran
+//								++numFiredTrans;
+//							}
+//						}
+//					}						
+//				}
+//			}
+//			
+//			
+//			// Check if we explored all paths
+//			if(numEnabledTrans == numFiredTrans) {
+//				//all paths explored: not a terminal state
+//				curProbState.setStateTerminal(false);
+//			}
+//			
+//			if(numEnabledTrans < numFiredTrans)  throw new PrismException("Fired more transitions than enabled!!!!!!!");
+//			
+//			
+//			// Print some progress info occasionally
+//			progress.updateIfReady(globalStateSet.size() + 1);
+//			
+//		}
+//		
+//		
+//		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//	
+//		// Finish progress display
+//		progress.update(globalIterationCount);
+//		progress.update(globalStateSet.size()+1);
+//		progress.end(" states");
+//		
+//		
+//		/////////////////reset proprty expression
+//		propertyExpression = null;
+//		
+//	}
 	
 }
