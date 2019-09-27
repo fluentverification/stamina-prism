@@ -42,7 +42,7 @@ Options:
 -kappa <k>.......................... Probability estimate threshold [default: 1.0e-6]
 -reducekappa <f>.................... Reduction factor for probability estimate threshold for refinement step.  [default: 1000.0]
 -pbwin <e>.......................... Probability precision - probability window between lower and upper bound. [default: 1.0e-3]
--maxrefinecount <n>................. Maximum number of refinement iteration. [default: 10]
+-maxapproxcount <n>................. Maximum number of approximation iteration. [default: 10]
 -noproprefine ...................... Do not use property-guided refinement. State exploration performs property-agnostic state expansion. [default: off]
 -const <vals> ...................... Comma separated values for constants
 	Examples:
