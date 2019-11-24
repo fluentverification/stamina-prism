@@ -17,7 +17,7 @@ Contributor(s): Thakur Neupane, Chris Myers, Curtis Madsen, Hao Zheng, Zhen Zhan
   	More details about installing PRISM can be found [here](http://www.prismmodelchecker.org/).
 
 2. Download the STAMINA from GitHub and build 
-  	* ``git clone https://github.com/thakurneupane/stamina.git``
+  	* ``git clone https://github.com/fluentverification/stamina.git``
   	* ``cd stamina/stamina``
   	* ``make PRISM_HOME=/path/to/prism/directory``
 
