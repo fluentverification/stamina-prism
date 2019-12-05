@@ -51,6 +51,7 @@ Options:
 Other Options:
 ========
 
+-printHelp ......................... Rank transitions before expanding. [default: false]
 -maxiters <n> ...................... Maximum iteration for solution. [default: 10000]
 -power ............................. Power method
 -jacobi ............................ Jacobi method

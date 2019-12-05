@@ -16,26 +16,28 @@ public class Options {
 	
 	// Use property based refinement
 	private static boolean noPropRefine = false;
+
+	private static boolean rankTransitions = false;
 	
 	
 	public static double getReachabilityThreshold() {
-	return reachabilityThreshold;
+		return reachabilityThreshold;
 	}
 	
 	public static void setReachabilityThreshold(double reach) {
-	reachabilityThreshold = reach;
+		reachabilityThreshold = reach;
 	}
 	
 	public static double getKappaReductionFactor() {
-	return kappaReductionFactor;
+		return kappaReductionFactor;
 	}
 	
 	public static void setKappaReductionFactor(double fac) {
-	kappaReductionFactor = fac;
+		kappaReductionFactor = fac;
 	}
 	
 	public static int getMaxApproxCount() {
-	return maxApproxCount;
+		return maxApproxCount;
 	}
 	
 	public static void setMaxRefinementCount(int rc) {
@@ -43,19 +45,27 @@ public class Options {
 	}
 	
 	public static double getProbErrorWindow() {
-	return probErrorWindow;
+		return probErrorWindow;
 	}
 	
 	public static void setProbErrorWindow(double w) {
-	probErrorWindow = w;
+		probErrorWindow = w;
 	}
 	
 	public static void setNoPropRefine(boolean o) {
-	noPropRefine = o;
+		noPropRefine = o;
 	}
 	
 	public static boolean getNoPropRefine() {
-	return noPropRefine;
+		return noPropRefine;
+	}
+
+	public static void setRankTransitions(boolean o) {
+		rankTransitions = o;
+	}
+
+	public static boolean getRankTransitions() {
+		return rankTransitions;
 	}
 
 }

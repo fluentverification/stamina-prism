@@ -33,9 +33,6 @@ init:
 classes/%.class: src/%.java
 	(javac -sourcepath src -classpath $(STAMINA_CLASSPATH):$(PRISM_CLASSPATH) -d $(STAMINA_CLASSPATH) $<)
 
-	@echo "export PRISM_HOME=$(PRISM_HOME)" > $(STAMINA_RC)
-	@echo "export STAMINA_HOME=$(PWD)" >> $(STAMINA_RC)
-
 # Clean up
 clean:
 	@rm -f $(STAMINA_CLASS_FILES)

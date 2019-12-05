@@ -64,6 +64,9 @@ public class StaminaCL {
 	
 	// Use property based refinement
 	private static boolean noPropRefine = false;
+
+	// Use property to explore by highest rank transition
+	private static boolean rankTransitions = false;
 	
 	
 	//////////////////////////////////// Command lines args to pass to prism ///////////////////
@@ -225,6 +228,7 @@ public class StaminaCL {
 			if (kappaReductionFactor >= 0.0 )	Options.setKappaReductionFactor(kappaReductionFactor);
 			if (maxApproxCount >= 0) Options.setMaxRefinementCount(maxApproxCount);
 			if (probErrorWindow >= 0.0) Options.setProbErrorWindow(probErrorWindow);
+			Options.setRankTransitions(rankTransitions);
 			
 			Options.setNoPropRefine(noPropRefine);
 			
@@ -267,11 +271,10 @@ public class StaminaCL {
 	void parseArguments(String[] args) {
 		
 		String sw;
-		int i;
 		
 		constSwitch = "";
 		
-		for (i=0; i<args.length; i++) {
+		for (int i=0; i<args.length; i++) {
 			
 			// if is a switch...
 			if (args[i].length() > 0 && args[i].charAt(0) == '-') {
@@ -341,6 +344,10 @@ public class StaminaCL {
 						else
 							constSwitch += "," + args[++i].trim();
 					}
+				}
+				else if (sw.equals("rankTransitions"))
+				{
+					rankTransitions = true;
 				}
 				else {
 					printHelp();
@@ -451,6 +458,7 @@ public class StaminaCL {
 		mainLog.println("Other Options:");
 		mainLog.println("========");
 		mainLog.println();
+		mainLog.println("-rankTransitions ................... Rank transitions before expanding. [default: false]");
 		mainLog.println("-maxiters <n> ...................... Maximum iteration for solution. [default: 10000]");
 		mainLog.println("-power ............................. Power method");
 		mainLog.println("-jacobi ............................ Jacobi method");
