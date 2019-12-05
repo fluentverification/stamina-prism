@@ -1,7 +1,6 @@
 package stamina;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -644,15 +643,25 @@ public class InfCTMCModelGenerator implements ModelGenerator
 			while (!exploredK.isEmpty()) {
 				
 				// Pick next state to explore
+				ProbState curProbState;
+				
+				// TODO get rid of linked lists, these are SLOW!
 				if(Options.getRankTransitions()) {
-					Collections.sort(exploredK, new Comparator<ProbState>() {
-					@Override
-					public int compare(ProbState l, ProbState r) {
-						return (int)(r.getCurReachabilityProb() - l.getCurReachabilityProb());
+					int highestCount = 0;
+					double highestProb = exploredK.get(0).getCurReachabilityProb();
+					for (int i = 1; i < exploredK.size(); ++i)
+					{
+						double thisProb = exploredK.get(i).getCurReachabilityProb();
+						if (thisProb > highestProb) {
+							highestProb = thisProb;
+							highestCount = i;
+						}
 					}
-					});
+					curProbState = exploredK.get(highestCount);
+					exploredK.remove(highestCount);
+				} else {
+					curProbState = exploredK.removeFirst();
 				}
-				ProbState curProbState = exploredK.removeFirst();
 				
 				// Explore all choices/transitions from this state
 				modelGen.exploreState(curProbState);
