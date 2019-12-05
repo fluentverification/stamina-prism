@@ -1,9 +1,10 @@
 package stamina;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Vector;
 import explicit.IndexedSet;
 import explicit.StateStorage;
 import parser.State;
@@ -609,7 +610,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		
 		
 		StateStorage<ProbState> statesK = new IndexedSet<ProbState>(true);
-		LinkedList<ProbState> exploredK = new LinkedList<ProbState>();
+		Vector<ProbState> exploredK = new Vector<ProbState>();
 		
 		int globalIterationCount = 1;
 		
@@ -642,27 +643,23 @@ public class InfCTMCModelGenerator implements ModelGenerator
 			
 			while (!exploredK.isEmpty()) {
 				
-				// Pick next state to explore
-				ProbState curProbState;
-				
-				// TODO get rid of linked lists, these are SLOW!
+				// Pick next state to explore				
 				if(Options.getRankTransitions()) {
-					int highestCount = 0;
-					double highestProb = exploredK.get(0).getCurReachabilityProb();
-					for (int i = 1; i < exploredK.size(); ++i)
-					{
-						double thisProb = exploredK.get(i).getCurReachabilityProb();
-						if (thisProb > highestProb) {
-							highestProb = thisProb;
-							highestCount = i;
+					exploredK.sort(new Comparator<ProbState>(){
+						@Override
+						public int compare(ProbState l, ProbState r) {
+							if (r.getCurReachabilityProb() > l.getCurReachabilityProb()) {
+								return 1;
+							} else if (r.getCurReachabilityProb() < l.getCurReachabilityProb()) {
+								return -1;
+							} else {
+								return 0;
+							}
 						}
-					}
-					curProbState = exploredK.get(highestCount);
-					exploredK.remove(highestCount);
-				} else {
-					curProbState = exploredK.removeFirst();
+					});
 				}
 				
+				ProbState curProbState = exploredK.remove(0);
 				// Explore all choices/transitions from this state
 				modelGen.exploreState(curProbState);
 				
