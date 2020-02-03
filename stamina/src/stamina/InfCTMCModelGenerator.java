@@ -640,25 +640,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		while(true) {
 			
 			// Explore...
-			
 			while (!exploredK.isEmpty()) {
-				
-				// Pick next state to explore				
-				if(Options.getRankTransitions()) {
-					exploredK.sort(new Comparator<ProbState>(){
-						@Override
-						public int compare(ProbState l, ProbState r) {
-							if (r.getCurReachabilityProb() > l.getCurReachabilityProb()) {
-								return 1;
-							} else if (r.getCurReachabilityProb() < l.getCurReachabilityProb()) {
-								return -1;
-							} else {
-								return 0;
-							}
-						}
-					});
-				}
-				
 				ProbState curProbState = exploredK.remove(0);
 				// Explore all choices/transitions from this state
 				modelGen.exploreState(curProbState);
@@ -774,7 +756,6 @@ public class InfCTMCModelGenerator implements ModelGenerator
 				
 				// Print some progress info occasionally
 				progress.updateIfReady(globalStateSet.size() + 1);
-				
 			}
 			
 			//statesK.clear();
@@ -801,11 +782,24 @@ public class InfCTMCModelGenerator implements ModelGenerator
 			}
 			
 			prevStateCount = curStateCount;
-			
+		
+			// Pick next state to explore                           
+			if(Options.getRankTransitions()) {
+				exploredK.sort(new Comparator<ProbState>(){
+					@Override
+					public int compare(ProbState l, ProbState r) {
+						if (r.getCurReachabilityProb() > l.getCurReachabilityProb()) {
+							return 1;
+						} else if (r.getCurReachabilityProb() < l.getCurReachabilityProb()) {
+							return -1;
+						} else {
+							return 0;
+						}
+					}
+				});
+			}
 			
 			++globalIterationCount;
-			
-			
 		}
 		
 		
