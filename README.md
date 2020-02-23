@@ -5,7 +5,7 @@ STAMINA is an infinite-state CTMC model-checker integrated with the PRISM probab
 ##### Contact: Brett Jepsen (@brettjepsen) brett.jepsen@aggiemail.usu.edu Thakur Neupane (@thakurneupane) thakur.neupane@aggiemail.usu.edu Zhen Zhang (@zgzn) zhen.zhang@usu.edu
                
 
-Contributor(s): Thakur Neupane, Chris Myers, Curtis Madsen, Hao Zheng, Zhen Zhang
+Contributor(s): Brett Jepsen, Thakur Neupane, Chris Myers, Curtis Madsen, Hao Zheng, Zhen Zhang
 
 ## Installing STAMINA
 
