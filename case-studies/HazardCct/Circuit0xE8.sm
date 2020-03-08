@@ -9,6 +9,23 @@ const int MAX_AMOUNT = 100;
 const double Cell = 1.0;
 
 // Model parameters
+// ***** Lukas: I listed the missing parameters below. Provide proper values for them. ******
+const double ko = 0.75; 
+const double kb = 0.75;
+const double ka = 0.75;
+const double ko_f = 0.75;
+const double ko_r = 0.75;
+const double kr_f = 0.75;
+const double Kr = 0.75;
+const double kr_r = 0.75;
+const double kao_f = 0.75;
+const double Ka = 0.75;
+const double kao_r = 0.75;
+const double kf_c = 0.75;
+const double Kc = 0.75;
+// Need to declare nc__aTc_aTc_TetR_protein.
+// *******************************************
+
 const double kd = 0.00075; // kd
 const double kc_f = 0.05; // kc_f
 const double kc_r = 1; // kc_r
