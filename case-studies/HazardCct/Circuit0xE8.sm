@@ -24,6 +24,20 @@ const double Ka = 0.0033;
 const double kf_c = 0.05;
 const double nc__aTc_aTc_TetR_protein = 2.0;
 
+// ************* Parameters added by Lukas *************
+const double IPTG = 0.0;
+const double aTc = 0.0;
+const double Ara = 0.0;
+const double YFP = 0.0;
+
+const double kr_c = 1.0;
+const double nc__TetR_protein_aTc_TetR_protein = 2.0;
+const double nc__AraC_protein_Ara_AraC_protein = 2.0;
+const double nc__Ara_Ara_AraC_protein = 2.0;
+const double nc__LacI_protein_IPTG_LacI_protein = 2.0;
+const double nc__IPTG_IPTG_LacI_protein = 2.0;
+// *******************************************************
+
 const double kd = 0.00075; // kd
 const double kc_f = 0.05; // kc_f
 const double kc_r = 1; // kc_r
