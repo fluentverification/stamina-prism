@@ -19,13 +19,10 @@ const double kr_r = 1.0;
 const double kao_f = 1.0;
 const double kao_r = 1.0;
 const double Kc = 0.05;
-
-// ***** Lukas: I listed the missing parameters below. Provide proper values for them. ******
-const double Kr = 0.75;
-const double Ka = 0.75;
-const double kf_c = 0.75;
-// Need to declare nc__aTc_aTc_TetR_protein.
-// *******************************************
+const double Kr = 0.5;
+const double Ka = 0.0033;
+const double kf_c = 0.05;
+const double nc__aTc_aTc_TetR_protein = 2;
 
 const double kd = 0.00075; // kd
 const double kc_f = 0.05; // kc_f
