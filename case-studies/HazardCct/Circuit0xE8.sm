@@ -22,7 +22,7 @@ const double Kc = 0.05;
 const double Kr = 0.5;
 const double Ka = 0.0033;
 const double kf_c = 0.05;
-const double nc__aTc_aTc_TetR_protein = 2;
+const double nc__aTc_aTc_TetR_protein = 2.0;
 
 const double kd = 0.00075; // kd
 const double kc_f = 0.05; // kc_f
