@@ -1,4 +1,4 @@
 // Hazard for transition (Ara, IPTG, aTc) = (H, H, H) to (L, H, L): the probability that YFP reaches 30 or above molecules up to 5000 time units.
 
-P=? [ true U[0,5000] (YFP >= 30) ]
+P=? [ true U[0,5000] (YFP_protein >= 30) ]
 

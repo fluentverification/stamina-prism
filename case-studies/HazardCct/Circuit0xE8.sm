@@ -28,7 +28,7 @@ const double nc__aTc_aTc_TetR_protein = 2.0;
 const int IPTG = 200;
 const int aTc = 0;
 const int Ara = 0;
-const int YFP = 200;
+const int YFP_protein = 200;
 
 const double kr_c = 1.0;
 const double nc__TetR_protein_aTc_TetR_protein = 2.0;
