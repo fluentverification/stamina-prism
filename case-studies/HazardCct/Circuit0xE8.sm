@@ -3,7 +3,7 @@
 
 ctmc
 
-const int MAX_AMOUNT = 100;
+const int MAX_AMOUNT = 1000;
 
 // Compartment size
 const double Cell = 1.0;
