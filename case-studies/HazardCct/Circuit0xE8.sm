@@ -28,7 +28,7 @@ const double nc__aTc_aTc_TetR_protein = 2.0;
 const int IPTG = 200;
 const int aTc = 0;
 const int Ara = 0;
-const int YFP_protein = 200;
+const int YFP_init = 200;
 
 const double kr_c = 1.0;
 const double nc__TetR_protein_aTc_TetR_protein = 2.0;
@@ -182,7 +182,7 @@ endmodule
 const int YFP_protein_MAX = MAX_AMOUNT;
 module YFP_protein
 	
-	YFP_protein : [0..YFP_protein_MAX] init 0; // Initial amount 0
+	YFP_protein : [0..YFP_protein_MAX] init YFP_init; // Initial amount 0
 	
 	// Degradation_YFP_protein
 	[Degradation_YFP_protein] YFP_protein > 0 -> (YFP_protein'=YFP_protein-1);
