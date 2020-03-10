@@ -2,10 +2,10 @@
 
 STAMINA is an infinite-state CTMC model-checker integrated with the PRISM probabilistic model checker. It deploys a state truncation-based approach. It estimates path probabilities of reaching each state on-the-fly and terminates exploration of a path when the cumulative estimated probability along such a path drops below a predefined threshold. Each terminated path is routed to an absorbing state, in order to estimate the error probability in subsequent CTMC analysis.  After all paths have been explored or truncated, transient Markov chain analysis is applied to determine the probability of a transient property of interest specified using Continuous Stochastic Logic (CSL).  The calculated probability forms a lower bound on the probability, while the upper bound also includes the probability of the absorbing state. The actual probability of the CSL property is guaranteed to be within this range. If the probability bound is still too large compared to a user-provided probability precision value (default is 10^(-3)), STAMINA employs a property property-guided refinement technique to expand the state space to tighten the reported probability range incrementally.
 
-##### Contact: Brett Jepsen (@brettjepsen) brett.jepsen@aggiemail.usu.edu Thakur Neupane (@thakurneupane) thakur.neupane@aggiemail.usu.edu Zhen Zhang (@zgzn) zhen.zhang@usu.edu
+##### Contact: Zhen Zhang (@zgzn) zhen.zhang@usu.edu, Brett Jepsen (@brettjepsen) brett.jepsen@aggiemail.usu.edu, Thakur Neupane (@thakurneupane) thakur.neupane@aggiemail.usu.edu 
                
 
-Contributor(s): Thakur Neupane, Chris Myers, Curtis Madsen, Hao Zheng, Zhen Zhang
+Contributor(s): Brett Jepsen, Thakur Neupane, Zhen Zhang, Chris Myers, Curtis Madsen, Hao Zheng, and Chris Winstead
 
 ## Installing STAMINA
 
