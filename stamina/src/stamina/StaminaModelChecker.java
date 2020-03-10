@@ -240,12 +240,13 @@ public class StaminaModelChecker extends Prism {
 						
 						for(int i=0; i<super.getBuiltModelExplicit().getNumStates(); ++i) {
 							
-							if(!minStatesNeg.get(i)) ans_min += (double) probsExpl.getValue(i);
+							if(b2.get(i)) ans_min += (double) probsExpl.getValue(i);
 							
 						}
 						
-						// TODO: need the index of absorbing state 
-						double ans_max =  ans_min + (double) probsExpl.getValue(0);
+						// TODO: need the index of absorbing state
+						double ans_max = ans_min + (double) probsExpl.getValue(0);
+						ans_max = ans_max > 1 ? 1.0 : ans_max;
 						
 						timer = System.currentTimeMillis() - timer;
 						mainLog.println("\nTime for model checking: " + timer / 1000.0 + " seconds.");
