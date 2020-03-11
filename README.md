@@ -8,7 +8,11 @@ STAMINA is an infinite-state CTMC model-checker integrated with the PRISM probab
 Contributor(s): Brett Jepsen, Thakur Neupane, Zhen Zhang, Chris Myers, Curtis Madsen, Hao Zheng, and Chris Winstead
 
 ## Installing STAMINA
+Easy Way
+    * An install script is provided and can be used to run all the commands below
+    * perl install.pl
 
+Harder Way
 1. Download a copy of PRISM from GitHub and build it
   	* ``git clone https://github.com/prismmodelchecker/prism prism``
   	* ``cd prism/prism``
