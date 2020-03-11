@@ -25,7 +25,7 @@ sub installStamina() {
 
 sub setEnvVariable() {
     my @command = (
-        "export _JAVA_OPTIONS=-Xmx65536m"
+        "export _JAVA_OPTIONS=-Xmx12288m"
     );
     system(shift @command);
 }
