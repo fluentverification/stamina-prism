@@ -1,6 +1,9 @@
 package stamina;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.BitSet;
 
 import explicit.CTMC;
@@ -263,9 +266,18 @@ public class StaminaModelChecker extends Prism {
 						
 						// Print result to log
 						mainLog.print("\nResult: " + res_min_max[1].getResultString() + "\n");
-						
-						
-						
+                        String filename = "results.txt";
+                        try {
+                        File file = new File(filename);
+                        file.delete();
+				        FileWriter writer = new FileWriter("results.txt");
+                        writer.write(Double.toString(ans_min));
+                        writer.write("\r\n");
+                        writer.write(Double.toString(ans_max));
+                        writer.close();
+                        } catch(IOException e) {
+                            // Do nothing for now
+                        }
 					}
 					
 					else {
