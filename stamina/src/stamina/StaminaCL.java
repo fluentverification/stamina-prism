@@ -79,7 +79,14 @@ public class StaminaCL {
 	
 
 	public static void main(String[] args) {
-		
+        Runtime.getRuntime().addShutdownHook(new Thread()
+        {
+            @Override
+            public void run() {
+                System.out.println("Killing app");
+                Runtime.getRuntime().halt(0);
+            }
+        });	
 		// Normal operation: just run PrismCL
 		if (args.length > 0) {
 			new StaminaCL().run(args);
@@ -359,7 +366,7 @@ public class StaminaCL {
 			else if ((modelFilename == null) && (args[i].endsWith(".prism") || args[i].endsWith(".sm") )) {
 				modelFilename = args[i];
 			} 
-			else if ((propertiesFilename == null) && (args[i].endsWith(".csl"))) {
+			else if ((propertiesFilename == null) && (args[i].endsWith(".csl") || args[i].endsWith(".props"))) {
 				propertiesFilename = args[i];
 			}
 			// anything else - must be something wrong with command line syntax

@@ -177,7 +177,7 @@ public class StaminaModelChecker extends Prism {
 					if(exprTemp.isPathFormula(false) && (exprTemp.getOperator()==ExpressionTemporal.P_U)) {
 						switchToCombinedCTMC = true;
 					}
-					
+				    	
 					if(switchToCombinedCTMC) {
 						
 						//////////////////////////Approximation Step///////////////////////////
@@ -274,6 +274,7 @@ public class StaminaModelChecker extends Prism {
                         writer.write(Double.toString(ans_min));
                         writer.write("\r\n");
                         writer.write(Double.toString(ans_max));
+                        writer.write("\r\n");
                         writer.close();
                         } catch(IOException e) {
                             // Do nothing for now
