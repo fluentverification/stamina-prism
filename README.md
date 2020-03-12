@@ -34,6 +34,8 @@ Harder Way
 
 ``/path/to/stamina/executable <model-file> <properties-file> [options]``. Please refer to the following section for details about all the options. Please see the [Prism Language Manual page](https://www.prismmodelchecker.org/manual/ThePRISMLanguage/Introduction) for information about how to create Prism model files and the [Property Specification Manual page](https://www.prismmodelchecker.org/manual/PropertySpecification/Introduction) for information about how to create property files.
 
+Currently, STAMINA does not inherit options in PRISM. To customize the maximum heap size for Java, use command such as ``export _JAVA_OPTIONS=-Xmx12g`` to set it to be 12G. 
+
 
 ## All command line options
 
