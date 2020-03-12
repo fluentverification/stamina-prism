@@ -12,7 +12,7 @@ Contributor(s): Brett Jepsen, Thakur Neupane, Zhen Zhang, Chris Myers, Curtis Ma
 Easy Way
 1. An install script is provided and can be used to run all the commands below
 2. perl install.pl
-3. This will install prism and stamina into the CWD of the script
+3. This will install PRISM and STAMINA into the CWD of the script
 
 Harder Way
 1. Download a copy of PRISM from GitHub and build it
