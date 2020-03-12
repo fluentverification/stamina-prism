@@ -9,8 +9,9 @@ Contributor(s): Brett Jepsen, Thakur Neupane, Zhen Zhang, Chris Myers, Curtis Ma
 
 ## Installing STAMINA
 
-Prism and Stamina expect Git and Java to be installed. On Ubuntu or other similar enviornments you can install them by running the following
-    * ``sudo apt-get update && sudo apt-get -y install openjdk-8-jre openjdk-11-jdk git``
+Prism and Stamina expect Git and Java to be installed. On Ubuntu or other similar enviornments you can install them by running the following:
+
+``sudo apt-get update && sudo apt-get -y install openjdk-11-jre openjdk-11-jdk git``
 
 Once the above pre-requisites are installed you can use the install script below or make prism and stamina manually.
 
