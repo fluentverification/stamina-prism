@@ -83,7 +83,6 @@ public class StaminaCL {
         {
             @Override
             public void run() {
-                System.out.println("Killing app");
                 Runtime.getRuntime().halt(0);
             }
         });	

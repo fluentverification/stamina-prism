@@ -167,7 +167,7 @@ public class StaminaModelChecker extends Prism {
 				Expression expr = ((ExpressionProb) exprProp).getExpression();
 				if(expr instanceof ExpressionTemporal) {
 					
-					expr = Expression.convertSimplePathFormulaToCanonicalForm(expr);
+				//	expr = Expression.convertSimplePathFormulaToCanonicalForm(expr);
 					ExpressionTemporal exprTemp = (ExpressionTemporal) expr.deepCopy();
 					
 					if(exprTemp.isPathFormula(false) && (exprTemp.getOperator()==ExpressionTemporal.P_U) && (!Options.getNoPropRefine())) {
@@ -305,6 +305,19 @@ public class StaminaModelChecker extends Prism {
 						mainLog.println();
 						mainLog.println("Verifying Upper Bound for " + prop_max.getName() + " .....");
 						res_min_max[1] = super.modelCheck(propertiesFile, prop_max);
+						String filename = "results.txt";
+                        try {
+                        File file = new File(filename);
+                        file.delete();
+				        FileWriter writer = new FileWriter("results.txt");
+                        writer.write(res_min_max[0].toString());
+                        writer.write("\r\n");
+                        writer.write(res_min_max[1].toString());
+                        writer.write("\r\n");
+                        writer.close();
+                        } catch(IOException e) {
+                            // Do nothing for now
+                        }
 					}
 					
 					
