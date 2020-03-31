@@ -337,9 +337,7 @@ public class StaminaCL {
 					
 				}
 				else if (sw.equals("power") || sw.equals("jacobi") || sw.equals("gaussseidel") || sw.equals("bgaussseidel") ) {
-					
-					solutionMethod = args[++i];
-					
+					solutionMethod = sw;
 				}
 				else if (sw.equals("const")) {
 					
