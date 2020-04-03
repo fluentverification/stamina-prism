@@ -454,7 +454,7 @@ public class StaminaCL {
 		mainLog.println("-pbwin <e>.......................... Probability window between lower and upperbound for termination. [default: 1.0e-3]");
 		mainLog.println("-maxapproxcount <n>................. Maximum number of approximation iteration. [default: 10]");
 		mainLog.println("-noproprefine ...................... Do not use property based refinement. If given, model exploration method will reduce the kappa and do the property independent refinement. [default: off]");
-		mainLog.println("-cuddmaxmem <memory>................ Maximum cudd memory. Expects the same format as prism [default: 1g].");
+		mainLog.println("-cuddmaxmem <memory>................ Maximum cudd memory. Expects the same format as prism [default: 1g]");
 		mainLog.println("-const <vals> ...................... Comma separated values for constants");
 		mainLog.println("\tExamples:");
 		mainLog.println("\t-const a=1,b=5.6,c=true");

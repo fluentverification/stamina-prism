@@ -59,6 +59,7 @@ Options:
 -pbwin <e>.......................... Probability precision - probability window between lower and upper bound. [default: 1.0e-3]
 -maxapproxcount <n>................. Maximum number of approximation iteration. [default: 10]
 -noproprefine ...................... Do not use property-guided refinement. State exploration performs property-agnostic state expansion. [default: off]
+-cuddmaxmem <memory>................ Maximum cudd memory. Expects the same format as prism [default: 1g]
 -const <vals> ...................... Comma separated values for constants
 	Examples:
 	-const a=1,b=5.6,c=true
