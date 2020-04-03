@@ -18,7 +18,8 @@ public class Options {
 	private static boolean noPropRefine = false;
 
 	private static boolean rankTransitions = false;
-	
+
+	private static String cuddMemoryLimit = "1g";	
 	
 	public static double getReachabilityThreshold() {
 		return reachabilityThreshold;
@@ -66,6 +67,14 @@ public class Options {
 
 	public static boolean getRankTransitions() {
 		return rankTransitions;
+	}
+
+	public static void setCuddMemoryLimit(String limit) {
+		cuddMemoryLimit = new String(limit);
+	}
+
+	public static String getCuddMemoryLimit() {
+		return cuddMemoryLimit;
 	}
 
 }

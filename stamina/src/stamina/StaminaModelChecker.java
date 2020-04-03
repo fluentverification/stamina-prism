@@ -36,11 +36,12 @@ public class StaminaModelChecker extends Prism {
 	 * @param mainLog PrismLog where all output will be sent.
 	 */
 	public StaminaModelChecker(PrismLog mainLog) {
-		
 		super(mainLog);
-		
+		try {
+			super.setCUDDMaxMem(Options.getCuddMemoryLimit());
+		} catch (Exception e) {
+		}
 	}
-	
 	
 	private void modifyExpression(Expression expr, boolean isMin) throws PrismLangException {
 		

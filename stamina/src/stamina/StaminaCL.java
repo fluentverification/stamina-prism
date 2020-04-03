@@ -99,16 +99,17 @@ public class StaminaCL {
 		
 		Result res;
 		mainLog = new PrismFileLog("stdout");
-		
-		//Initialize
-		initializeSTAMINA();
-		
+
 		// Parse options
 		doParsing(args);
 		
+		//Initialize
+		initializeSTAMINA();
+
+		parseModelProperties();
+		
 		// Process options
 		processOptions();
-		
 		
 		try {
 			// process info about undefined constant
@@ -255,10 +256,7 @@ public class StaminaCL {
 					staminaMC.setEngine(Prism.BGAUSSSEIDEL);
 				}
 			}
-			
 			staminaMC.loadPRISMModel(modulesFile);
-			
-			
 			
 		} catch (PrismException e) {
 			// TODO Auto-generated catch block
@@ -269,9 +267,7 @@ public class StaminaCL {
 	
 	private void doParsing(String[] args) {
 		
-		parseArguments(args);
-		parseModelProperties();
-		
+		parseArguments(args);		
 	}
 	
 	void parseArguments(String[] args) {
@@ -320,6 +316,9 @@ public class StaminaCL {
 						mainLog.println("Probability error window not given.");
 					}
 					
+				}
+				else if (sw.equals("cuddmaxmem")) {
+					Options.setCuddMemoryLimit(args[++i].trim());
 				}
 				else if (sw.equals("noproprefine")) {
 					
@@ -455,6 +454,7 @@ public class StaminaCL {
 		mainLog.println("-pbwin <e>.......................... Probability window between lower and upperbound for termination. [default: 1.0e-3]");
 		mainLog.println("-maxapproxcount <n>................. Maximum number of approximation iteration. [default: 10]");
 		mainLog.println("-noproprefine ...................... Do not use property based refinement. If given, model exploration method will reduce the kappa and do the property independent refinement. [default: off]");
+		mainLog.println("-cuddmaxmem <memory>................ Maximum cudd memory. Expects the same format as prism [default: 1g].");
 		mainLog.println("-const <vals> ...................... Comma separated values for constants");
 		mainLog.println("\tExamples:");
 		mainLog.println("\t-const a=1,b=5.6,c=true");
