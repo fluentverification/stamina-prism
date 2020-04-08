@@ -192,6 +192,28 @@ public class StaminaModelChecker extends Prism {
 						// Explicitely invoke model build
 						super.buildModel();
 
+						if (Options.getExportModel()) {
+							try {
+								int exportType = 1; // EXPORT_PLAIN
+								String filename = Options.getExportFileName();
+								String transFile = filename + ".tra";
+								String stateRewardsFile = filename + "srew";
+								String transRewardsFile = filename + ".trew";
+								String statesFile = filename + ".sta";
+								String labelsFile = filename + ".lab";
+								super.exportTransToFile(true, exportType, new File(transFile));
+								super.exportStateRewardsToFile(1, new File (stateRewardsFile));
+								super.exportTransRewardsToFile(true, exportType, new File(transRewardsFile));
+								super.exportStatesToFile(exportType, new File(statesFile));
+								super.exportLabelsToFile(propertiesFile, exportType, new File(labelsFile));
+							} catch (FileNotFoundException e) {
+								// throw e;
+								throw new PrismException("Cannot open file for exporting " + e.toString());
+							} catch (Exception e) {
+								throw new PrismException(e.toString());
+							}
+						}
+
 						// model check operands first for all states
 						explicit.CTMCModelChecker mcCTMC = new CTMCModelChecker(this);
 						BitSet b1 = mcCTMC.checkExpression(super.getBuiltModelExplicit(), exprTemp.getOperand1(), null).getBitSet();

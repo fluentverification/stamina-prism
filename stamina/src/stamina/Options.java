@@ -20,6 +20,12 @@ public class Options {
 	private static boolean rankTransitions = false;
 
 	private static String cuddMemoryLimit = "1g";	
+
+	// Saving variables
+	private static boolean exportModel = false;
+
+	// Saving filenames
+	private static String exportFileName = null;
 	
 	public static double getReachabilityThreshold() {
 		return reachabilityThreshold;
@@ -75,6 +81,22 @@ public class Options {
 
 	public static String getCuddMemoryLimit() {
 		return cuddMemoryLimit;
+	}
+
+	public static boolean getExportModel() {
+		return exportModel;
+	}
+
+	public static void setExportModel(boolean e) {
+		exportModel = e;
+	}
+
+	public static String getExportFileName() {
+		return exportFileName;
+	}
+
+	public static void setExportFileName(String s) {
+		exportFileName = s;
 	}
 
 }
