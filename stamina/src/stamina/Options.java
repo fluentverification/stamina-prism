@@ -32,6 +32,10 @@ public class Options {
 
     // Import filenames
     private static String importFileName = null;
+
+    // Specific Property
+    private static boolean specificProperty = false;
+    private static String property = null;
 	
 	public static double getReachabilityThreshold() {
 		return reachabilityThreshold;
@@ -121,4 +125,19 @@ public class Options {
         importFileName = s;
     }
 
+    public static boolean getSpecificProperty() {
+        return specificProperty;
+    }
+
+    public static void setSpecificProperty(boolean b) {
+        specificProperty = b;
+    }
+
+    public static String getPropertyName() {
+        return property;
+    }
+
+    public static void setPropertyName(String s) {
+        property = s;
+    }
 }
