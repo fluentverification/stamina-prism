@@ -26,6 +26,12 @@ public class Options {
 
 	// Saving filenames
 	private static String exportFileName = null;
+
+    // Import variables
+    private static boolean importModel = false;
+
+    // Import filenames
+    private static String importFileName = null;
 	
 	public static double getReachabilityThreshold() {
 		return reachabilityThreshold;
@@ -98,5 +104,21 @@ public class Options {
 	public static void setExportFileName(String s) {
 		exportFileName = s;
 	}
+
+    public static boolean getImportModel() {
+        return importModel;
+    }
+
+    public static void setImportModel(boolean e) {
+        importModel = e;
+    }
+
+    public static String getImportFileName() {
+        return importFileName;
+    }
+
+    public static void setImportFileName(String s) {
+        importFileName = s;
+    }
 
 }

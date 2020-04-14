@@ -324,6 +324,10 @@ public class StaminaCL {
 					Options.setExportModel(true);
 					Options.setExportFileName(args[++i].trim());
 				}
+                else if (sw.equals("import")) {
+                    Options.setImportModel(true);
+                    Options.setImportFileName(args[++i].trim());
+                }
 				else if (sw.equals("noproprefine")) {
 					
 					noPropRefine = true;
