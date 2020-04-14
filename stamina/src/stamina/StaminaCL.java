@@ -19,6 +19,9 @@ import prism.ResultsCollection;
 import prism.UndefinedConstants;
 
 public class StaminaCL {
+    // Version
+    final private int versionMajor = 1;
+    final private int versionMinor = 1;
 	
 	// logs
 	private PrismLog mainLog = null;
@@ -210,7 +213,9 @@ public class StaminaCL {
 			// Create a log for PRISM output (hidden or stdout)
 			//mainLog = new PrismDevNullLog();
 			mainLog = new PrismFileLog("stdout");
-			
+		    
+            // Print our version
+            mainLog.println("STAMINA\n=====\nVersion: " + Integer.toString(versionMajor) + "." + Integer.toString(versionMinor) + "\n");
 			// Initialise PRISM engine 
 			staminaMC = new StaminaModelChecker(mainLog);
 			staminaMC.initialise();
