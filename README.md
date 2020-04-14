@@ -62,6 +62,7 @@ Options:
 -cuddmaxmem <memory>................ Maximum cudd memory. Expects the same format as prism [default: 1g]
 -export <filename>.................. Export model to a file. Please provide a filename without an extension
 -import <filename>.................. Import model to a file. Please provide a filename without an extension. The files must be in the current working directory.
+-property <property>................ Specify a specific property to check in a model file that contains many
 -const <vals> ...................... Comma separated values for constants
 	Examples:
 	-const a=1,b=5.6,c=true
