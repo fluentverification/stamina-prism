@@ -174,7 +174,7 @@ endmodule
 //const int BetI_protein_MAX = MAX_AMOUNT;
 module BetI_protein
 
-	BetI_protein : int init 66; 
+	BetI_protein : int init 70; 
 
 	// Degradation_BetI_protein
 	[Degradation_BetI_protein] BetI_protein > 9 -> (BetI_protein'=BetI_protein-10);
@@ -189,7 +189,7 @@ endmodule
 // const int PhlF_protein_MAX = MAX_AMOUNT;
 module PhlF_protein
 
-	PhlF_protein : int init 66;
+	PhlF_protein : int init 70;
 
 	// Degradation_PhlF_protein
 	[Degradation_PhlF_protein] PhlF_protein > 9 -> (PhlF_protein'=PhlF_protein-10);
@@ -203,7 +203,7 @@ endmodule
 // Species HlyIIR_protein
 module HlyIIR_protein
 
-	HlyIIR_protein : int init 314; 
+	HlyIIR_protein : int init 310; 
 
 	// Degradation_HlyIIR_protein
 	[Degradation_HlyIIR_protein] HlyIIR_protein > 9 -> (HlyIIR_protein'=HlyIIR_protein-10);
@@ -217,7 +217,7 @@ endmodule
 // Species AmtR_protein
 module AmtR_protein
 
-	AmtR_protein : int init 247;
+	AmtR_protein : int init 250;
 
 	// Degradation_AmtR_protein
 	[Degradation_AmtR_protein] AmtR_protein > 9 -> (AmtR_protein'=AmtR_protein-10);
