@@ -488,7 +488,7 @@ public class StaminaCL {
 		mainLog.println("-noproprefine ...................... Do not use property based refinement. If given, model exploration method will reduce the kappa and do the property independent refinement. [default: off]");
 		mainLog.println("-cuddmaxmem <memory>................ Maximum cudd memory. Expects the same format as prism [default: 1g]");
 		mainLog.println("-export <filename>.................. Export model to a file. Please provide a filename without an extension");
-		mainLog.println("-exportPerimeterStates <filename>... Export perimeter states to a file. Please provide a filename without an extension");
+		mainLog.println("-exportPerimeterStates <filename>... Export perimeter states to a file. Please provide a filename. This will append to the file if it is existing");
         mainLog.println("-import <filename>.................. Import model to a file. Please provide a filename without an extension");
         mainLog.println("-property <property>................ Specify a specific property to check in a model file that contains many");
 		mainLog.println("-const <vals> ...................... Comma separated values for constants");

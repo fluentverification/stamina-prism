@@ -371,9 +371,9 @@ public class StaminaModelChecker extends Prism {
 					// increment refinement count
 					if (Options.getExportPerimeterStates()) {
 						try {
-							String filename = Options.getExportPerimeterFilename() + Integer.toString(numRefineIteration) + ".txt";
-							FileWriter writer = new FileWriter(filename);
+							FileWriter writer = new FileWriter(Options.getExportPerimeterFilename(), true);
 							Vector<String> values = infModelGen.getPerimeterStatesVector();
+							writer.write("Iteration: " + Integer.toString(numRefineIteration) + "\r\n");
 							for (int i = 0; i<values.size(); ++i) {
 								writer.write(values.get(i) + "\r\n");
 							}
