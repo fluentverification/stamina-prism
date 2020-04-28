@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.BitSet;
+import java.util.Vector;
 
 import explicit.CTMC;
 import explicit.CTMCModelChecker;
@@ -348,6 +349,23 @@ public class StaminaModelChecker extends Prism {
 					reachTh /= Options.getKappaReductionFactor();
 					
 					// increment refinement count
+					if (Options.getExportPerimeterStates()) {
+						try {
+							String filename = Options.getExportPerimeterFilename() + Integer.toString(numRefineIteration) + ".txt";
+							FileWriter writer = new FileWriter(filename);
+							Vector<String> values = infModelGen.getPerimeterStatesVector();
+							for (int i = 0; i<values.size(); ++i) {
+								writer.write(values.get(i) + "\r\n");
+							}
+							writer.close();
+						} catch (IOException e) {
+							// throw e;
+							throw new PrismException("Cannot handle file for exporting " + e.toString());
+						} catch (Exception e) {
+							throw new PrismException(e.toString());
+						} 
+					}
+					infModelGen.clearPerimeterStatesVector();
 					++numRefineIteration;
 					
 				}

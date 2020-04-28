@@ -26,6 +26,9 @@ public class Options {
 
 	// Saving filenames
 	private static String exportFileName = null;
+
+	private static boolean exportPerimeterStates = false;
+	private static String exportPerimeterFilename = null;
 	
 	public static double getReachabilityThreshold() {
 		return reachabilityThreshold;
@@ -99,4 +102,17 @@ public class Options {
 		exportFileName = s;
 	}
 
+	public static boolean getExportPerimeterStates() {
+		return exportPerimeterStates;
+	}
+	public static void setExportPerimeterStates(boolean b) {
+		exportPerimeterStates = b;
+	}
+
+	public static String getExportPerimeterFilename() {
+		return exportPerimeterFilename;
+	}
+	public static void setExportPerimeterFilename(String s) {
+		exportPerimeterFilename = s;
+	}
 }

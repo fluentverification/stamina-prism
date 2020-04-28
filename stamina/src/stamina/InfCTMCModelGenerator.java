@@ -49,6 +49,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	private VarList varList;
 	private LabelList labelList;
 	private List<String> labelNames;
+	private Vector<String> perimeterStates;
 	
 	// Model exploration info
 	
@@ -138,7 +139,6 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	}
 	
 	public State getAbsorbingState() {
-		
 		return absorbingState;
 	}
 	
@@ -151,9 +151,15 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	
 	
 	public void setPropertyExpression(ExpressionTemporal expr) {
-		
 		propertyExpression = expr;
-		
+	}
+
+	public void clearPerimeterStatesVector() {
+		perimeterStates.clear();
+	}
+
+	public Vector<String> getPerimeterStatesVector() {
+		return perimeterStates;
 	}
 	
 	
@@ -611,6 +617,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		
 		StateStorage<ProbState> statesK = new IndexedSet<ProbState>(true);
 		Vector<ProbState> exploredK = new Vector<ProbState>();
+		perimeterStates = new Vector<String>();
 		
 		int globalIterationCount = 1;
 		
@@ -658,7 +665,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 					
 					if(!(b1&&(!b2))) {
 						curProbState.setStateAbsorbing(true);
-						
+						perimeterStates.addElement(curProbState.toString());
 					}
 					
 					
