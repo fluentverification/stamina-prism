@@ -20,6 +20,7 @@ import parser.ast.ExpressionVar;
 import parser.ast.PropertiesFile;
 import parser.ast.Property;
 import parser.type.TypeInt;
+import prism.ModelType;
 import prism.Prism;
 import prism.PrismException;
 import prism.PrismLangException;
@@ -191,7 +192,26 @@ public class StaminaModelChecker extends Prism {
 						
 						
 						// Explicitely invoke model build
-						super.buildModel();
+                        if(Options.getImportModel()) {
+                            File sf=null, lf = null, srf = null, mf = null;
+                            try {
+                                String filename = Options.getImportFileName();
+                                String transFile = filename + ".tra";
+                                String stateRewardsFile = filename + "srew";
+                                String transRewardsFile = filename + ".trew";
+                                String statesFile = filename + ".sta";
+                                String labelsFile = filename + ".lab";
+                                sf = new File(statesFile);
+                                lf = new File(labelsFile);
+                                srf = new File(stateRewardsFile);
+                                mf = new File(transFile);
+                                super.loadModelFromExplicitFiles(sf, mf, lf, srf, ModelType.CTMC);
+                            } catch (Exception e) {
+                                throw new PrismException(e.toString());
+                            }
+                        }
+    
+    				    super.buildModel();
 
 						if (Options.getExportModel()) {
 							try {

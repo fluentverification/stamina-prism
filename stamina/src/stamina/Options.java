@@ -27,8 +27,20 @@ public class Options {
 	// Saving filenames
 	private static String exportFileName = null;
 
+<<<<<<< HEAD
 	private static boolean exportPerimeterStates = false;
 	private static String exportPerimeterFilename = null;
+=======
+    // Import variables
+    private static boolean importModel = false;
+
+    // Import filenames
+    private static String importFileName = null;
+
+    // Specific Property
+    private static boolean specificProperty = false;
+    private static String property = null;
+>>>>>>> f3d09544eae5b243ddcd3c4ef460138ec78de3c7
 	
 	public static double getReachabilityThreshold() {
 		return reachabilityThreshold;
@@ -102,6 +114,7 @@ public class Options {
 		exportFileName = s;
 	}
 
+<<<<<<< HEAD
 	public static boolean getExportPerimeterStates() {
 		return exportPerimeterStates;
 	}
@@ -115,4 +128,37 @@ public class Options {
 	public static void setExportPerimeterFilename(String s) {
 		exportPerimeterFilename = s;
 	}
+=======
+    public static boolean getImportModel() {
+        return importModel;
+    }
+
+    public static void setImportModel(boolean e) {
+        importModel = e;
+    }
+
+    public static String getImportFileName() {
+        return importFileName;
+    }
+
+    public static void setImportFileName(String s) {
+        importFileName = s;
+    }
+
+    public static boolean getSpecificProperty() {
+        return specificProperty;
+    }
+
+    public static void setSpecificProperty(boolean b) {
+        specificProperty = b;
+    }
+
+    public static String getPropertyName() {
+        return property;
+    }
+
+    public static void setPropertyName(String s) {
+        property = s;
+    }
+>>>>>>> f3d09544eae5b243ddcd3c4ef460138ec78de3c7
 }

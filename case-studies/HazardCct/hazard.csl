@@ -2,5 +2,4 @@
 
 // P=? [ true U[0,1000] (YFP_protein >= 30) ] // STAMINA reports one initial state with Pmin=1.
 
-P=? [ true U[0,500] (YFP_protein < 30) ]
-
+P=? [ true U[0,1000] (YFP_protein >= 30) ]

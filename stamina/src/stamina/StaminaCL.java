@@ -19,6 +19,9 @@ import prism.ResultsCollection;
 import prism.UndefinedConstants;
 
 public class StaminaCL {
+    // Version
+    final private int versionMajor = 1;
+    final private int versionMinor = 1;
 	
 	// logs
 	private PrismLog mainLog = null;
@@ -131,7 +134,7 @@ public class StaminaCL {
 			// initialise storage for results
 			results = new ResultsCollection[numPropertiesToCheck];
 			for (int i = 0; i < numPropertiesToCheck; i++) {
-				results[i] = new ResultsCollection(undefinedConstants[i], propertiesToCheck.get(i).getExpression().getResultName());
+				results[i] = new ResultsCollection(undefinedConstants[i], propertiesToCheck.get(i).getName());
 			}
 
 			// iterate through as many models as necessary
@@ -210,7 +213,9 @@ public class StaminaCL {
 			// Create a log for PRISM output (hidden or stdout)
 			//mainLog = new PrismDevNullLog();
 			mainLog = new PrismFileLog("stdout");
-			
+		    
+            // Print our version
+            mainLog.println("STAMINA\n=====\nVersion: " + Integer.toString(versionMajor) + "." + Integer.toString(versionMinor) + "\n");
 			// Initialise PRISM engine 
 			staminaMC = new StaminaModelChecker(mainLog);
 			staminaMC.initialise();
@@ -328,6 +333,14 @@ public class StaminaCL {
 					Options.setExportModel(true);
 					Options.setExportFileName(args[++i].trim());
 				}
+                else if (sw.equals("import")) {
+                    Options.setImportModel(true);
+                    Options.setImportFileName(args[++i].trim());
+                }
+                else if (sw.equals("property")) {
+                    Options.setSpecificProperty(true);
+                    Options.setPropertyName(args[++i].trim());
+                }
 				else if (sw.equals("noproprefine")) {
 					
 					noPropRefine = true;
@@ -403,13 +416,24 @@ public class StaminaCL {
 			}
 			// unless specified, verify all properties
 			else{
-				
-				numPropertiesToCheck = propertiesFile.getNumProperties();
-				for(int i = 0; i< numPropertiesToCheck; ++i) {
-					propertiesToCheck.add(propertiesFile.getPropertyObject(i));
-				}
-				
-				
+                if (Options.getSpecificProperty()) {
+                    int tempProperties = propertiesFile.getNumProperties();
+                    for (int i = 0; i<tempProperties; ++i) {
+                        if (propertiesFile.getPropertyObject(i).getName().equals(Options.getPropertyName())) {
+                            propertiesToCheck.add(propertiesFile.getPropertyObject(i));
+                            numPropertiesToCheck = 1;
+                            break;
+                        }
+                    }
+                    if (numPropertiesToCheck != 1) {
+                        throw new PrismException("Did not find property " + Options.getPropertyName());
+                    }
+                } else {
+    				numPropertiesToCheck = propertiesFile.getNumProperties();
+	    			for(int i = 0; i< numPropertiesToCheck; ++i) {
+		    			propertiesToCheck.add(propertiesFile.getPropertyObject(i));
+			    	}
+			    }
 			}
 
 		} catch (FileNotFoundException e) {
@@ -465,6 +489,8 @@ public class StaminaCL {
 		mainLog.println("-cuddmaxmem <memory>................ Maximum cudd memory. Expects the same format as prism [default: 1g]");
 		mainLog.println("-export <filename>.................. Export model to a file. Please provide a filename without an extension");
 		mainLog.println("-exportPerimeterStates <filename>... Export perimeter states to a file. Please provide a filename without an extension");
+        mainLog.println("-import <filename>.................. Import model to a file. Please provide a filename without an extension");
+        mainLog.println("-property <property>................ Specify a specific property to check in a model file that contains many");
 		mainLog.println("-const <vals> ...................... Comma separated values for constants");
 		mainLog.println("\tExamples:");
 		mainLog.println("\t-const a=1,b=5.6,c=true");
