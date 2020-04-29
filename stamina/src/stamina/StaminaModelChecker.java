@@ -374,6 +374,10 @@ public class StaminaModelChecker extends Prism {
 							FileWriter writer = new FileWriter(Options.getExportPerimeterFilename(), true);
 							Vector<String> values = infModelGen.getPerimeterStatesVector();
 							writer.write("Iteration: " + Integer.toString(numRefineIteration) + "\r\n");
+							for (int i = 0; i<infModelGen.getNumVars(); ++i) {
+								writer.write(infModelGen.getVarName(i) + ",");
+							}
+							writer.write("Current Reachability Probability\r\n");
 							for (int i = 0; i<values.size(); ++i) {
 								writer.write(values.get(i) + "\r\n");
 							}

@@ -94,14 +94,12 @@ public class ProbState extends State{
 	public String toString()
 	{
 		int i, n;
-		String s = "(";
+		String s = "";
 		n = varValues.length;
 		for (i = 0; i < n; i++) {
-			if (i > 0)
-				s += ",";
 			s += varValues[i];
+			s += ",";
 		}
-		s += "): ";
 		
 		s += curReachabilityProb;
 		return s;
