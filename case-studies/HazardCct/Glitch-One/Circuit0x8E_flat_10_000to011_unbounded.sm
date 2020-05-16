@@ -158,8 +158,8 @@ const double nc__BetI_protein_Circuit10_10_YFP_module_sub__pBetI = 2;
 // const int YFP_protein_MAX = MAX_AMOUNT;
 module YFP_protein
 
-	// YFP_protein : [0..YFP_protein_MAX] init 70; // Initial amount 0
-	YFP_protein : int init 0; // Initial amount 0
+	// YFP_protein : [0..YFP_protein_MAX] init 0; // Initial amount 0
+	YFP_protein : int init 70; // Initial amount 0
 
 	// Degradation_YFP_protein
 	[Degradation_YFP_protein] YFP_protein > 9 -> (YFP_protein'=YFP_protein-10);
