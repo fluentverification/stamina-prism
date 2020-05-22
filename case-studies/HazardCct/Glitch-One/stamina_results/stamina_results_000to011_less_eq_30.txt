@@ -6,7 +6,7 @@ PRISM
 =====
 
 Version: 4.5
-Date: Fri May 22 01:18:25 MDT 2020
+Date: Fri May 22 11:52:52 MDT 2020
 Hostname: el176-deeplearning
 Memory limits: cudd=1g, java(heap)=120g
 
@@ -29,12 +29,12 @@ Warning: Model contains one or more unbounded variables: model construction may 
 
 Computing reachable states...
 Warning: Infinite State system: Reachability analysis based on reachabilityThreshold=1.0E-20
- 108132 204524 266658 273792 281838 283528 285336 286631 287280 287764 288070 288428 288703 288866 289040 289156 289287 289403 289532 289542 states
- 1 163171 289542 states
-Reachable states exploration and model construction done in 63.41 secs.
+ 114390 204209 266875 274685 281922 283739 285588 286654 287247 287760 288070 288449 288692 288866 289040 289147 289287 289399 289525 289542 states
+ 1 170199 289542 states
+Reachable states exploration and model construction done in 64.326 secs.
 Sorting reachable states list...
 
-Time for model construction: 63.777 seconds.
+Time for model construction: 65.001 seconds.
 
 Type:        CTMC
 States:      289542 (1 initial)
@@ -48,9 +48,9 @@ Starting transient probability computation...
 
 Uniformisation: q.t = 1.02 x 1000.0 = 1020.0
 Fox-Glynn (1.25E-7): left = 794, right = 1293
-Transient probability computation took 1294 iters and 145.03 seconds.
+Transient probability computation took 1294 iters and 141.713 seconds.
 
-Time for model checking: 145.059 seconds.
+Time for model checking: 141.743 seconds.
 
 Result: 0.9999999999555043 (minimum bound)
 
