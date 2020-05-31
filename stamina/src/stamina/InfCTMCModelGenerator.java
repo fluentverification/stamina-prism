@@ -615,45 +615,49 @@ public class InfCTMCModelGenerator implements ModelGenerator
 			throw new PrismNotSupportedException("Probabilistic model construction not supported for " + modelType + "s");
 		}
 		
-		
+		int globalIterationCount = 1;
 		
 		Vector<ProbState> exploredK = new Vector<ProbState>();
 		StateStorage<ProbState> statesK = new IndexedSet<ProbState>(true);
 
+		if(globalStateSet.isEmpty()) {
+			//Get initial state and set reach_prob
+			State initState = modelGen.getInitialState();
+			ProbState probInitState = null;
+			if(globalStateSet.containsKey(initState)) {
+				probInitState = globalStateSet.get(initState);
+			}
+			else {
+				probInitState = new ProbState(initState);
+				probInitState.setCurReachabilityProb(1.0);
+				// Add initial state(s) to 'explore', 'states' and to the model
+				globalStateSet.put(initState, probInitState);
+			}
+			
+			// Add state to exploration queue
+			exploredK.add(probInitState);
+			statesK.add(probInitState);
 
-		
-		
-		int globalIterationCount = 1;
-		
-		//Get initial state and set reach_prob
-		State initState = modelGen.getInitialState();
-		ProbState probInitState = null;
-		if(globalStateSet.containsKey(initState)) {
-			probInitState = globalStateSet.get(initState);
 		}
+
 		else {
-			probInitState = new ProbState(initState);
-			probInitState.setCurReachabilityProb(1.0);
-			// Add initial state(s) to 'explore', 'states' and to the model
-			globalStateSet.put(initState, probInitState);
-		}
-		
-		// Add state to exploration queue
-		exploredK.add(probInitState);
-		statesK.add(probInitState);
-
-		for(State st: globalStateSet.keySet()) {
+			for(State st: globalStateSet.keySet()) {
 				
 				ProbState localSt = globalStateSet.get(st);
 				
-				//localSt.setNextReachabilityProbToCurrent();
-				
+
+
 				if(localSt.isStateTerminal()) {
 					exploredK.add(localSt);
 					statesK.add(localSt);
+					//localSt.computeNextReachabilityProb();
+					//localSt.setNextReachabilityProbToCurrent();
 				}
 				
 			}
+		}
+
+
 		
 		
 		// Start the exploration
@@ -791,7 +795,18 @@ public class InfCTMCModelGenerator implements ModelGenerator
 			//statesK.clear();
 			exploredK.clear();
 			
-			
+			/*for(State st: globalStateSet.keySet()) {
+				
+				ProbState localSt = globalStateSet.get(st);
+				
+
+
+				if(localSt.isStateTerminal()) {
+					exploredK.add(localSt);
+					statesK.add(localSt);
+				}
+				
+			}*/
 			
 			
 			//Prepare for next itr or terminate
@@ -835,3 +850,4 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		
 	}
 }
+
