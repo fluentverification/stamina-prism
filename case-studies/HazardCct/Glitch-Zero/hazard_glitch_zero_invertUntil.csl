@@ -6,5 +6,6 @@
 
 // For 010to111 and 100to111, check the inverted until: P=? [!(true U[0,1000] (YFP_protein > 30)) ]. STAMINA is having trouble parsing this property. Instead, check the equivalent one below. 
 
-P=? [G[0,1000] (!(YFP_protein > 30)) ]
+//P=? [G[0,1000] (!(YFP_protein > 30)) ]
+P=? [G[0,1000] (YFP_protein <= 30)]
 
