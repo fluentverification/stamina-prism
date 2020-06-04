@@ -785,7 +785,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 			exploredK.clear();
 			
 			
-			/*for(State st: globalStateSet.keySet()) {
+			for(State st: globalStateSet.keySet()) {
 				
 				ProbState localSt = globalStateSet.get(st);
 				
@@ -796,7 +796,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 					statesK.add(localSt);
 				}
 				
-			}*/
+			}
 			
 			//Prepare for next itr or terminate
 			int curStateCount = globalStateSet.size();
