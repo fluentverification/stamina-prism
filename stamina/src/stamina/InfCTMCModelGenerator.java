@@ -70,7 +70,6 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	
 	// Absorbing state
 	private State absorbingState = null;
-
 	
 	//Non Absorbing state
 	//private BitSet nonAbsorbingStateSet = null;
@@ -597,7 +596,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	
 	public void doReachabilityAnalysis() throws PrismException {
 		
-	 	//globalStateSet.clear();
+	 	
 		// Model gen from file
 	 	ModulesFileModelGenerator modelGen = new ModulesFileModelGenerator(modulesFile, parent);
 	
@@ -615,11 +614,12 @@ public class InfCTMCModelGenerator implements ModelGenerator
 			throw new PrismNotSupportedException("Probabilistic model construction not supported for " + modelType + "s");
 		}
 		
+		
+		StateStorage<ProbState> statesK = new IndexedSet<ProbState>(true);
+		Vector<ProbState> exploredK = new Vector<ProbState>();
+		
 		int globalIterationCount = 1;
 		
-		Vector<ProbState> exploredK = new Vector<ProbState>();
-		StateStorage<ProbState> statesK = new IndexedSet<ProbState>(true);
-
 		if(globalStateSet.isEmpty()) {
 			//Get initial state and set reach_prob
 			State initState = modelGen.getInitialState();
@@ -656,8 +656,6 @@ public class InfCTMCModelGenerator implements ModelGenerator
 				
 			}
 		}
-
-
 		
 		
 		// Start the exploration
@@ -726,23 +724,15 @@ public class InfCTMCModelGenerator implements ModelGenerator
 							
 							//compute next reachability probability for nextState
 							double tranProb = tranRate/exitRateSum;
-							double currentProb = nxtProbState.getCurReachabilityProb(); //This is added
 							nxtProbState.updatePredecessorProbMap(curProbState, tranProb);
 							nxtProbState.computeNextReachabilityProb();
 							nxtProbState.setNextReachabilityProbToCurrent();
-							if ((currentProb < reachabilityThreshold) && (nxtProbState.getCurReachabilityProb() >= reachabilityThreshold) ) { //This is added
-								//System.out.println("Made it here"); //TODO: This added, remove
+							
+							// Is this a new state?
+							if (statesK.add(nxtProbState)) {
+								// If so, add to the explore list
 								exploredK.add(nxtProbState);
-								statesK.add(nxtProbState);
 							}
-							else {
-								// Is this a new state?
-								if (statesK.add(nxtProbState)) {
-									// If so, add to the explore list
-
-									exploredK.add(nxtProbState);
-								}
-							}	
 							
 							// Increment fired tran
 							++numFiredTrans;
@@ -785,29 +775,28 @@ public class InfCTMCModelGenerator implements ModelGenerator
 				}
 				
 				if(numEnabledTrans < numFiredTrans)  throw new PrismException("Fired more transitions than enabled!!!!!!!");
-
+				
 				
 				// Print some progress info occasionally
 				progress.updateIfReady(globalStateSet.size() + 1);
 			}
 			
-			
 			//statesK.clear();
 			exploredK.clear();
+			
 			
 			/*for(State st: globalStateSet.keySet()) {
 				
 				ProbState localSt = globalStateSet.get(st);
 				
-
-
+				//localSt.setNextReachabilityProbToCurrent();
+				
 				if(localSt.isStateTerminal()) {
 					exploredK.add(localSt);
 					statesK.add(localSt);
 				}
 				
 			}*/
-			
 			
 			//Prepare for next itr or terminate
 			int curStateCount = globalStateSet.size();
@@ -850,4 +839,3 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		
 	}
 }
-
