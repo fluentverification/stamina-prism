@@ -620,42 +620,22 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		
 		int globalIterationCount = 1;
 		
-		if(globalStateSet.isEmpty()) {
-			//Get initial state and set reach_prob
-			State initState = modelGen.getInitialState();
-			ProbState probInitState = null;
-			if(globalStateSet.containsKey(initState)) {
-				probInitState = globalStateSet.get(initState);
-			}
-			else {
-				probInitState = new ProbState(initState);
-				probInitState.setCurReachabilityProb(1.0);
-				// Add initial state(s) to 'explore', 'states' and to the model
-				globalStateSet.put(initState, probInitState);
-			}
-			
-			// Add state to exploration queue
-			exploredK.add(probInitState);
-			statesK.add(probInitState);
-
+		//Get initial state and set reach_prob
+		State initState = modelGen.getInitialState();
+		ProbState probInitState = null;
+		if(globalStateSet.containsKey(initState)) {
+			probInitState = globalStateSet.get(initState);
 		}
-
 		else {
-			for(State st: globalStateSet.keySet()) {
-				
-				ProbState localSt = globalStateSet.get(st);
-				
-
-
-				if(localSt.isStateTerminal()) {
-					exploredK.add(localSt);
-					statesK.add(localSt);
-					//localSt.computeNextReachabilityProb();
-					//localSt.setNextReachabilityProbToCurrent();
-				}
-				
-			}
+			probInitState = new ProbState(initState);
+			probInitState.setCurReachabilityProb(1.0);
+			// Add initial state(s) to 'explore', 'states' and to the model
+			globalStateSet.put(initState, probInitState);
 		}
+		
+		// Add state to exploration queue
+		exploredK.add(probInitState);
+		statesK.add(probInitState);
 		
 		
 		// Start the exploration
