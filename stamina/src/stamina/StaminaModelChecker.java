@@ -285,7 +285,7 @@ public class StaminaModelChecker extends Prism {
 						
 						double ans_min = 0.0;
 						
-						for(int i=0; i<super.getBuiltModelExplicit().getNumStates(); ++i) {
+						for(int i=1; i<super.getBuiltModelExplicit().getNumStates(); ++i) {
 							
 							if(b2.get(i)) ans_min += (double) probsExpl.getValue(i);
 							
