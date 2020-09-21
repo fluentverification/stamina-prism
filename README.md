@@ -2,9 +2,9 @@
 
 STAMINA is an infinite-state CTMC model-checker integrated with the PRISM probabilistic model checker. It deploys a state truncation-based approach. It estimates path probabilities of reaching each state on-the-fly and terminates exploration of a path when the cumulative estimated probability along such a path drops below a predefined threshold. Each terminated path is routed to an absorbing state, in order to estimate the error probability in subsequent CTMC analysis.  After all paths have been explored or truncated, transient Markov chain analysis is applied to determine the probability of a transient property of interest specified using Continuous Stochastic Logic (CSL).  The calculated probability forms a lower bound on the probability, while the upper bound also includes the probability of the absorbing state. The actual probability of the CSL property is guaranteed to be within this range. If the probability bound is still too large compared to a user-provided probability precision value (default is 10^(-3)), STAMINA employs a property property-guided refinement technique to expand the state space to tighten the reported probability range incrementally.
 
-##### Contact: Zhen Zhang (zhen.zhang@usu.edu), Trent Wall (tnwall707@gmail.com), Riley Roberts, (riley.roberts@aggiemail.usu.edu)
+##### Contact: Riley Roberts (riley.roberts@usu.edu) and Zhen Zhang (zhen.zhang@usu.edu)
 
-##### Contributor(s): Trent Wall, Riley Roberts, Brett Jepsen, Thakur Neupane, Zhen Zhang, Chris Myers, Curtis Madsen, Hao Zheng, and Chris Winstead
+##### Contributor(s):  Riley Roberts, Trent Wall, Brett Jepsen, Thakur Neupane, Zhen Zhang, Chris Myers, Curtis Madsen, Hao Zheng, and Chris Winstead
 
 #### To cite STAMINA, please use the most recent tool paper from CAV'19:
 Neupane T., Myers C.J., Madsen C., Zheng H., Zhang Z. (2019) STAMINA: STochastic Approximate Model-Checker for INfinite-State Analysis. In: Dillig I., Tasiran S. (eds) Computer Aided Verification. CAV 2019. Lecture Notes in Computer Science, vol 11561. Springer, Cham. Download link: https://link.springer.com/chapter/10.1007/978-3-030-25540-4_31
