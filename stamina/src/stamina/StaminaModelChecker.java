@@ -180,6 +180,10 @@ public class StaminaModelChecker extends Prism {
 					if(exprTemp.isPathFormula(false) && (exprTemp.getOperator()==ExpressionTemporal.P_U)) {
 						switchToCombinedCTMC = true;
 					}
+					
+					if(Options.getNoPropRefine()) {
+						switchToCombinedCTMC = false;
+					}
 				    	
 					if(switchToCombinedCTMC) {
 						
