@@ -87,6 +87,10 @@ public class ProbState extends State{
 	}
 	
 	
+	public HashMap<ProbState, Double> getPredecessorProbMap() {
+		return predecessorPropMap;
+	}
+	
 	/**
 	 * Get string representation, e.g. "(0,true,5)". 
 	 */
