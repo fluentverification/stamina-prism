@@ -452,7 +452,9 @@ public class StaminaCL {
 	 */
 	private void exit()
 	{
-		staminaMC.closeDown();
+		if(staminaMC!=null) {
+			staminaMC.closeDown();
+		}
 		mainLog.flush();
 		System.exit(1);
 	}
@@ -462,7 +464,9 @@ public class StaminaCL {
 	 */
 	private void errorAndExit(String s)
 	{
-		staminaMC.closeDown();
+		if(staminaMC!=null) {
+			staminaMC.closeDown();
+		}
 		mainLog.println("\nError: " + s + ".");
 		mainLog.flush();
 		System.exit(1);
