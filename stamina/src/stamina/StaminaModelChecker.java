@@ -241,11 +241,11 @@ public class StaminaModelChecker extends Prism {
 
 						// model check operands first for all states
 						explicit.CTMCModelChecker mcCTMC = new CTMCModelChecker(this);
-						BitSet b1 = mcCTMC.checkExpression(super.getBuiltModelExplicit(), exprTemp.getOperand1(), null).getBitSet();
+						//BitSet b1 = mcCTMC.checkExpression(super.getBuiltModelExplicit(), exprTemp.getOperand1(), null).getBitSet(); //b1 and minStatesNeg aren't needed with property guided expansion
 						BitSet b2 = mcCTMC.checkExpression(super.getBuiltModelExplicit(), exprTemp.getOperand2(), null).getBitSet();
 						
-						BitSet minStatesNeg = (BitSet) b1.clone();
-						minStatesNeg.andNot(b2);
+						//BitSet minStatesNeg = (BitSet) b1.clone();
+						//minStatesNeg.andNot(b2);
 						
 						// lower bound is 0 if not specified
 						// (i.e. if until is of form U<=t)
