@@ -11,7 +11,7 @@ const int MAX_AMOUNT = 1000;
 const double Cell = 1.0;
 
 // Model inputs
-const HIGH = 60; 
+const HIGH = 60;
 const double TetR_protein = HIGH;
 const double LacI_protein = 0;
 const double Ara_AraC_protein = 0;
@@ -162,8 +162,10 @@ module YFP_protein
 
 	// Degradation_YFP_protein
 	[Degradation_YFP_protein] YFP_protein > 9 -> (YFP_protein'=YFP_protein-10);
+
 	// R_abstracted_production_Circuit10_10_YFP_module_sub__pPhlF
 	[R_abstracted_production_Circuit10_10_YFP_module_sub__pPhlF]  YFP_protein <= YFP_protein_MAX-10 -> (YFP_protein'=YFP_protein+10);
+	
 	// R_abstracted_production_Circuit10_10_YFP_module_sub__pBetI
 	[R_abstracted_production_Circuit10_10_YFP_module_sub__pBetI]  YFP_protein <= YFP_protein_MAX-10 -> (YFP_protein'=YFP_protein+10);
 
