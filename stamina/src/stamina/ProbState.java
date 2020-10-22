@@ -1,6 +1,7 @@
 package stamina;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import parser.State;
 
@@ -73,8 +74,8 @@ public class ProbState extends State{
 		
 		nextReachabilityProb = 0.0;
 		
-		for(ProbState pre: predecessorPropMap.keySet()) {
-			nextReachabilityProb += pre.getCurReachabilityProb() * predecessorPropMap.get(pre);
+		for(Map.Entry<ProbState, Double> entry: predecessorPropMap.entrySet()) {
+			nextReachabilityProb += entry.getKey().getCurReachabilityProb() * entry.getValue();
 		}
 		
 		if (nextReachabilityProb > 1.0) {
