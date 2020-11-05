@@ -647,7 +647,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		double perimReachability = 1;
 		HashSet<State> transStates = new HashSet<State>();
 		// State Search 
-		while(perimReachability >= Options.getProbErrorWindow()/2) {
+		while(perimReachability >= Options.getProbErrorWindow()/Options.getKappaReductionFactor()) {
 			/*double startTime = System.currentTimeMillis();
 			double predMapTime = 0;// Explore...
 			double prismTime = 0.0;
@@ -711,6 +711,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 						if(stateIsExisting) {
 
 							if (nxtSt.equals(initState)) {
+								++numFiredTrans;
 								continue;
 							}
 
@@ -722,6 +723,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 							//Map.Entry<ProbState, Integer> key_v = globalStateSet.ceilingEntry(nxtState);
 							
 							ProbState nxtProbState = globalStateSet.get(nxtSt);
+
 							//trackPrismTime = System.currentTimeMillis();
 							double tranRate = modelGen.getTransitionProbability(i, j);
 							//prismTime += System.currentTimeMillis() - trackPrismTime;
@@ -872,7 +874,8 @@ public class InfCTMCModelGenerator implements ModelGenerator
 			//++globalIterationCount;
 		}
 		
-		Options.setReachabilityThreshold(reachabilityThreshold);	
+		Options.setReachabilityThreshold(reachabilityThreshold);
+			
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 		// Finish progress display
