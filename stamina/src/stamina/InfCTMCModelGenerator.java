@@ -734,7 +734,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 							//double mapStart = System.currentTimeMillis();
 
 							if(alreadyTrans) {
-								nxtProbState.updatePredecessorProbMap(curProbState, nxtProbState.getPredecessorProbMap().get(curProbState)+tranProb);
+								nxtProbState.updateAddToPredecessorProbMap(curProbState, tranProb);
 							}
 							else {
 								nxtProbState.updatePredecessorProbMap(curProbState, tranProb);

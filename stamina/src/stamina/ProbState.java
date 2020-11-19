@@ -2,7 +2,7 @@ package stamina;
 
 import java.util.HashMap;
 import java.util.Map;
-
+import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap;
 import parser.State;
 
 public class ProbState extends State{
@@ -16,7 +16,7 @@ public class ProbState extends State{
 	/**
 	 * This maps stores transition rate for each outgoing transition.
 	 */
-	private HashMap<ProbState, Double> predecessorPropMap; 
+	private Object2DoubleOpenHashMap<ProbState> predecessorPropMap; 
 	
 	
 	public ProbState(State s) {
@@ -28,7 +28,7 @@ public class ProbState extends State{
 		isStateTerminal = true;
 		isStateAbsorbing = false;
 		
-		predecessorPropMap = new HashMap<ProbState, Double>();
+		predecessorPropMap = new Object2DoubleOpenHashMap<ProbState>();
 	}
 	
 	
@@ -74,9 +74,12 @@ public class ProbState extends State{
 		
 		nextReachabilityProb = 0.0;
 		
-		for(Map.Entry<ProbState, Double> entry: predecessorPropMap.entrySet()) {
-			nextReachabilityProb += entry.getKey().getCurReachabilityProb() * entry.getValue();
-		}
+
+		predecessorPropMap.object2DoubleEntrySet().fastForEach(entry -> {
+			nextReachabilityProb += entry.getKey().getCurReachabilityProb()*entry.getDoubleValue();
+			
+		});
+
 		
 		if (nextReachabilityProb > 1.0) {
 			throw new RuntimeException("Path Probability greater than 1.0");
@@ -87,8 +90,12 @@ public class ProbState extends State{
 		predecessorPropMap.put(state, tranProb);
 	}
 	
+	public void updateAddToPredecessorProbMap(ProbState state, double increment) {
 	
-	public HashMap<ProbState, Double> getPredecessorProbMap() {
+		predecessorPropMap.addTo(state, increment);
+	}	
+	
+	public Object2DoubleOpenHashMap<ProbState> getPredecessorProbMap() {
 		return predecessorPropMap;
 	}
 	
