@@ -8,7 +8,6 @@ import parser.State;
 public class ProbState extends State{
 	
 	private double curReachabilityProb;
-	private double nextReachabilityProb;
 	
 	private boolean isStateTerminal;
 	private boolean isStateAbsorbing;
@@ -23,7 +22,6 @@ public class ProbState extends State{
 		super(s);
 		
 		curReachabilityProb = 0.0;
-		nextReachabilityProb = 0.0;
 		
 		isStateTerminal = true;
 		isStateAbsorbing = false;
@@ -60,28 +58,19 @@ public class ProbState extends State{
 		curReachabilityProb = reachProb;
 	}
 	
-	public double getNextReachabilityProb() {
-		
-		return nextReachabilityProb;
-		
-	}
-	
-	public void setNextReachabilityProbToCurrent() {
-		curReachabilityProb = nextReachabilityProb;
-	}
 	
 	public void computeNextReachabilityProb() {
 		
-		nextReachabilityProb = 0.0;
+		curReachabilityProb = 0.0;
 		
 
 		predecessorPropMap.object2DoubleEntrySet().fastForEach(entry -> {
-			nextReachabilityProb += entry.getKey().getCurReachabilityProb()*entry.getDoubleValue();
+			curReachabilityProb += entry.getKey().getCurReachabilityProb()*entry.getDoubleValue();
 			
 		});
 
 		
-		if (nextReachabilityProb > 1.0) {
+		if (curReachabilityProb > 1.0) {
 			throw new RuntimeException("Path Probability greater than 1.0");
 		}
 	}

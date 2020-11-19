@@ -741,7 +741,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 							}	
 
 							nxtProbState.computeNextReachabilityProb();
-							nxtProbState.setNextReachabilityProbToCurrent();
+							//nxtProbState.setNextReachabilityProbToCurrent();
 
 							//predMapTime += System.currentTimeMillis() - mapStart;
 
@@ -778,7 +778,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 									//double mapStart = System.currentTimeMillis();
 									nxtProbState.updatePredecessorProbMap(curProbState, tranProb);
 									nxtProbState.computeNextReachabilityProb();
-									nxtProbState.setNextReachabilityProbToCurrent();
+									//nxtProbState.setNextReachabilityProbToCurrent();
 									//predMapTime += System.currentTimeMillis() - mapStart;
 									
 									//Update the global state graph
