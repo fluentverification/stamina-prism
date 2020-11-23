@@ -370,8 +370,11 @@ public class StaminaModelChecker extends Prism {
 					
 					
 					// Reduce kappa for refinement
-					double percentOff = (((Double)res_min_max[1].getResult())-((Double)res_min_max[0].getResult()))/Options.getProbErrorWindow();
-					Options.setKappaReductionFactor(Options.getKappaReductionFactor()*percentOff*2);
+					double percentOff = 4*((((Double)res_min_max[1].getResult())-((Double)res_min_max[0].getResult()))/Options.getProbErrorWindow());
+					if(percentOff > 100) {
+						percentOff = 100;
+					}
+					Options.setKappaReductionFactor(Options.getKappaReductionFactor()*percentOff);
 					
 					// increment refinement count
 					if (Options.getExportPerimeterStates()) {
