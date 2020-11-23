@@ -674,6 +674,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 						curProbState.setStateAbsorbing(true);
 						perimeterStates.addElement(curProbState.toString());
 						curProbState.setStateTerminal(false);
+						continue;
 					}
 				}
 				//propCheckTime += System.currentTimeMillis() - propCheckTimeHelper;
@@ -729,7 +730,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 							//prismTime += System.currentTimeMillis() - trackPrismTime;
 							//compute next reachability probability for nextState
 							double tranProb = tranRate/exitRateSum;
-							double curProb = nxtProbState.getCurReachabilityProb();
+							//double curProb = nxtProbState.getCurReachabilityProb();
 
 							//double mapStart = System.currentTimeMillis();
 
