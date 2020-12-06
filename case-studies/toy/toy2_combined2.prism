@@ -37,7 +37,7 @@ endmodule
 
 module reaction_rates
 
-       [repress_TetR_combined] ((TetR>=0 & TetR<9) | (TetR>=5 & TetR<9)) -> (p_t + p_t/3): true; // Conjoin the two guards; sum transition rates.
+       [repress_TetR_combined] ((TetR>=0 & TetR<9) | (TetR>=5 & TetR<9)) -> (p_t + p_t/3): true; // Take disjunction of the two guards; sum transition rates.
        //[repress_TetR_combined] (TetR>=5 & TetR<9) -> (p_t + p_t/3): true; // Conjoin the two guards; sum transition rates.
        //[repress_TetR_combined] (TetR>=0 & TetR<5) -> p_t: true;
        [degrade_TetR] TetR>0 -> 0.0075*TetR : true;
