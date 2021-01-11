@@ -645,7 +645,6 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		
 		int prevStateCount = globalStateSet.size();
 		double perimReachability = 1;
-		HashSet<State> transStates = new HashSet<State>();
 		// State Search 
 		while(perimReachability >= Options.getProbErrorWindow()/Options.getKappaReductionFactor()) {
 			/*double startTime = System.currentTimeMillis();
@@ -654,6 +653,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 			double propCheckTime = 0.0;*/
 			while (!exploredK.isEmpty()) {
 				ProbState curProbState = exploredK.removeFirst();
+				statesK.remove(curProbState);
 				
 				//System.out.println("\nExplored exactly one time\n");
 				// Explore all choices/transitions from this state
@@ -695,107 +695,98 @@ public class InfCTMCModelGenerator implements ModelGenerator
 						exitRateSum += modelGen.getTransitionProbability(i, j);
 					}
 				}
-				//prismTime += System.currentTimeMillis() - trackPrismTime;
-				transStates.clear();
-				for (int i = 0; i < nc; i++) {
-					// Look at each transition in the choice
-					//System.out.println("\nA choice\n");
-					int nt = modelGen.getNumTransitions(i);
-					for (int j = 0; j < nt; j++) {
-						//trackPrismTime = System.currentTimeMillis();
-						State nxtSt = modelGen.computeTransitionTarget(i, j);
-						//prismTime += System.currentTimeMillis() - trackPrismTime;
-
-						boolean stateIsExisting = globalStateSet.containsKey(nxtSt);
-						
-						
-						if(stateIsExisting) {
-
-							if (nxtSt.equals(initState)) {
-								++numFiredTrans;
-								continue;
-							}
-
-							Boolean alreadyTrans = false;
-							if (!transStates.add(nxtSt)) {
-								alreadyTrans = true;
-							}
-							
-							//Map.Entry<ProbState, Integer> key_v = globalStateSet.ceilingEntry(nxtState);
-							
-							ProbState nxtProbState = globalStateSet.get(nxtSt);
-
+				double curStateReachability = curProbState.getCurReachabilityProb();
+				/*System.out.println("\nState");
+				System.out.println(curProbState);
+				System.out.println(curStateReachability);*/
+				if(!curProbState.isStateTerminal() || curStateReachability >= reachabilityThreshold) {
+					//prismTime += System.currentTimeMillis() - trackPrismTime;
+					for (int i = 0; i < nc; i++) {
+						// Look at each transition in the choice
+						//System.out.println("\nA choice\n");
+						int nt = modelGen.getNumTransitions(i);
+						for (int j = 0; j < nt; j++) {
 							//trackPrismTime = System.currentTimeMillis();
-							double tranRate = modelGen.getTransitionProbability(i, j);
+							State nxtSt = modelGen.computeTransitionTarget(i, j);
 							//prismTime += System.currentTimeMillis() - trackPrismTime;
-							//compute next reachability probability for nextState
-							double tranProb = tranRate/exitRateSum;
-							//double curProb = nxtProbState.getCurReachabilityProb();
 
-							//double mapStart = System.currentTimeMillis();
-
-							if(alreadyTrans) {
-								nxtProbState.updateAddToPredecessorProbMap(curProbState, tranProb);
-							}
-							else {
-								nxtProbState.updatePredecessorProbMap(curProbState, tranProb);
-							}	
-
-							nxtProbState.computeNextReachabilityProb();
-							//nxtProbState.setNextReachabilityProbToCurrent();
-
-							//predMapTime += System.currentTimeMillis() - mapStart;
-
-					
+							boolean stateIsExisting = globalStateSet.containsKey(nxtSt);
 							
-							// Is this a new state?
-							if (statesK.add(nxtProbState)) {
-								// If so, add to the explore list
-								exploredK.addLast(nxtProbState);
-							}
 							
-							// Increment fired tran
-							++numFiredTrans;
-						}
-						else {
+							if(stateIsExisting) {
 
-							if(!curProbState.isStateAbsorbing()) {
+		
+								ProbState nxtProbState = globalStateSet.get(nxtSt);
+
+								//trackPrismTime = System.currentTimeMillis();
+								double tranRate = modelGen.getTransitionProbability(i, j);
+								//prismTime += System.currentTimeMillis() - trackPrismTime;
+								//compute next reachability probability for nextState
+								double tranProb = tranRate/exitRateSum;
+								//double curProb = nxtProbState.getCurReachabilityProb();
+
+								//double mapStart = System.currentTimeMillis();
 								
-								if(curProbState.getCurReachabilityProb() >= reachabilityThreshold) {
+								double leavingProb = tranProb*curStateReachability;
+								nxtProbState.addToReachability(leavingProb);
+								curProbState.subtractFromReachability(leavingProb);
+								//nxtProbState.setNextReachabilityProbToCurrent();
 
-									transStates.add(nxtSt);
-
-									ProbState nxtProbState = new ProbState(nxtSt);
-									//trackPrismTime = System.currentTimeMillis();
-									double tranRate = modelGen.getTransitionProbability(i, j);
-									//prismTime += System.currentTimeMillis()-trackPrismTime;
-									//compute next reachability probability for nextState
-									double tranProb = tranRate/exitRateSum;
-									/*if(curProbState.equals(initState)) {
-										System.out.println("\nFrom init to other");
-										System.out.println(nxtProbState.toString());
-										System.out.println(tranProb);
-									}*/
-									//double mapStart = System.currentTimeMillis();
-									nxtProbState.updatePredecessorProbMap(curProbState, tranProb);
-									nxtProbState.computeNextReachabilityProb();
-									//nxtProbState.setNextReachabilityProbToCurrent();
-									//predMapTime += System.currentTimeMillis() - mapStart;
-									
-									//Update the global state graph
-									globalStateSet.put(nxtSt, nxtProbState);
-									
-									// Is this a new state?
-									if (statesK.add(nxtProbState)) {
-										// If so, add to the explore list
+								//predMapTime += System.currentTimeMillis() - mapStart;		
+								
+								// Is this a new state?
+								if (nxtProbState.getCurReachabilityProb() >= reachabilityThreshold) {
+									// If so, add to the explore list
+									if(statesK.add(nxtProbState)) {
 										exploredK.addLast(nxtProbState);
 									}
 									
-									// Increment fired tran
-									++numFiredTrans;
 								}
+								
+								// Increment fired tran
+								++numFiredTrans;
 							}
-						}						
+							else {
+
+								if(!curProbState.isStateAbsorbing()) {
+									
+									
+
+
+										ProbState nxtProbState = new ProbState(nxtSt);
+										//trackPrismTime = System.currentTimeMillis();
+										double tranRate = modelGen.getTransitionProbability(i, j);
+										//prismTime += System.currentTimeMillis()-trackPrismTime;
+										//compute next reachability probability for nextState
+										double tranProb = tranRate/exitRateSum;
+										/*if(curProbState.equals(initState)) {
+											System.out.println("\nFrom init to other");
+											System.out.println(nxtProbState.toString());
+											System.out.println(tranProb);
+										}*/
+										//double mapStart = System.currentTimeMillis();
+										double leavingProb = tranProb*curStateReachability;
+										nxtProbState.addToReachability(leavingProb);
+										curProbState.subtractFromReachability(leavingProb);
+										//nxtProbState.setNextReachabilityProbToCurrent();
+										//predMapTime += System.currentTimeMillis() - mapStart;
+										
+										//Update the global state graph
+										globalStateSet.put(nxtSt, nxtProbState);
+										
+										// Is this a new state?
+										//if (statesK.add(nxtProbState)) {
+											// If so, add to the explore list
+											statesK.add(nxtProbState);
+											exploredK.addLast(nxtProbState);
+										//}
+										
+										// Increment fired tran
+										++numFiredTrans;
+									
+								}
+							}						
+						}
 					}
 				}
 				
@@ -855,7 +846,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 			System.out.println();
 			prevStateCount = curStateCount;*/		
 				
-			reachabilityThreshold /= 2.0;
+			reachabilityThreshold /= 10;
 			// Pick next state to explore                           
 			/*if(Options.getRankTransitions()) {
 				exploredK.sort(new Comparator<ProbState>(){
