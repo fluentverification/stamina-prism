@@ -846,7 +846,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 			System.out.println();
 			prevStateCount = curStateCount;*/		
 				
-			reachabilityThreshold /= 10;
+			reachabilityThreshold /= 2.0;
 			// Pick next state to explore                           
 			/*if(Options.getRankTransitions()) {
 				exploredK.sort(new Comparator<ProbState>(){
