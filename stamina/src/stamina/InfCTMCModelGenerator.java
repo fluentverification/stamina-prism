@@ -696,6 +696,13 @@ public class InfCTMCModelGenerator implements ModelGenerator
 							int nt = modelGen.getNumTransitions(i);
 							for (int j = 0; j < nt; j++) {
 								State nxtSt = modelGen.computeTransitionTarget(i, j);
+								boolean stateIsExisting = globalStateSet.containsKey(nxtSt);
+								if(stateIsExisting) {
+									ProbState nxtProbState = globalStateSet.get(nxtSt);
+									if(statesK.add(nxtProbState)) {
+										exploredK.addLast(nxtProbState);
+									}
+								}
 							}
 						}
 					}
@@ -710,14 +717,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 							int nt = modelGen.getNumTransitions(i);
 							for (int j = 0; j < nt; j++) {
 								exitRateSum += modelGen.getTransitionProbability(i, j);
-								boolean stateIsExisting = globalStateSet.containsKey(nxtSt);
-								if(stateIsExisting) {
-									ProbState nxtProbState = globalStateSet.get(nxtSt);
-									if(statesK.add(nxtProbState)) {
-										exploredK.addLast(nxtProbState);
-									}
-								}
-							}
+															}
 						}
 
 						for (int i = 0; i < nc; i++) {
