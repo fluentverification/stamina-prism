@@ -24,55 +24,47 @@ public class ProbState extends State{
 	}
 	
 	
-	public boolean isStateTerminal(){
+	public synchronized boolean isStateTerminal(){
 		return isStateTerminal;
 	}
 	
-	public void setStateTerminal(boolean flag) {
+	public synchronized void setStateTerminal(boolean flag) {
 		isStateTerminal = flag;
 	}
 	
-	public boolean isStateAbsorbing(){
+	public synchronized boolean isStateAbsorbing(){
 		return isStateAbsorbing;
 	}
 	
-	public void setStateAbsorbing(boolean flag) {
+	public synchronized void setStateAbsorbing(boolean flag) {
 		isStateAbsorbing = flag;
 	}
 	
 	
 	/* Probabilistic search */
-	public double getCurReachabilityProb() {
+	public synchronized double getCurReachabilityProb() {
 		
 		return curReachabilityProb;
 		
 	}
 	
-	public void setCurReachabilityProb(double reachProb) {
+	public synchronized void setCurReachabilityProb(double reachProb) {
 		curReachabilityProb = reachProb;
 	}
 	
 	
-	public void addToReachability(double newReach) {
+	public synchronized void addToReachability(double newReach) {
 		curReachabilityProb += newReach;
 		if(curReachabilityProb >= 1.0) {
 			curReachabilityProb = 1.0;
 		}
 	}
-
-	public void subtractFromReachability(double minusReach) {
-		curReachabilityProb -= minusReach;
-		if(curReachabilityProb <= 0.0) {
-			curReachabilityProb = 0.0;
-		}
-	}
 	
-
 	/**
 	 * Get string representation, e.g. "(0,true,5)". 
 	 */
 	@Override
-	public String toString()
+	public synchronized String toString()
 	{
 		int i, n;
 		String s = "";
