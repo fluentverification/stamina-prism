@@ -11,6 +11,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.lang.Runtime;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import explicit.IndexedSet;
 import explicit.StateStorage;
 import parser.State;
@@ -652,7 +655,8 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		
 		int prevStateCount = globalStateSet.size();
 		double perimReachability = 1;
-		// State Search 
+		ExecutorService threadPool = Executors.newFixedThreadPool(4);
+ 
 		while(perimReachability >= Options.getProbErrorWindow()/Options.getKappaReductionFactor()) {
 			/*double startTime = System.currentTimeMillis();
 			double predMapTime = 0;// Explore...
@@ -661,23 +665,23 @@ public class InfCTMCModelGenerator implements ModelGenerator
 			boolean thread = true;
 			if (thread) {
 				Runtime currentRuntimeVar = Runtime.getRuntime();
-				int numProcessors = currentRuntimeVar.availableProcessors() - 1;
+				int numProcessors = 4;//currentRuntimeVar.availableProcessors() - 1;
 				syncedExploredK = Collections.synchronizedList(exploredK);
 				syncedStatesK = Collections.synchronizedSet(statesK);
-				Map<State, ProbState> syncedGlobalStateSet = Collections.synchronizedMap(globalStateSet);
 				try {
-					Thread[] workers = new Thread[numProcessors];
 					AtomicInteger counter = new AtomicInteger(0);
 					for (int i = 0; i < numProcessors; i++) {
-						workers[i] = new Thread(new ReachabilityThread(new ModulesFileModelGenerator(modulesFile, parent), syncedExploredK, syncedStatesK, progress, counter, propertyExpression, mfConstants, reachabilityThreshold));
-						workers[i].start();
+						if(i!= numProcessors - 1) {
+						threadPool.submit(new ReachabilityThread(new ModulesFileModelGenerator(modulesFile, parent), syncedExploredK, syncedStatesK, progress, counter, propertyExpression, mfConstants, reachabilityThreshold));
+						}
+						else {
+							threadPool.submit(new ReachabilityThread(new ModulesFileModelGenerator(modulesFile, parent), syncedExploredK, syncedStatesK, progress, counter, propertyExpression, mfConstants, reachabilityThreshold)).get();
+	
+						}
 					}
 
-					for (int i = 0; i < numProcessors; i++) {
-						workers[i].join();
-					}
 
-				}
+									}
 				catch (Exception e) {
 					System.out.println("Error: Something went wrong with the multi-threading");
 					e.printStackTrace();
@@ -917,6 +921,13 @@ public class InfCTMCModelGenerator implements ModelGenerator
 			
 			//++globalIterationCount;
 		}
+		try {
+			threadPool.shutdown();
+			threadPool.awaitTermination(1, TimeUnit.HOURS);
+		}
+		catch (Exception e) {
+			System.out.println("Something went wrong shutting down the threadPool");
+		}
 		
 		Options.setReachabilityThreshold(reachabilityThreshold);
 			
@@ -947,16 +958,16 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		return nxtProbState;
 	}
 
-	public static synchronized void addToExplore(State newState) {
+	public static synchronized ProbState addToExplore(State newState) {
 		if(globalStateSet.containsKey(newState)) {
 			ProbState nxtProbState = globalStateSet.get(newState);
-			if(syncedStatesK.add(nxtProbState)) {
-				syncedExploredK.add(nxtProbState);
-			}
+			return nxtProbState;
 		}
+		return null;
+
 	}
 
-	public static synchronized long getStateSpaceSize() {
+	public static long getStateSpaceSize() {
 		return globalStateSet.size();
 	}
 }
