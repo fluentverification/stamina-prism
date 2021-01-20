@@ -81,12 +81,7 @@ public class ReachabilityThread implements Runnable{
                                 int nt = modelGen.getNumTransitions(i);
                                 for (int j = 0; j < nt; j++) {
                                     State nxtSt = modelGen.computeTransitionTarget(i, j);
-                                    ProbState nxtProbState = InfCTMCModelGenerator.addToExplore(nxtSt);
-				    if (nxtProbState != null) {
-				    	if(statesK.add(nxtProbState)){
-						exploredK.add(nxtProbState);
-					}
-				    }
+                                    InfCTMCModelGenerator.addToExplore(nxtSt);
                                 }
                             }
                         }
