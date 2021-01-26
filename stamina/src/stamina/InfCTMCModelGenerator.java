@@ -655,7 +655,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		
 		int prevStateCount = globalStateSet.size();
 		double perimReachability = 1;
-		ExecutorService threadPool = Executors.newFixedThreadPool(4);
+		ExecutorService threadPool = Executors.newFixedThreadPool(2);
  
 		while(perimReachability >= Options.getProbErrorWindow()/Options.getKappaReductionFactor()) {
 			/*double startTime = System.currentTimeMillis();
@@ -665,7 +665,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 			boolean thread = true;
 			if (thread) {
 				Runtime currentRuntimeVar = Runtime.getRuntime();
-				int numProcessors = 4;//currentRuntimeVar.availableProcessors() - 1;
+				int numProcessors = 2;//currentRuntimeVar.availableProcessors() - 1;
 				syncedExploredK = Collections.synchronizedList(exploredK);
 				syncedStatesK = Collections.synchronizedSet(statesK);
 				try {
