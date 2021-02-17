@@ -374,7 +374,7 @@ public class StaminaModelChecker extends Prism {
 					if(percentOff > 100) {
 						percentOff = 100;
 					}
-					Options.setKappaReductionFactor(Options.getKappaReductionFactor()*percentOff);
+					Options.setMispredictionFactor(Options.getMispredictionFactor()*percentOff);
 					
 					// increment refinement count
 					if (Options.getExportPerimeterStates()) {
