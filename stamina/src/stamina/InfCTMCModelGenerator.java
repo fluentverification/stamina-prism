@@ -375,18 +375,25 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	@Override
 	public String getTransitionAction(int index) throws PrismException
 	{
-		return null;
+		if(transitionListBuilt) {
+			return transitionList.getTransitionModuleOrAction(index);
+		}
+		else {
+			throw new PrismException("TransitionList not yet built");
+		}
 	}
 
 	@Override
 	public String getTransitionAction(int index, int offset) throws PrismException
 	{
-		if(modelGen == null) {
-			throw new PrismException("States have not yet been generated"); 
+			
+		if(transitionListBuilt) {
+			return transitionList.getTransitionModuleOrAction(transitionList.getTotalIndexOfTransition(index, offset));
 		}
 		else {
-			return modelGen.getTransitionAction(index, offset);
+			throw new PrismException("TransitionList not yet built");
 		}
+
 	}
 
 	@Override
