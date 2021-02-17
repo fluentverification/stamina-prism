@@ -31,10 +31,11 @@ init:
 
 
 classes/%.class: src/%.java
-	(javac -sourcepath src -classpath $(STAMINA_CLASSPATH):$(PRISM_CLASSPATH) -d $(STAMINA_CLASSPATH) $<)
+	(javac -sourcepath src -classpath $(STAMINA_CLASSPATH):$(PRISM_CLASSPATH):lib/fastutil-8.4.3.jar -d $(STAMINA_CLASSPATH) $<)
 
 	@echo "export PRISM_HOME=$(PRISM_HOME)" > $(STAMINA_RC)
 	@echo "export STAMINA_HOME=$(PWD)" >> $(STAMINA_RC)
+	@echo "export JAR_NAME=fastutil-8.4.3.jar" >> $(STAMINA_RC)
 
 # Clean up
 clean:

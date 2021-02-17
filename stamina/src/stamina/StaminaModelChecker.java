@@ -166,7 +166,7 @@ public class StaminaModelChecker extends Prism {
 			
 		
 			while(numRefineIteration==0 || ((!terminateModelCheck(res_min_max[0].getResult(), res_min_max[1].getResult(), Options.getProbErrorWindow())) && (numRefineIteration < Options.getMaxApproxCount()))) {
-				
+				reachTh = Options.getReachabilityThreshold();
 				Expression expr = ((ExpressionProb) exprProp).getExpression();
 				if(expr instanceof ExpressionTemporal) {
 					
@@ -370,7 +370,11 @@ public class StaminaModelChecker extends Prism {
 					
 					
 					// Reduce kappa for refinement
-					reachTh /= Options.getKappaReductionFactor();
+					double percentOff = 4*((((Double)res_min_max[1].getResult())-((Double)res_min_max[0].getResult()))/Options.getProbErrorWindow());
+					if(percentOff > 100) {
+						percentOff = 100;
+					}
+					Options.setMispredictionFactor(Options.getMispredictionFactor()*percentOff);
 					
 					// increment refinement count
 					if (Options.getExportPerimeterStates()) {

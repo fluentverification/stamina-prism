@@ -58,6 +58,7 @@ public class StaminaCL {
 	
 	// Kappa reduction factor
 	private static double kappaReductionFactor = -1;
+	private static double mispredictionFactor = -1;
 		
 	// max number of refinement count 
 	private static int maxApproxCount = -1;
@@ -238,6 +239,7 @@ public class StaminaCL {
 			// Configure options
 			if (reachabilityThreshold >= 0.0 )	Options.setReachabilityThreshold(reachabilityThreshold);
 			if (kappaReductionFactor >= 0.0 )	Options.setKappaReductionFactor(kappaReductionFactor);
+			if (mispredictionFactor >= 0.0 )	Options.setMispredictionFactor(mispredictionFactor);
 			if (maxApproxCount >= 0) Options.setMaxRefinementCount(maxApproxCount);
 			if (probErrorWindow >= 0.0) Options.setProbErrorWindow(probErrorWindow);
 			Options.setRankTransitions(rankTransitions);
@@ -309,6 +311,16 @@ public class StaminaCL {
 					}
 					else {
 						mainLog.println("kappaReductionFactor not defined.");
+					}
+					
+				}
+				else if (sw.equals("approxFactor")) {
+					
+					if (i < args.length - 1) {
+						mispredictionFactor = Double.parseDouble(args[++i].trim());
+					}
+					else {
+						mainLog.println("mispredictionFactor not defined.");
 					}
 					
 				}
@@ -485,8 +497,9 @@ public class StaminaCL {
 		mainLog.println("Options:");
 		mainLog.println("========");
 		mainLog.println();
-		mainLog.println("-kappa <k>.......................... ReachabilityThreshold [default: 1.0e-6]");
-		mainLog.println("-reducekappa <f>.................... Reduction factor for ReachabilityThreshold(kappa) for refinement step.  [default: 1000.0]");
+		mainLog.println("-kappa <k>.......................... ReachabilityThreshold for first iteration [default: 1.0]");
+		mainLog.println("-reducekappa <f>.................... Reduction factor for ReachabilityThreshold(kappa) for refinement step.  [default: 2.0]");
+		mainLog.println("-approxFactor <f>................... Factor to estimate how far off our reachability predictions will be  [default: 2.0]");
 		mainLog.println("-pbwin <e>.......................... Probability window between lower and upperbound for termination. [default: 1.0e-3]");
 		mainLog.println("-maxapproxcount <n>................. Maximum number of approximation iteration. [default: 10]");
 		mainLog.println("-noproprefine ...................... Do not use property based refinement. If given, model exploration method will reduce the kappa and do the property independent refinement. [default: off]");

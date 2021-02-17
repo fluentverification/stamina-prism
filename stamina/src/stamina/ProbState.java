@@ -2,13 +2,12 @@ package stamina;
 
 import java.util.HashMap;
 import java.util.Map;
-
+import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap;
 import parser.State;
 
 public class ProbState extends State{
 	
 	private double curReachabilityProb;
-	private double nextReachabilityProb;
 	
 	private boolean isStateTerminal;
 	private boolean isStateAbsorbing;
@@ -16,19 +15,18 @@ public class ProbState extends State{
 	/**
 	 * This maps stores transition rate for each outgoing transition.
 	 */
-	private HashMap<ProbState, Double> predecessorPropMap; 
+	private Object2DoubleOpenHashMap<ProbState> predecessorPropMap; 
 	
 	
 	public ProbState(State s) {
 		super(s);
 		
 		curReachabilityProb = 0.0;
-		nextReachabilityProb = 0.0;
 		
 		isStateTerminal = true;
 		isStateAbsorbing = false;
 		
-		predecessorPropMap = new HashMap<ProbState, Double>();
+		predecessorPropMap = new Object2DoubleOpenHashMap<ProbState>();
 	}
 	
 	
@@ -60,25 +58,19 @@ public class ProbState extends State{
 		curReachabilityProb = reachProb;
 	}
 	
-	public double getNextReachabilityProb() {
-		
-		return nextReachabilityProb;
-		
-	}
-	
-	public void setNextReachabilityProbToCurrent() {
-		curReachabilityProb = nextReachabilityProb;
-	}
 	
 	public void computeNextReachabilityProb() {
 		
-		nextReachabilityProb = 0.0;
+		curReachabilityProb = 0.0;
 		
-		for(Map.Entry<ProbState, Double> entry: predecessorPropMap.entrySet()) {
-			nextReachabilityProb += entry.getKey().getCurReachabilityProb() * entry.getValue();
-		}
+
+		predecessorPropMap.object2DoubleEntrySet().fastForEach(entry -> {
+			curReachabilityProb += entry.getKey().getCurReachabilityProb()*entry.getDoubleValue();
+			
+		});
+
 		
-		if (nextReachabilityProb > 1.0) {
+		if (curReachabilityProb > 1.0) {
 			throw new RuntimeException("Path Probability greater than 1.0");
 		}
 	}
@@ -87,8 +79,12 @@ public class ProbState extends State{
 		predecessorPropMap.put(state, tranProb);
 	}
 	
+	public void updateAddToPredecessorProbMap(ProbState state, double increment) {
 	
-	public HashMap<ProbState, Double> getPredecessorProbMap() {
+		predecessorPropMap.addTo(state, increment);
+	}	
+	
+	public Object2DoubleOpenHashMap<ProbState> getPredecessorProbMap() {
 		return predecessorPropMap;
 	}
 	
