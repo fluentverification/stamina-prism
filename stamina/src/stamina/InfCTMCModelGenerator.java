@@ -73,6 +73,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	
 	// Absorbing state
 	private State absorbingState = null;
+	private ModulesFileModelGenerator modelGen;
 	
 	//Non Absorbing state
 	//private BitSet nonAbsorbingStateSet = null;
@@ -380,7 +381,12 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	@Override
 	public String getTransitionAction(int index, int offset) throws PrismException
 	{
-		return null;
+		if(modelGen == null) {
+			throw new PrismException("States have not yet been generated"); 
+		}
+		else {
+			return modelGen.getTransitionAction(index, offset);
+		}
 	}
 
 	@Override
@@ -601,7 +607,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		
 	 	
 		// Model gen from file
-	 	ModulesFileModelGenerator modelGen = new ModulesFileModelGenerator(modulesFile, parent);
+	 	modelGen = new ModulesFileModelGenerator(modulesFile, parent);
 	
 		//VarList varList = modelGen.createVarList();
 		if (modelGen.containsUnboundedVariables())
