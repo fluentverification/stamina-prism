@@ -71,6 +71,9 @@ public class StaminaCL {
 
 	// Use property to explore by highest rank transition
 	private static boolean rankTransitions = false;
+
+	// Export a list of transitions with their associated action
+	private String exportTransitionsToFile = null;
 	
 	
 	//////////////////////////////////// Command lines args to pass to prism ///////////////////
@@ -242,6 +245,7 @@ public class StaminaCL {
 			if (mispredictionFactor >= 0.0 )	Options.setMispredictionFactor(mispredictionFactor);
 			if (maxApproxCount >= 0) Options.setMaxRefinementCount(maxApproxCount);
 			if (probErrorWindow >= 0.0) Options.setProbErrorWindow(probErrorWindow);
+			if (exportTransitionsToFile != null) Options.setExportTransitionsToFile(exportTransitionsToFile);
 			Options.setRankTransitions(rankTransitions);
 			
 			Options.setNoPropRefine(noPropRefine);
@@ -385,6 +389,18 @@ public class StaminaCL {
 				{
 					rankTransitions = true;
 				}
+				else if (sw.equals("exportTrans"))
+				{
+					if (i < args.length - 1) {
+						// store argument for later use (append if already partially specified)
+						exportTransitionsToFile = args[++i].trim();
+							
+					}
+					else {
+						mainLog.println("File to export transitions not defined, using trans.txt by default");
+						exportTransitionsToFile = "trans.txt";
+					}
+				}
 				else {
 					printHelp();
 					exit();
@@ -509,6 +525,7 @@ public class StaminaCL {
         mainLog.println("-import <filename>.................. Import model to a file. Please provide a filename without an extension");
         mainLog.println("-property <property>................ Specify a specific property to check in a model file that contains many");
 		mainLog.println("-const <vals> ...................... Comma separated values for constants");
+		mainLog.println("-exportTrans <filename>............. Export the list of transitions and actions to a specified file name, or to trans.txt if no file name is specified. Transitions exported in the format srcStateIndex destStateIndex actionLabel");
 		mainLog.println("\tExamples:");
 		mainLog.println("\t-const a=1,b=5.6,c=true");
 		mainLog.println();

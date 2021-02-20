@@ -1,8 +1,11 @@
 package stamina;
 
+
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.BitSet;
 import java.util.Vector;
@@ -27,6 +30,32 @@ import prism.PrismLangException;
 import prism.PrismLog;
 import prism.Result;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.LinkedList;
+import java.util.List;
+
+import parser.VarList;
+import explicit.IndexedSet;
+import explicit.StateStorage;
+import explicit.ModelSimple;
+import explicit.ModelExplicit;
+import explicit.CTMCSimple;
+import prism.ModelGenerator;
+import prism.ModelType;
+import prism.Prism;
+import prism.PrismComponent;
+import prism.PrismException;
+import prism.PrismLog;
+import prism.PrismNotSupportedException;
+import prism.PrismPrintStreamLog;
+import prism.ProgressDisplay;
+import prism.UndefinedConstants;
+
+
+
 public class StaminaModelChecker extends Prism {
 	
 	
@@ -44,6 +73,7 @@ public class StaminaModelChecker extends Prism {
 		} catch (Exception e) {
 		}
 	}
+
 	
 	private void modifyExpression(Expression expr, boolean isMin) throws PrismLangException {
 		
@@ -416,9 +446,117 @@ public class StaminaModelChecker extends Prism {
 		mainLog.println("ProbMax: " + res_min_max[1].getResultString());
 		mainLog.println();
 		mainLog.println("========================================================================");
+
+		/*try{
+			super.exportTransToFile(true, Prism.EXPORT_PLAIN, new File("test.txt"));
+		}
+		catch(FileNotFoundException e) {
+			System.out.println("File could not be found for transition exporting");
+		}*/
+		if(Options.getExportTransitionsToFile() != null) {
+			printTransitionActions(infModelGen, false, Options.getExportTransitionsToFile());
+		}
+		
 		
 		return res_min_max[0];
 		
 	}
+
+	private void printTransitionActions(InfCTMCModelGenerator modelGen, boolean justReach, String exportFileName) throws PrismException{
+		// Model info
+		ModelType modelType;
+		// State storage
+		StateStorage<State> states;
+		LinkedList<State> explore;
+		State state, stateNew;
+		// Explicit model storage
+		ModelSimple modelSimple = null;
+		//DTMCSimple dtmc = null;
+		CTMCSimple ctmc = null;
+		/*MDPSimple mdp = null;
+		POMDPSimple pomdp = null;
+		CTMDPSimple ctmdp = null;
+		LTSSimple lts = null;*/
+		ModelExplicit model = null;
+		
+		//Distribution distr = null;
+		// Observation info
+		List<String> observableVars = null;
+		List<String> unobservableVars = null;
+		// Misc
+		int i, j, nc, nt, src, dest;
+		long timer;
+
+		mainLog.println("Exporting transitions to a file...");
+
+		try {
+			BufferedWriter out = new BufferedWriter(new FileWriter(exportFileName));
+		
+		
+
+			// Get model info
+			modelType = modelGen.getModelType();
+			
+			// Display a warning if there are unbounded vars
+			
+			// Initialise states storage
+			states = new IndexedSet<State>(true);
+			explore = new LinkedList<State>();
+			// Add initial state(s) to 'explore', 'states' and to the model
+			for (State initState : modelGen.getInitialStatesForTransitionFile()) {
+				explore.add(initState);
+				states.add(initState);
+			}
+			// Explore...
+			src = -1;
+			while (!explore.isEmpty()) {
+				// Pick next state to explore
+				// (they are stored in order found so know index is src+1)
+				state = explore.removeFirst();
+				src++;
+				// Explore all choices/transitions from this state
+				modelGen.exploreState(state);
+				// Look at each outgoing choice in turn
+				nc = modelGen.getNumChoices();
+				for (i = 0; i < nc; i++) {
+					// Look at each transition in the choice
+					nt = modelGen.getNumTransitions(i);
+					for (j = 0; j < nt; j++) {
+						stateNew = modelGen.computeTransitionTarget(i, j);
+						// Is this a new state?
+						if (states.add(stateNew)) {
+							// If so, add to the explore list
+							explore.add(stateNew);
+
+						}
+						// Get index of state in state set
+						dest = states.getIndexOfLastAdd();
+						// Add transitions to model
+						if (!justReach) {
+							switch (modelType) {
+							case CTMC:
+								//ctmc.addToProbability(src, dest, modelGen.getTransitionProbability(i, j));
+								out.write(src + " " + dest + " " + modelGen.getTransitionAction(i,j));
+								out.newLine();
+								break;
+							default:
+								throw new PrismNotSupportedException("Model construction not supported for " + modelType + "s");
+							}
+						}
+					}
+
+				}
+
+			}
+			out.close();
+		}
+		catch (Exception e) {
+			System.out.println("An error occurred creating the transition file");
+			e.printStackTrace();
+		}
+
+	}
+
+	
 
 }

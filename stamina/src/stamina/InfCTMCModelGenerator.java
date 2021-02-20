@@ -311,12 +311,22 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		return modulesFile.getDefaultInitialState();
 		
 	}
+
+	public State getInitialStateForTransitionFile() throws PrismException
+	{
+		return modulesFile.getDefaultInitialState();
+	}
 	
 	@Override
 	public List<State> getInitialStates() throws PrismException
 	{
 		// Default to the case of a single initial state
 		return Collections.singletonList(getInitialState());
+	}
+
+	public List<State> getInitialStatesForTransitionFile() throws PrismException
+	{
+		return Collections.singletonList(getInitialStateForTransitionFile());
 	}
 
 	@Override
@@ -379,7 +389,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 			return transitionList.getTransitionModuleOrAction(index);
 		}
 		else {
-			throw new PrismException("TransitionList not yet built");
+			return "[Absorbing_State]";
 		}
 	}
 
@@ -391,7 +401,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 			return transitionList.getTransitionModuleOrAction(transitionList.getTotalIndexOfTransition(index, offset));
 		}
 		else {
-			throw new PrismException("TransitionList not yet built");
+			return "[Absorbing_State]";
 		}
 
 	}
@@ -401,6 +411,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	{
 		return null;
 	}
+
 
 	@Override
 	public double getTransitionProbability(int index, int offset) throws PrismException

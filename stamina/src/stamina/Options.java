@@ -40,6 +40,8 @@ public class Options {
     // Specific Property
     private static boolean specificProperty = false;
     private static String property = null;
+
+	private static String exportTransitionsToFile = null;
 	
 	public static double getReachabilityThreshold() {
 		return reachabilityThreshold;
@@ -164,5 +166,13 @@ public class Options {
 
     public static void setPropertyName(String s) {
         property = s;
+    }
+
+	public static String getExportTransitionsToFile() {
+        return exportTransitionsToFile;
+    }
+
+    public static void setExportTransitionsToFile(String b) {
+        exportTransitionsToFile = b;
     }
 }
