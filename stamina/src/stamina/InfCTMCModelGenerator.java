@@ -82,6 +82,8 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	ExpressionTemporal propertyExpression = null;
 
 	
+
+
 	
 	/**
 	 * Build a ModulesFileModelGenerator for a particular PRISM model, represented by a ModuleFile instance.
@@ -165,7 +167,18 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	public Vector<String> getPerimeterStatesVector() {
 		return perimeterStates;
 	}
-	
+
+	public HashMap<State, ProbState> getGlobalStateSet() {
+		return globalStateSet;
+	}
+	public boolean finalModelHasAbsorbing() {
+		for (ProbState ps : globalStateSet.values()) {
+			if(ps.isStateTerminal()) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	/**
 	 * (Re-)Initialise the class ready for model exploration

@@ -9,6 +9,10 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.BitSet;
 import java.util.Vector;
+import java.util.TreeSet;
+import java.util.TreeMap;
+import java.util.HashMap;
+import java.util.Map;
 
 import explicit.CTMC;
 import explicit.CTMCModelChecker;
@@ -28,6 +32,7 @@ import prism.Prism;
 import prism.PrismException;
 import prism.PrismLangException;
 import prism.PrismLog;
+import prism.PrismUtils;
 import prism.Result;
 
 import java.io.File;
@@ -37,6 +42,10 @@ import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.List;
 
+
+import common.IterableStateSet;
+import common.iterable.IterableInt;
+import common.iterable.MappingIterator;
 import parser.VarList;
 import explicit.IndexedSet;
 import explicit.StateStorage;
@@ -318,16 +327,31 @@ public class StaminaModelChecker extends Prism {
 						explicit.StateValues probsExpl = mcCTMC.doTransient((CTMC) super.getBuiltModelExplicit(), uTime);
 						
 						double ans_min = 0.0;
-						
-						for(int i=1; i<super.getBuiltModelExplicit().getNumStates(); ++i) {
+						double ans_max;
+
+						if(infModelGen.finalModelHasAbsorbing()) {
+							for(int i=1; i<super.getBuiltModelExplicit().getNumStates(); ++i) {
 							
-							if(b2.get(i)) ans_min += (double) probsExpl.getValue(i);
+								if(b2.get(i)) ans_min += (double) probsExpl.getValue(i);
+								
+							}
 							
+							// TODO: need the index of absorbing state
+							ans_max = ans_min + (double) probsExpl.getValue(0);
+							ans_max = ans_max > 1 ? 1.0 : ans_max;
+						}
+						else {
+							for(int i=0; i<super.getBuiltModelExplicit().getNumStates(); ++i) {
+							
+								if(b2.get(i)) ans_min += (double) probsExpl.getValue(i);
+								
+							}
+							
+							// TODO: need the index of absorbing state
+							ans_max = ans_min;
 						}
 						
-						// TODO: need the index of absorbing state
-						double ans_max = ans_min + (double) probsExpl.getValue(0);
-						ans_max = ans_max > 1 ? 1.0 : ans_max;
+						
 						
 						timer = System.currentTimeMillis() - timer;
 						mainLog.println("\nTime for model checking: " + timer / 1000.0 + " seconds.");
@@ -454,7 +478,9 @@ public class StaminaModelChecker extends Prism {
 			System.out.println("File could not be found for transition exporting");
 		}*/
 		if(Options.getExportTransitionsToFile() != null) {
-			printTransitionActions(infModelGen, false, Options.getExportTransitionsToFile());
+			mainLog.println("\n\n Exporting transition list...");
+			printTransitionActions(infModelGen, Options.getExportTransitionsToFile());
+			mainLog.println("Export Complete");
 		}
 		
 		
@@ -462,7 +488,56 @@ public class StaminaModelChecker extends Prism {
 		
 	}
 
-	private void printTransitionActions(InfCTMCModelGenerator modelGen, boolean justReach, String exportFileName) throws PrismException{
+	private void printTransitionActions(InfCTMCModelGenerator modelGen, String exportFileName) throws PrismException{
+		
+		HashMap<State, ProbState> globalStateSet = modelGen.getGlobalStateSet();
+		TreeSet<State> sortedStates = new TreeSet<State>(globalStateSet.keySet());
+		if(modelGen.finalModelHasAbsorbing()) {
+			sortedStates.add(modelGen.getAbsorbingState());
+		}
+		HashMap<State, Integer> stateIndex = new HashMap<State,Integer>();
+		int spot = 0;
+		for (State sortState : sortedStates) {
+			stateIndex.put(sortState, spot);
+			spot++;
+		}
+
+		try {
+			BufferedWriter out = new BufferedWriter(new FileWriter(exportFileName));
+
+			for (State exploredState : sortedStates) {
+				modelGen.exploreState(exploredState);
+					// Look at each outgoing choice in turn
+				int nc = modelGen.getNumChoices();
+				TreeMap<State, int[]> sortedTrans = new TreeMap<State, int[]>(sortedStates.comparator());
+				for (int i = 0; i < nc; i++) {
+					// Look at each transition in the choice
+					int nt = modelGen.getNumTransitions(i);
+					for (int j = 0; j < nt; j++) {
+						State stateNew = modelGen.computeTransitionTarget(i, j);
+						int[] indices = new int[2];
+						indices[0] = i;
+						indices[1] = j;
+						sortedTrans.put(stateNew, indices);					
+					}
+				}
+				while(!sortedTrans.isEmpty()) {
+					Map.Entry<State, int[]> mapping = sortedTrans.pollFirstEntry();
+					State stateNew = mapping.getKey();
+					int i = mapping.getValue()[0];
+					int j = mapping.getValue()[1];
+					out.write(stateIndex.get(exploredState) + " " + stateIndex.get(stateNew) + " " + PrismUtils.formatDouble(modelGen.getTransitionProbability(i,j)) + " " + modelGen.getTransitionAction(i,j));
+					out.newLine();
+				}
+			}
+			out.close();
+		}
+		catch (Exception e) {
+			System.out.println("An error occurred creating the transition file");
+			e.printStackTrace();
+		}
+
+		/*	
 		// Model info
 		ModelType modelType;
 		// State storage
@@ -473,10 +548,6 @@ public class StaminaModelChecker extends Prism {
 		ModelSimple modelSimple = null;
 		//DTMCSimple dtmc = null;
 		CTMCSimple ctmc = null;
-		/*MDPSimple mdp = null;
-		POMDPSimple pomdp = null;
-		CTMDPSimple ctmdp = null;
-		LTSSimple lts = null;*/
 		ModelExplicit model = null;
 		
 		//Distribution distr = null;
@@ -554,9 +625,9 @@ public class StaminaModelChecker extends Prism {
 			System.out.println("An error occurred creating the transition file");
 			e.printStackTrace();
 		}
+		*/
 
 	}
-
 	
 
 }
