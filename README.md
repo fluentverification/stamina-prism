@@ -83,3 +83,6 @@ Other Options:
 
 ## Running case studies
 There are few case studies form different domain included with STAMINA. You can run the toggle example from stamina/stamina directory using ``./bin/stamina -kappa 1e-03 -reducekappa 1000 -maxapproxcount 5 -pbwin 0.001  ../case-studies/Toggle/toggle_IPTG_100.prism ../case-studies/Toggle/toggle_IPTG_100.csl``. Please refer to the description of case studies for more details about the examples.
+
+## External Libraries
+STAMINA makes use of the fastutil (https://github.com/vigna/fastutil) Java library. Fastutil is distributed under the Apache 2.0 license http://www.apache.org/licenses/LICENSE-2.0.html. The fastutil library was not modified at all for this project.
