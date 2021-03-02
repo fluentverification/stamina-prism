@@ -71,7 +71,7 @@ public class ProbState extends State{
 
 		
 		if (curReachabilityProb > 1.0) {
-			throw new RuntimeException("Path Probability greater than 1.0");
+			curReachabilityProb = 1.0;
 		}
 	}
 	
