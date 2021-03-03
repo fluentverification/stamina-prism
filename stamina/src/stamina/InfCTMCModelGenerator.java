@@ -719,7 +719,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 								exitRateSum += modelGen.getTransitionProbability(i, j);
 															}
 						}
-
+						//double exitRateInverse = 1.0/exitRateSum; 
 						for (int i = 0; i < nc; i++) {
 							// Look at each transition in the choice
 							//System.out.println("\nA choice\n");
@@ -804,12 +804,12 @@ public class InfCTMCModelGenerator implements ModelGenerator
 											
 										
 									//}
-								}
-								curProbState.setCurReachabilityProb(0.0);
-								curProbState.setStateTerminal(false);						
+								}						
 							}
 						}
-					}	
+					}
+					curProbState.setCurReachabilityProb(0.0);
+					curProbState.setStateTerminal(false);	
 				}
 				
 
