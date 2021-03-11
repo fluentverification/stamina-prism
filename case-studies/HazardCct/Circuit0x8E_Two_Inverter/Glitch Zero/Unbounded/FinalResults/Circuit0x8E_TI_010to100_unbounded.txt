@@ -6,13 +6,13 @@ PRISM
 =====
 
 Version: 4.5
-Date: Mon Dec 07 08:38:58 MST 2020
+Date: Sat Mar 06 10:53:33 MST 2021
 Hostname: el176-deeplearning
 Memory limits: cudd=1g, java(heap)=120g
 
 Type:        CTMC
-Modules:     BM3R1_protein HlyIIR_protein YFP_protein SrpR_protein BetI_protein PhlF_protein AmtR_protein topModel_PhlFpart_module_sub__pAmtR topModel_PhlFpart_module_sub__pSrpR topModel_YFPpart_module_sub__pBetI topModel_YFPpart_module_sub__pPhlF topModel_Inverter2_module_sub__Inverter2_fc topModel_AmtRpart_module_sub__pBAD topModel_AmtRpart_module_sub__pHlyIIR topModel_HlyIIRpart_module_sub__pTet topModel_HlyIIRpart_module_sub__pBAD topModel_Inverter1_module_sub__Inverter1_fc topModel_BetIpart_module_sub__pHlyIIR topModel_BetIpart_module_sub__pTet reaction_rates 
-Variables:   BM3R1_protein HlyIIR_protein YFP_protein SrpR_protein BetI_protein PhlF_protein AmtR_protein topModel_PhlFpart_module_sub__pAmtR topModel_PhlFpart_module_sub__pSrpR topModel_YFPpart_module_sub__pBetI topModel_YFPpart_module_sub__pPhlF topModel_Inverter2_module_sub__Inverter2_fc topModel_AmtRpart_module_sub__pBAD topModel_AmtRpart_module_sub__pHlyIIR topModel_HlyIIRpart_module_sub__pTet topModel_HlyIIRpart_module_sub__pBAD topModel_Inverter1_module_sub__Inverter1_fc topModel_BetIpart_module_sub__pHlyIIR topModel_BetIpart_module_sub__pTet 
+Modules:     YFP_protein BM3R1_protein AmtR_protein PhlF_protein BetI_protein SrpR_protein HlyIIR_protein topModel_PhlFpart_module_sub__pAmtR topModel_PhlFpart_module_sub__pSrpR topModel_YFPpart_module_sub__pPhlF topModel_YFPpart_module_sub__pBetI topModel_Inverter1_module_sub__Inverter1_fc topModel_Inverter2_module_sub__Inverter2_fc topModel_AmtRpart_module_sub__pHlyIIR topModel_AmtRpart_module_sub__pBAD topModel_HlyIIRpart_module_sub__pBAD topModel_HlyIIRpart_module_sub__pTet topModel_BetIpart_module_sub__pHlyIIR topModel_BetIpart_module_sub__pTet reaction_rates 
+Variables:   YFP_protein BM3R1_protein AmtR_protein PhlF_protein BetI_protein SrpR_protein HlyIIR_protein topModel_PhlFpart_module_sub__pAmtR topModel_PhlFpart_module_sub__pSrpR topModel_YFPpart_module_sub__pPhlF topModel_YFPpart_module_sub__pBetI topModel_Inverter1_module_sub__Inverter1_fc topModel_Inverter2_module_sub__Inverter2_fc topModel_AmtRpart_module_sub__pHlyIIR topModel_AmtRpart_module_sub__pBAD topModel_HlyIIRpart_module_sub__pBAD topModel_HlyIIRpart_module_sub__pTet topModel_BetIpart_module_sub__pHlyIIR topModel_BetIpart_module_sub__pTet 
 
 Generator:   stamina.InfCTMCModelGenerator
 Type:        CTMC
@@ -29,16 +29,16 @@ Warning: Model contains one or more unbounded variables: model construction may 
 
 Computing reachable states...
 Warning: Infinite State system: Reachability analysis based on reachabilityThreshold=1.0
- 41586 84030 120334 148103 178725 215907 234100 263458 288013 310472 333175 364804 383543 405972 434122 463284 478005 498518 523826 550794 578714 states
- 1 128819 250457 372222 465945 578714 states
-Reachable states exploration and model construction done in 77.134 secs.
+ 56627 103324 148017 189880 224540 258844 304313 326884 359633 402620 427185 452365 483861 523045 566106 586318 605886 634569 665990 704249 745091 764959 786457 813119 839834 871106 908506 951729 966549 984386 1005272 1028416 1054361 1079965 1107697 1141038 1180460 1218345 1233847 1251971 1270438 1292389 1314959 1336960 1360995 1385383 1415378 1447879 1491900 1520439 1534206 1550487 1567765 1585234 1604304 1625761 1645465 1667256 1690338 1714606 1741846 1769524 1807587 1853994 1866317 1880117 1894906 1909644 1926718 1943529 1962220 1981331 2000774 2019896 2040881 2060815 2084394 2109498 2134079 2167827 2203726 2240540 states
+ 1 127693 247515 363259 475870 598860 716461 833576 948622 1073274 1192878 1299874 1421223 1541672 1662036 1780868 1900847 2021243 2135595 2240540 states
+Reachable states exploration and model construction done in 302.18 secs.
 Sorting reachable states list...
 
-Time for model construction: 78.011 seconds.
+Time for model construction: 305.108 seconds.
 
 Type:        CTMC
-States:      578714 (1 initial)
-Transitions: 6776211
+States:      2240540 (1 initial)
+Transitions: 23642836
 
 ---------------------------------------------------------------------
 
@@ -48,16 +48,16 @@ Starting transient probability computation...
 
 Uniformisation: q.t = 1.02 x 1000.0 = 1020.0
 Fox-Glynn (1.25E-7): left = 794, right = 1293
-Transient probability computation took 1294 iters and 373.045 seconds.
+Transient probability computation took 1294 iters and 1043.42 seconds.
 
-Time for model checking: 373.081 seconds.
+Time for model checking: 1043.482 seconds.
 
-Result: 0.30657643521619377 (minimum bound)
+Result: 0.46610588340357073 (minimum bound)
 
-Result: 0.9995586656072855 (maximum bound)
+Result: 0.6167383441209802 (maximum bound)
 
 ========================================================================
-Approximation<2> : kappa = 5.9604644775390625E-8
+Approximation<2> : kappa = 1.4901161193847656E-8
 ========================================================================
 
 ---------------------------------------------------------------------
@@ -67,17 +67,17 @@ Building model...
 Warning: Model contains one or more unbounded variables: model construction may not terminate
 
 Computing reachable states...
-Warning: Infinite State system: Reachability analysis based on reachabilityThreshold=5.9604644775390625E-8
- 592111 609945 629016 652636 677300 708335 730696 746311 763377 782635 804036 826409 853123 889010 902322 917674 933326 951609 971891 992199 1015347 1040248 1076563 1091704 1104346 1118680 1133425 1149789 1168668 1187850 1207812 1229109 1251993 1282047 1304646 1313453 1324898 1338779 1353091 1367902 1382901 1401460 1417745 1437232 1456018 1475216 1497966 1524848 1551531 1561178 1571423 1583033 1596289 1609753 1624445 1639861 1655766 1672666 1690905 1707735 1726379 1745410 1767360 1794929 1824460 states
- 1 122977 244957 355605 479739 597212 705776 824019 944939 1061720 1178557 1298037 1412623 1530997 1640508 1757873 1824460 states
-Reachable states exploration and model construction done in 241.326 secs.
+Warning: Infinite State system: Reachability analysis based on reachabilityThreshold=1.4901161193847656E-8
+ 2251538 2263746 2277005 2290545 2305759 2319891 2335038 2348930 2364890 2381642 2399357 2417353 2434334 2452246 2471964 2491931 2512920 2536308 2560916 2590269 2626035 2673350 2683245 2692767 2703736 2713998 2728292 2741127 2754607 2769419 2784671 2800866 2816564 2833609 2850936 2867335 2884833 2902225 2920412 2938349 2957742 2977563 2999067 3022104 3048533 3077442 3111150 3151445 3162864 3172708 3184115 3195045 3207730 3219852 3233122 3246122 3260063 3273496 3288356 3304541 3322375 3337627 3353572 3370410 3387464 3404069 3420684 3438439 3456662 3475047 3494437 3516479 3539030 3563752 3589852 3622652 3664805 3686361 states
+ 1 129356 246506 365002 481477 596898 717700 828945 945705 1067609 1184063 1299104 1413853 1532733 1647532 1768541 1888200 1997417 2118809 2231817 2332963 2448707 2563034 2675911 2797471 2915561 3028346 3145532 3254678 3374976 3490086 3601617 3686361 states
+Reachable states exploration and model construction done in 327.985 secs.
 Sorting reachable states list...
 
-Time for model construction: 244.131 seconds.
+Time for model construction: 332.468 seconds.
 
 Type:        CTMC
-States:      1824460 (1 initial)
-Transitions: 21206703
+States:      3686361 (1 initial)
+Transitions: 38807029
 
 ---------------------------------------------------------------------
 
@@ -87,59 +87,20 @@ Starting transient probability computation...
 
 Uniformisation: q.t = 1.02 x 1000.0 = 1020.0
 Fox-Glynn (1.25E-7): left = 794, right = 1293
-Transient probability computation took 1294 iters and 865.902 seconds.
+Transient probability computation took 1294 iters and 1728.018 seconds.
 
-Time for model checking: 865.931 seconds.
+Time for model checking: 1728.07 seconds.
 
-Result: 0.4422434416923641 (minimum bound)
+Result: 0.4714936989879035 (minimum bound)
 
-Result: 0.7558348236733479 (maximum bound)
-
-========================================================================
-Approximation<3> : kappa = 9.313225746154785E-10
-========================================================================
-
----------------------------------------------------------------------
-
-Building model...
-
-Warning: Model contains one or more unbounded variables: model construction may not terminate
-
-Computing reachable states...
-Warning: Infinite State system: Reachability analysis based on reachabilityThreshold=9.313225746154785E-10
- 1830250 1838276 1848137 1859354 1871579 1884014 1897306 1908930 1921892 1936957 1953505 1971222 1987952 2003924 2022306 2040948 2061662 2086918 2120932 2134359 2143746 2154026 2164338 2176030 2188012 2200781 2213582 2227856 2242099 2257380 2273705 2289849 2302741 2317491 2332829 2350980 2368084 2387901 2409450 2437908 2464926 2473206 2482585 2491585 2501459 2512152 2522895 2535140 2546920 2560067 2573761 2586414 2599615 2614500 2630602 2646572 2661549 2677136 2692626 2708702 2726155 2742356 2762787 2787722 2818455 2834373 2842446 2851382 2859791 2868756 2878396 2888823 2899724 2911728 2923002 2933606 2946415 2960327 2971913 2985118 2999835 3015586 3029985 3043957 3058521 3073535 3087357 3102054 3119877 3136400 3152071 3174413 3201329 3230208 3238300 3246669 3254914 3263790 3272634 3281163 3290634 3300670 3311753 3321837 3333698 3345740 3356383 3369250 3383700 3397534 3410441 3425982 3441645 3455096 3469181 3484245 3498543 3513761 3527959 3543417 3560282 3579230 3599136 3622167 3654553 3664295 states
- 1 129268 240611 365077 484503 599494 706024 829225 937906 1060765 1178250 1293415 1409772 1529853 1650395 1754315 1863579 1972767 2092159 2204825 2318306 2436839 2548359 2664728 2775818 2890911 3001981 3115533 3223150 3335785 3441096 3554745 3664295 states
-Reachable states exploration and model construction done in 472.774 secs.
-Sorting reachable states list...
-
-Time for model construction: 478.627 seconds.
-
-Type:        CTMC
-States:      3664295 (1 initial)
-Transitions: 42295559
-
----------------------------------------------------------------------
-
-Verifying Prob .....
-
-Starting transient probability computation...
-
-Uniformisation: q.t = 1.02 x 1000.0 = 1020.0
-Fox-Glynn (1.25E-7): left = 794, right = 1293
-Transient probability computation took 1294 iters and 1806.445 seconds.
-
-Time for model checking: 1806.457 seconds.
-
-Result: 0.4696988070881326 (minimum bound)
-
-Result: 0.5056467317043692 (maximum bound)
+Result: 0.4903670864659795 (maximum bound)
 
 ========================================================================
 
 Property: P=? [ true U[0,1000] (YFP_protein>=30) ]
 
-ProbMin: 0.4696988070881326 (minimum bound)
+ProbMin: 0.4714936989879035 (minimum bound)
 
-ProbMax: 0.5056467317043692 (maximum bound)
+ProbMax: 0.4903670864659795 (maximum bound)
 
 ========================================================================
