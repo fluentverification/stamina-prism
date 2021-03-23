@@ -6,7 +6,7 @@ public class Options {
 	private static double reachabilityThreshold = 1;
 	
 	// Kappa reduction factor
-	private static double kappaReductionFactor = 2;
+	private static double kappaReductionFactor = 1.25;
 
 	private static double mispredictionFactor = 2;
 	
