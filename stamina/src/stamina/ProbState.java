@@ -12,11 +12,6 @@ public class ProbState extends State{
 	private boolean isStateTerminal;
 	private boolean isStateAbsorbing;
 	
-	/**
-	 * This maps stores transition rate for each outgoing transition.
-	 */
-	private Object2DoubleOpenHashMap<ProbState> predecessorPropMap; 
-	
 	
 	public ProbState(State s) {
 		super(s);
@@ -26,7 +21,6 @@ public class ProbState extends State{
 		isStateTerminal = true;
 		isStateAbsorbing = false;
 		
-		predecessorPropMap = new Object2DoubleOpenHashMap<ProbState>();
 	}
 	
 	
@@ -59,35 +53,21 @@ public class ProbState extends State{
 	}
 	
 	
-	public void computeNextReachabilityProb() {
-		
-		curReachabilityProb = 0.0;
-		
-
-		predecessorPropMap.object2DoubleEntrySet().fastForEach(entry -> {
-			curReachabilityProb += entry.getKey().getCurReachabilityProb()*entry.getDoubleValue();
-			
-		});
-
-		
-		if (curReachabilityProb > 1.0) {
+	public void addToReachability(double newReach) {
+		curReachabilityProb += newReach;
+		if(curReachabilityProb >= 1.0) {
 			curReachabilityProb = 1.0;
 		}
 	}
-	
-	public void updatePredecessorProbMap(ProbState state, double tranProb) {
-		predecessorPropMap.put(state, tranProb);
+
+	public void subtractFromReachability(double minusReach) {
+		curReachabilityProb -= minusReach;
+		if(curReachabilityProb <= 0.0) {
+			curReachabilityProb = 0.0;
+		}
 	}
 	
-	public void updateAddToPredecessorProbMap(ProbState state, double increment) {
-	
-		predecessorPropMap.addTo(state, increment);
-	}	
-	
-	public Object2DoubleOpenHashMap<ProbState> getPredecessorProbMap() {
-		return predecessorPropMap;
-	}
-	
+
 	/**
 	 * Get string representation, e.g. "(0,true,5)". 
 	 */
