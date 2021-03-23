@@ -683,7 +683,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		int prevStateCount = globalStateSet.size();
 		double perimReachability = 1;
 		// State Search 
-		while(perimReachability >= Options.getProbErrorWindow()/Options.getMisPredictionFactor()) {
+		while(perimReachability >= Options.getProbErrorWindow()/Options.getMispredictionFactor()) {
 			/*double startTime = System.currentTimeMillis();
 			double predMapTime = 0;// Explore...
 			double prismTime = 0.0;
