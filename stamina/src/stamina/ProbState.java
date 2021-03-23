@@ -2,7 +2,6 @@ package stamina;
 
 import java.util.HashMap;
 import java.util.Map;
-import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap;
 import parser.State;
 
 public class ProbState extends State{
