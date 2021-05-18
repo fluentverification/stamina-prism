@@ -150,27 +150,42 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	
 	/**
 	 * set reachability threshold
+	 @param th (double) The new reachability threshold to set
 	 */
 	public void setReachabilityThreshold(double th) {
 		reachabilityThreshold = th;
 	}
-	
-	
+	/**
+	 * Set the property description
+	 * @param expr (ExpressionTemporal) The property expression to set.
+	 */
 	public void setPropertyExpression(ExpressionTemporal expr) {
 		propertyExpression = expr;
 	}
-
+	/**
+	 * Clears the perimeter states vector
+	 */
 	public void clearPerimeterStatesVector() {
 		perimeterStates.clear();
 	}
-
+	/**
+	 * Gets a pointer to a vector containing all perimter states
+	 * @return Perimeter states (in the format of a Vector<String>)
+	 */
 	public Vector<String> getPerimeterStatesVector() {
 		return perimeterStates;
 	}
-
+	/**
+	 * Gets the global state set.
+	 * @return A hash map containing all states in the global state set.
+	 */
 	public HashMap<State, ProbState> getGlobalStateSet() {
 		return globalStateSet;
 	}
+	/**
+	 * Determines if the final (truncated) model has absorbing states
+	 * @return a boolean value reflective of whether or not absorbing states exist in the final model.
+	 */
 	public boolean finalModelHasAbsorbing() {
 		for (ProbState ps : globalStateSet.values()) {
 			if(ps.isStateTerminal()) {
@@ -183,6 +198,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	/**
 	 * (Re-)Initialise the class ready for model exploration
 	 * (can only be done once any constants needed have been provided)
+	 * @throws PrismLangException
 	 */
 	private void initialise() throws PrismLangException
 	{
@@ -201,19 +217,33 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	}
 	
 	// Methods for ModelInfo interface
-	
+	/**
+	 * Gets the model type
+	 * @return the model type
+	 */
 	@Override
 	public ModelType getModelType()
 	{
 		return modelType;
 	}
-
+	/**
+	 * Sets constants which are undefined by the PRISM file passed in. This corresponds to the -const
+	 * parameter passed into the stamina binary. This function is a wrapper for setSomeUndefinedConstants(Values, boolean)
+	 * @param someValues The values to be passed in.
+	 * @throws PrismException
+	 */
 	@Override
 	public void setSomeUndefinedConstants(Values someValues) throws PrismException
 	{
 		setSomeUndefinedConstants(someValues, false);
 	}
-
+	/**
+	 * Sets constants undefined by the PRISM file passed in. This corresponds to the -const
+	 * parameter and allows the constants to be defined as exact or not.
+	 * @param someValues The values to be passed in.
+	 * @param exact are these constants exact?
+	 * @throws PrismException
+	 */
 	@Override
 	public void setSomeUndefinedConstants(Values someValues, boolean exact) throws PrismException
 	{
@@ -228,79 +258,123 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		mfConstants = modulesFile.getConstantValues();
 		initialise();
 	}
-	
+	/**
+	 * Gets the constant values associated with this PRISM model
+	 * @return The constant values
+	 */
 	@Override
 	public Values getConstantValues()
 	{
 		return mfConstants;
 	}
-	
+	/**
+	 * Checks to see if the modules file contains unbounded variables.
+	 * @return Whether or not there are unbounded variables
+	 */
 	@Override
 	public boolean containsUnboundedVariables()
 	{
 		return modulesFile.containsUnboundedVariables();
 	}
-	
+	/**
+	 * Gets the number of variables in the PRISM modules file.
+	 * @return The number of variables
+	 */
 	@Override
 	public int getNumVars()
 	{
 		return modulesFile.getNumVars();
 	}
-	
+	/**
+	 * Gets the variable names from the modules file.
+	 * @return A List of type String with the variable names in it.
+	 */
 	@Override
 	public List<String> getVarNames()
 	{
 		return modulesFile.getVarNames();
 	}
-
+	/**
+	 * Gets the types of each variable corresponding to the modules file.
+	 * @return A List of type Type with the variable types in it.
+	 */
 	@Override
 	public List<Type> getVarTypes()
 	{
 		return modulesFile.getVarTypes();
 	}
-
+	/**
+	 * Gets the number of labels.
+	 * @return The number of labels as int.
+	 */
 	@Override
 	public int getNumLabels()
 	{
 		return labelList.size();	
 	}
-
+	/**
+	 * Gets the label names.
+	 * @return A List of type String with the label names.
+	 */
 	@Override
 	public List<String> getLabelNames()
 	{
 		return labelNames;
 	}
-	
+	/**
+	 * Gets a label name at a particular index.
+	 * @param i The index of the label name to get.
+	 * @return The label at index i.
+	 * @throws PrismException
+	 */
 	@Override
 	public String getLabelName(int i) throws PrismException
 	{
 		return labelList.getLabelName(i);
 	}
-	
+	/**
+	 * Given a string with a desired label name, gets the index corresponding to that label.
+	 * @param label The name of the label.
+	 * @return The index of the label.
+	 */
 	@Override
 	public int getLabelIndex(String label)
 	{
 		return labelList.getLabelIndex(label);
 	}
-	
+	/**
+	 * Gets the number of rewards structs.
+	 * @return The number of rewards structs in the PRISM model.
+	 */
 	@Override
 	public int getNumRewardStructs()
 	{
 		return modulesFile.getNumRewardStructs();
 	}
-	
+	/**
+	 * Gets all rewards structure names.
+	 * @return A List of type String with the reward structure names.
+	 */
 	@Override
 	public List<String> getRewardStructNames()
 	{
 		return modulesFile.getRewardStructNames();
 	}
-	
+	/**
+	 * Given a name of a rewards structure, gets the index of that rewards structure.
+	 * @param name The name of the rewards structure.
+	 * @return The index corresponding to the name.
+	 */
 	@Override
 	public int getRewardStructIndex(String name)
 	{
 		return modulesFile.getRewardStructIndex(name);
 	}
-	
+	/**
+	 * Gets a particular reward struct at an index.
+	 * @param i The index of the reward struct desired.
+	 * @return The RewardStruct at index i.
+	 */
 	@Override
 	public RewardStruct getRewardStruct(int i)
 	{
@@ -308,13 +382,21 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	}
 
 	// Methods for ModelGenerator interface
-	
+	/**
+	 * Checks to see if there is an initial state.
+	 * @return boolean indicating whether or not there is a single initial state.
+	 * @throws PrismException
+	 */
 	@Override
 	public boolean hasSingleInitialState() throws PrismException
 	{
 		return modulesFile.getInitialStates() == null;
 	}
-	
+	/**
+	 * Gets the default initial state after model truncation.
+	 * @return The default initial state.
+	 * @throws PrismException
+	 */
 	@Override
 	public State getInitialState() throws PrismException
 	{
@@ -324,24 +406,41 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		return modulesFile.getDefaultInitialState();
 		
 	}
-
+	/**
+	 * Gets initial state for transition file.
+	 * @return Initial state for transition matrix file.
+	 * @throws PrismException
+	 */
 	public State getInitialStateForTransitionFile() throws PrismException
 	{
 		return modulesFile.getDefaultInitialState();
 	}
-	
+	/**
+	 * Gets all initial states after model truncation.
+	 * @return A List of type State with all of the initial states.
+	 * @throws PrismException
+	 */
 	@Override
 	public List<State> getInitialStates() throws PrismException
 	{
 		// Default to the case of a single initial state
 		return Collections.singletonList(getInitialState());
 	}
-
+	/**
+	 * Gets all initial states for transition matrix file.
+	 * @return A List of type State that contains all of the initial states for a transition file.
+	 * @throws PrismException
+	 */
 	public List<State> getInitialStatesForTransitionFile() throws PrismException
 	{
 		return Collections.singletonList(getInitialStateForTransitionFile());
 	}
-
+	/**
+	 * Explores a particular state. If it's an absorbing state, clears its transition list,
+	 * otherwise, it calculates a transition list for it.
+	 * @param exploreState The state to explore.
+	 * @throws PrismException
+	 */
 	@Override
 	public void exploreState(State exploreState) throws PrismException
 	{
@@ -357,13 +456,20 @@ public class InfCTMCModelGenerator implements ModelGenerator
 			transitionListBuilt = true;
 		}
 	}
-	
+	/**
+	 * Gets the state the model generator is about to explore.
+	 * @return The state we are about to explore.
+	 */
 	@Override
 	public State getExploreState()
 	{
 		return exploreState;
 	}
-	
+	/**
+	 * Gets the number of choices available for the state we are about to explore.
+	 * @return The number of choices available.
+	 * @throws PrismException
+	 */
 	@Override
 	public int getNumChoices() throws PrismException
 	{
@@ -376,13 +482,22 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		}
 		
 	}
-
+	/**
+	 * Gets the number of transitions for the current state.
+	 * @return Not implemented.
+	 * @throws PrismException
+	 */
 	@Override
 	public int getNumTransitions() throws PrismException
 	{
 		throw new PrismException("Not Implemented");
 	}
-
+	/**
+	 * Gets the number of transitions for the choice at a specific index in the transitions list.
+	 * @param index The index of the choice within the transition list to look at.
+	 * @return The number of transitions associated with that choice.
+	 * @throws PrismException
+	 */
 	@Override
 	public int getNumTransitions(int index) throws PrismException
 	{
@@ -394,7 +509,13 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		}
 		
 	}
-
+	/**
+	 * Gets the action of the transition list at an index. If no transition list exists then it
+	 * means that state is absorbing, so returns [Absorbing_State]
+	 * @param index The index of the transition list to get.
+	 * @return The transition action in the form of a String.
+	 * @throws PrismException
+	 */
 	@Override
 	public String getTransitionAction(int index) throws PrismException
 	{
@@ -405,7 +526,14 @@ public class InfCTMCModelGenerator implements ModelGenerator
 			return "[Absorbing_State]";
 		}
 	}
-
+	/**
+	 * Gets the action of the transition list at an index and offset. If no transition list exists
+	 * then state is absorbing, so returns [Absorbing_State].
+	 * @param index The index to look at.
+	 * @param offset The offset to look at.
+	 * @return The action at that location of the transition list.
+	 * @throws PrismException
+	 */
 	@Override
 	public String getTransitionAction(int index, int offset) throws PrismException
 	{
@@ -418,7 +546,12 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		}
 
 	}
-
+	/**
+	 * Gets the choice action at an index. TODO: Why does this return null?
+	 * @param index Index to look at.
+	 * @return null
+	 * @throws PrismException
+	 */
 	@Override
 	public String getChoiceAction(int index) throws PrismException
 	{
