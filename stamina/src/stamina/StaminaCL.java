@@ -84,7 +84,10 @@ public class StaminaCL {
 	private String solutionMethod = null;
 	
 	
-
+	/**
+	 * Main function. Entry point into STAMINA.
+	 * @param args Command line arguments.
+	 */
 	public static void main(String[] args) {
         Runtime.getRuntime().addShutdownHook(new Thread()
         {
@@ -93,7 +96,7 @@ public class StaminaCL {
                 Runtime.getRuntime().halt(0);
             }
         });	
-		// Normal operation: just run PrismCL
+		// Normal operation: just run StaminaCL
 		if (args.length > 0) {
 			new StaminaCL().run(args);
 		}
@@ -101,7 +104,10 @@ public class StaminaCL {
 			System.err.println("Error: Missing arguments.");
 		}
 	}
-	
+	/**
+	 * Runs the StaminaCL.
+	 * @param args Command line arguments to parse.
+	 */
 	public void run(String[] args) {
 		
 		Result res;
@@ -209,7 +215,9 @@ public class StaminaCL {
 		
 	}
 	
-	
+	/**
+	 * Initializes STAMINA to ready state. Also initializes the PRISM engine we're using.
+	 */
 	public void initializeSTAMINA() {
 	
 		//init prism
@@ -234,7 +242,9 @@ public class StaminaCL {
 	}
 	
 	
-	
+	/**
+	 * Processes command line arguments.
+	 */
 	private void processOptions() {
 		
 		try {
@@ -275,12 +285,18 @@ public class StaminaCL {
 		}
 	}
 	
-	
+	/**
+	 * Parses command-line arguments. TODO: why do we need this when we have parseArguments?
+	 * @param args Arguments to parse
+	 */
 	private void doParsing(String[] args) {
 		
 		parseArguments(args);		
 	}
-	
+	/**
+	 * Parses command line arguments.
+	 * @param args Arguments to parse.
+	 */
 	void parseArguments(String[] args) {
 		
 		String sw;

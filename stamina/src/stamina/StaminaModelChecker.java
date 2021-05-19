@@ -83,7 +83,12 @@ public class StaminaModelChecker extends Prism {
 		}
 	}
 
-	
+	/**
+	 * Modifies an expression.
+	 * @param expr Expression to modify.
+	 * @param isMin Expression is minimum.
+	 * @throws PrismLangException
+	 */
 	private void modifyExpression(Expression expr, boolean isMin) throws PrismLangException {
 		
 		if(expr instanceof ExpressionBinaryOp) {
@@ -136,7 +141,14 @@ public class StaminaModelChecker extends Prism {
 		//return expr;
 	}
 	
-	
+	/**
+	 * Stops the model checking process and checks whether or not it got the probability range to the desired bound.
+	 * @param minProb The lower bound on the probability.
+	 * @param maxProb The upper bound on the probability.
+	 * @param termParam The (tight) range we want for Pmax - Pmin
+	 * @return Whether or not the model achieved maxProb - minProb <= termParam. I.e., whether or not
+	 * we were successful in state space approximation.
+	 */
 	private boolean terminateModelCheck(Object minProb, Object maxProb, double termParam) {
 		
 		if( (minProb instanceof Boolean) && (maxProb instanceof Boolean)){
@@ -487,7 +499,12 @@ public class StaminaModelChecker extends Prism {
 		return res_min_max[0];
 		
 	}
-
+	/**
+	 * Prints all transition actions taken by the InfCTMCModelGenerator to a file.
+	 * @param modelGen The model generator we're using.
+	 * @param exportFileName The file we're exporting to.
+	 * @throws PrismException
+	 */
 	private void printTransitionActions(InfCTMCModelGenerator modelGen, String exportFileName) throws PrismException{
 		
 		HashMap<State, ProbState> globalStateSet = modelGen.getGlobalStateSet();

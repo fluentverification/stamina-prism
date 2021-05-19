@@ -150,7 +150,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	
 	/**
 	 * set reachability threshold
-	 @param th (double) The new reachability threshold to set
+	 * @param th (double) The new reachability threshold to set
 	 */
 	public void setReachabilityThreshold(double th) {
 		reachabilityThreshold = th;
