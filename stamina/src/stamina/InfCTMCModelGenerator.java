@@ -558,7 +558,15 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		return null;
 	}
 
-
+	/**
+	 * Gets the probability that a particular choice and offset are taken.
+	 * If the transistion list is not built, then the state is absorbing and
+	 * the probability is 1.0.
+	 * @param index The index of the choice.
+	 * @param offset The offset of the choice to get the probability from.
+	 * @return The probability of transition.
+	 * @throws PrismException
+	 */
 	@Override
 	public double getTransitionProbability(int index, int offset) throws PrismException
 	{
@@ -569,13 +577,26 @@ public class InfCTMCModelGenerator implements ModelGenerator
 			return 1.0;
 		}
 	}
-
+	/**
+	 * Gets the transition probability using just an index.
+	 * @param index The index to get the transition probability.
+	 * @return The probability. TODO: not implemented.
+	 * @throws PrismException 
+	 */
 	//@Override
 	public double getTransitionProbability(int index) throws PrismException
 	{
 		throw new PrismException("Not Implemented");
 	}
-
+	/**
+	 * Computes the target state of a transition from the current state based on 
+	 * the transition list. If state is absorbing, will always return a pointer to the
+	 * current state.
+	 * @param index The index of the choice.
+	 * @param offset The offset from that index to compute the target state for.
+	 * @return The state we will be travelling to.
+	 * @throws PrismException
+	 */
 	@Override
 	public State computeTransitionTarget(int index, int offset) throws PrismException
 	{	
@@ -596,20 +617,36 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		}
 		
 	}
-
+	/**
+	 * Computes the transition target just based on a single index.
+	 * @param index The index of the choice.
+	 * @return TODO: not implemented
+	 * @throws PrismException
+	 */
 	//@Override
 	public State computeTransitionTarget(int index) throws PrismException
 	{
 		throw new PrismException("Not Implemented");
 	}
-	
+	/**
+	 * Evaluates a label at an index and indicates whether it is currently true for the exploreState
+	 * @param i The index of the label.
+	 * @return Whether or not that label is currently true.
+	 * @throws PrismException
+	 */
 	@Override
 	public boolean isLabelTrue(int i) throws PrismException
 	{
 		Expression expr = labelList.getLabel(i);
 		return expr.evaluateBoolean(exploreState);
 	}
-	
+	/**
+	 * Gets the total state reward at a specific index of rewards structure and a specific state.
+	 * @param r The index of the reward structure.
+	 * @param state The state to evaluate the rewards structure at.
+	 * @return The total state reward at the given state.
+	 * @throws PrismException
+	 */
 	@Override
 	public double getStateReward(int r, State state) throws PrismException
 	{
@@ -629,7 +666,15 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		}
 		return d;
 	}
-
+	/**
+	 * Gets the rewards from a rewards structure witha specific index associated with being at a certain state and
+	 * taking a certain action.
+	 * @param r The index of the rewards structure.
+	 * @param state The state we are at.
+	 * @param action The action we wish to take.
+	 * @return The total reward associated with that state-action combination.
+	 * @throws PrismException
+	 */
 	@Override
 	public double getStateActionReward(int r, State state, Object action) throws PrismException
 	{
@@ -652,13 +697,22 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		}
 		return d;
 	}
-	
+	/**
+	 * Calculates the state rewards associated with a specific state and store array.
+	 * @param state The state the rewards are associated with
+	 * @param store The array of stored probabilities. TODO: not 100% sure this is correct
+	 * @throws PrismLangException
+	 */
 	//@Override
 	public void calculateStateRewards(State state, double[] store) throws PrismLangException
 	{
 		updater.calculateStateRewards(state, store);
 	}
-	
+	/**
+	 * Provides the list of variables associated with the PRISM model.
+	 * TODO: why is this named createVarList() and not getVarList()?
+	 * @return The list of variables.
+	 */
 	@Override
 	public VarList createVarList()
 	{
@@ -666,7 +720,12 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	}
 	
 	// Miscellaneous (unused?) methods
-	
+	/**
+	 * Gets a random initial state given a random number generator.
+	 * @param rng The RandomNumberGenerator to pass into the method.
+	 * @param initialState A pointer to the current initial state.
+	 * @throws PrismException Multiple initial states not yet supported.
+	 */
 	//@Override
 	public void getRandomInitialState(RandomNumberGenerator rng, State initialState) throws PrismException
 	{
@@ -678,7 +737,11 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	}
 
 	// Local utility methods
-
+	/**
+	 * Determines if a rewards structure at a specific index has transition rewards.
+	 * @param i The index of the rewards structure.
+	 * @return Whether or not that structure has transition rewards associated with it.
+	 */
 	//@Override
 	public boolean rewardStructHasTransitionRewards(int i)
 	{
@@ -691,7 +754,12 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	
-	
+	/**
+	 * Replaces the label on an expression.
+	 * @param expr Expression to replace the label on.
+	 * @return The new expression, with replaced label.
+	 * @throws PrismException
+	 */
 	Expression replaceLabel(Expression expr) throws PrismException {
 		
 		if(expr instanceof ExpressionUnaryOp) {
@@ -766,7 +834,12 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		return expr;
 	}
 	
-
+	/**
+	 * Does reachability analysis and truncates state space based on values of Kappa (&kappa;), and
+	 * its reduction factor. This method performs a breadth first search to find most of the probability
+	 * mass of the state space.
+	 * @throws PrismException Does not support anything other than CTMCs.
+	 */
 	public void doReachabilityAnalysis() throws PrismException {
 		
 	 	
