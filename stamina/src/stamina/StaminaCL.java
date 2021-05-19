@@ -505,6 +505,7 @@ public class StaminaCL {
 	
 	/**
 	 * Report a (fatal) error and exit cleanly (with exit code 1).
+	 * @param s Error message
 	 */
 	private void errorAndExit(String s)
 	{
