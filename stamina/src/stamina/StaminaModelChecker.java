@@ -79,7 +79,9 @@ public class StaminaModelChecker extends Prism {
 		super(mainLog);
 		try {
 			super.setCUDDMaxMem(Options.getCuddMemoryLimit());
-		} catch (Exception e) {
+		} 
+		catch (Exception e) {
+		
 		}
 	}
 
@@ -142,7 +144,7 @@ public class StaminaModelChecker extends Prism {
 	}
 	
 	/**
-	 * Stops the model checking process and checks whether or not it got the probability range to the desired bound.
+	 * Whether or not, according to our bounding of probabilities, we can terminate the model checking.
 	 * @param minProb The lower bound on the probability.
 	 * @param maxProb The upper bound on the probability.
 	 * @param termParam The (tight) range we want for Pmax - Pmin
@@ -151,8 +153,7 @@ public class StaminaModelChecker extends Prism {
 	 */
 	private boolean terminateModelCheck(Object minProb, Object maxProb, double termParam) {
 		
-		if( (minProb instanceof Boolean) && (maxProb instanceof Boolean)){
-				
+		if((minProb instanceof Boolean) && (maxProb instanceof Boolean)){
 				boolean terminateRefinment = !(((boolean) minProb) ^ ((boolean) maxProb));
 				return terminateRefinment;
 		}

@@ -87,7 +87,8 @@ public class Options {
 		mispredictionFactor = fac;
 	}
 	/**
-	 * Gets the max approximate count.
+	 * Gets the max approximate count:  maximum number of iterations used in computing the upper and lower bounds of the
+	 * probabilities of reaching a certain state.
 	 * @return Max approximate count.
 	 */
 	public static int getMaxApproxCount() {
