@@ -1,0 +1,27 @@
+var searchData=
+[
+  ['setcuddmemorylimit_164',['setCuddMemoryLimit',['../classstamina_1_1Options.html#ae3dbb18dab9e7a2b02692dd84e3d8d34',1,'stamina::Options']]],
+  ['setcurreachabilityprob_165',['setCurReachabilityProb',['../classstamina_1_1ProbState.html#a8fd5930144d80a5879e4333e06f0afff',1,'stamina::ProbState']]],
+  ['setexportfilename_166',['setExportFileName',['../classstamina_1_1Options.html#abe41e10e6218cfc8053541875ba9c0f3',1,'stamina::Options']]],
+  ['setexportmodel_167',['setExportModel',['../classstamina_1_1Options.html#a0d840d6f8f2dfa8ce7dc57d4982bd768',1,'stamina::Options']]],
+  ['setexportperimeterfilename_168',['setExportPerimeterFilename',['../classstamina_1_1Options.html#a9fad25f405ed20470ce5963a749d5020',1,'stamina::Options']]],
+  ['setexportperimeterstates_169',['setExportPerimeterStates',['../classstamina_1_1Options.html#a73adf8f4ec5093faea71c5b51e7581de',1,'stamina::Options']]],
+  ['setexporttransitionstofile_170',['setExportTransitionsToFile',['../classstamina_1_1Options.html#ac60bede907043086f88a4c7416c332d1',1,'stamina::Options']]],
+  ['setimportfilename_171',['setImportFileName',['../classstamina_1_1Options.html#a4b022914da127fed4a1ff79c98842863',1,'stamina::Options']]],
+  ['setimportmodel_172',['setImportModel',['../classstamina_1_1Options.html#a46e06f5c26876dab5c742baa79eebbb4',1,'stamina::Options']]],
+  ['setkappareductionfactor_173',['setKappaReductionFactor',['../classstamina_1_1Options.html#aa6470b9ef6d07d2c8ce68c13b5d38642',1,'stamina::Options']]],
+  ['setmaxrefinementcount_174',['setMaxRefinementCount',['../classstamina_1_1Options.html#a36d72ee37cacec424799967c489a9a53',1,'stamina::Options']]],
+  ['setmispredictionfactor_175',['setMispredictionFactor',['../classstamina_1_1Options.html#a14840bc69953c9c848f598bf8530b4e5',1,'stamina::Options']]],
+  ['setnoproprefine_176',['setNoPropRefine',['../classstamina_1_1Options.html#ab47af846393c46282d7effefd84445a4',1,'stamina::Options']]],
+  ['setproberrorwindow_177',['setProbErrorWindow',['../classstamina_1_1Options.html#a762ae7fbc218efc6c8fa5eb63cd60bd5',1,'stamina::Options']]],
+  ['setpropertyexpression_178',['setPropertyExpression',['../classstamina_1_1InfCTMCModelGenerator.html#af647c1178dd231b4edb617e814f492b2',1,'stamina::InfCTMCModelGenerator']]],
+  ['setpropertyname_179',['setPropertyName',['../classstamina_1_1Options.html#a534122a6a7de283e1cba5dc529b7a0b5',1,'stamina::Options']]],
+  ['setranktransitions_180',['setRankTransitions',['../classstamina_1_1Options.html#abd4897c19218909bf49b0a0410bf6077',1,'stamina::Options']]],
+  ['setreachabilitythreshold_181',['setReachabilityThreshold',['../classstamina_1_1InfCTMCModelGenerator.html#aa0177096bc5a31d966a1096aef00445c',1,'stamina.InfCTMCModelGenerator.setReachabilityThreshold()'],['../classstamina_1_1Options.html#a8ab9481deb34f730a24fdcfd3d69e886',1,'stamina.Options.setReachabilityThreshold()']]],
+  ['setsomeundefinedconstants_182',['setSomeUndefinedConstants',['../classstamina_1_1InfCTMCModelGenerator.html#a17314bf22b29a50e166408a1ed42df46',1,'stamina.InfCTMCModelGenerator.setSomeUndefinedConstants(Values someValues)'],['../classstamina_1_1InfCTMCModelGenerator.html#abbfaf77f65448f9d21fd9207fe64a7f5',1,'stamina.InfCTMCModelGenerator.setSomeUndefinedConstants(Values someValues, boolean exact)']]],
+  ['setspecificproperty_183',['setSpecificProperty',['../classstamina_1_1Options.html#a5204e06345694d6d243e82f84f2f4591',1,'stamina::Options']]],
+  ['setstateabsorbing_184',['setStateAbsorbing',['../classstamina_1_1ProbState.html#a6dfe25ea91647f2860761532485394b3',1,'stamina::ProbState']]],
+  ['setstateterminal_185',['setStateTerminal',['../classstamina_1_1ProbState.html#aa4459bb8fc005b8122b6073bf1cb3453',1,'stamina::ProbState']]],
+  ['staminamodelchecker_186',['StaminaModelChecker',['../classstamina_1_1StaminaModelChecker.html#a45e9911529dcf9db73dd0e7c75406b9e',1,'stamina::StaminaModelChecker']]],
+  ['subtractfromreachability_187',['subtractFromReachability',['../classstamina_1_1ProbState.html#aae8fa25fde66f8406c95e27ea2b6630b',1,'stamina::ProbState']]]
+];
