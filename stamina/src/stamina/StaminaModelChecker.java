@@ -383,15 +383,16 @@ public class StaminaModelChecker extends Prism {
 						mainLog.print("\nResult: " + res_min_max[1].getResultString() + "\n");
                         String filename = "results.txt";
                         try {
-                        File file = new File(filename);
-                        file.delete();
-				        FileWriter writer = new FileWriter("results.txt");
-                        writer.write(Double.toString(ans_min));
-                        writer.write("\r\n");
-                        writer.write(Double.toString(ans_max));
-                        writer.write("\r\n");
-                        writer.close();
-                        } catch(IOException e) {
+							File file = new File(filename);
+							file.delete();
+							FileWriter writer = new FileWriter("results.txt");
+							writer.write(Double.toString(ans_min));
+							writer.write("\r\n");
+							writer.write(Double.toString(ans_max));
+							writer.write("\r\n");
+							writer.close();
+                        } 
+                        catch(IOException e) {
                             // Do nothing for now
                         }
 					}
@@ -422,14 +423,14 @@ public class StaminaModelChecker extends Prism {
 						res_min_max[1] = super.modelCheck(propertiesFile, prop_max);
 						String filename = "results.txt";
                         try {
-                        File file = new File(filename);
-                        file.delete();
-				        FileWriter writer = new FileWriter("results.txt");
-                        writer.write(res_min_max[0].toString());
-                        writer.write("\r\n");
-                        writer.write(res_min_max[1].toString());
-                        writer.write("\r\n");
-                        writer.close();
+							File file = new File(filename);
+							file.delete();
+							FileWriter writer = new FileWriter("results.txt");
+							writer.write(res_min_max[0].toString());
+							writer.write("\r\n");
+							writer.write(res_min_max[1].toString());
+							writer.write("\r\n");
+							writer.close();
                         } catch(IOException e) {
                             // Do nothing for now
                         }
@@ -525,7 +526,7 @@ public class StaminaModelChecker extends Prism {
 
 			for (State exploredState : sortedStates) {
 				modelGen.exploreState(exploredState);
-					// Look at each outgoing choice in turn
+				// Look at each outgoing choice in turn
 				int nc = modelGen.getNumChoices();
 				TreeMap<State, ArrayList<Integer>> sortedTrans = new TreeMap<State, ArrayList<Integer>>(sortedStates.comparator());
 				for (int i = 0; i < nc; i++) {
