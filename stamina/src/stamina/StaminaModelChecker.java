@@ -527,25 +527,33 @@ public class StaminaModelChecker extends Prism {
 				modelGen.exploreState(exploredState);
 					// Look at each outgoing choice in turn
 				int nc = modelGen.getNumChoices();
-				TreeMap<State, int[]> sortedTrans = new TreeMap<State, int[]>(sortedStates.comparator());
+				TreeMap<State, ArrayList<Integer>> sortedTrans = new TreeMap<State, ArrayList<Integer>>(sortedStates.comparator());
 				for (int i = 0; i < nc; i++) {
 					// Look at each transition in the choice
 					int nt = modelGen.getNumTransitions(i);
 					for (int j = 0; j < nt; j++) {
 						State stateNew = modelGen.computeTransitionTarget(i, j);
-						int[] indices = new int[2];
-						indices[0] = i;
-						indices[1] = j;
-						sortedTrans.put(stateNew, indices);					
+						ArrayList<Integer> currentList = sortedTrans.get(stateNew);
+						if (currentList == null) {
+							currentList = new ArrayList<Integer>();
+							
+						}
+						currentList.add(i);
+						currentList.add(j);
+						sortedTrans.put(stateNew, currentList);					
 					}
 				}
 				while(!sortedTrans.isEmpty()) {
-					Map.Entry<State, int[]> mapping = sortedTrans.pollFirstEntry();
+					Map.Entry<State, ArrayList<Integer>> mapping = sortedTrans.pollFirstEntry();
 					State stateNew = mapping.getKey();
-					int i = mapping.getValue()[0];
-					int j = mapping.getValue()[1];
-					out.write(stateIndex.get(exploredState) + " " + stateIndex.get(stateNew) + " " + PrismUtils.formatDouble(modelGen.getTransitionProbability(i,j)) + " " + modelGen.getTransitionAction(i,j));
-					out.newLine();
+					ArrayList<Integer> indexList = mapping.getValue();
+					int size = indexList.size() / 2;
+					for (int k = 0; k < size; k++) {
+						int i = indexList.get(2*k);
+						int j = indexList.get(2*k + 1);
+						out.write(stateIndex.get(exploredState) + " " + stateIndex.get(stateNew) + " " + PrismUtils.formatDouble(modelGen.getTransitionProbability(i,j)) + " " + modelGen.getTransitionAction(i,j));
+						out.newLine();
+					}
 				}
 			}
 			out.close();
