@@ -928,7 +928,8 @@ public class InfCTMCModelGenerator implements ModelGenerator
 				
 				double curStateReachability = curProbState.getCurReachabilityProb();
 				double curTime = curProbState.getShortestTime();
-				if (curTime > 0.3) {
+				if (curTime > 12) {
+					System.out.println("It actually ran");
 					curProbState.setCurReachabilityProb(0.0);
 					continue;
 				}
@@ -1086,10 +1087,9 @@ public class InfCTMCModelGenerator implements ModelGenerator
 			//statesK.clear();
 			exploredK.clear();
 			statesK.clear();
-			probInitState.setShortestTime(0.0);
-			exploredK.add(probInitState);
-			statesK.add(probInitState);
+			
 			perimReachability = 0;
+			int count = 0;
 			//double findPerimTime = System.currentTimeMillis();
 			for (ProbState localSt: globalStateSet.values()) {
 				
@@ -1097,6 +1097,11 @@ public class InfCTMCModelGenerator implements ModelGenerator
 				
 				if (localSt.isStateTerminal()) {
 					perimReachability += reachabilityThreshold; 
+				}
+				
+				if (localSt.getCurReachabilityProb() > 0) {
+					exploredK.add(localSt);
+					statesK.add(localSt);
 				}
 				
 			}
