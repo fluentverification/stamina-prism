@@ -928,11 +928,11 @@ public class InfCTMCModelGenerator implements ModelGenerator
 				
 				double curStateReachability = curProbState.getCurReachabilityProb();
 				double curTime = curProbState.getShortestTime();
-				if (curTime > 12) {
+				/*if (curTime > 12) {
 					System.out.println("It actually ran");
 					curProbState.setCurReachabilityProb(0.0);
 					continue;
-				}
+				}*/
 				/*System.out.println("\nState");
 				System.out.println(curProbState);
 				System.out.println(curStateReachability);*/
@@ -984,6 +984,14 @@ public class InfCTMCModelGenerator implements ModelGenerator
 							}
 						}
 						double exitRateInverse = 1.0/exitRateSum; 
+						if (curTime + exitRateInverse > 1000) {
+							curProbState.setCurReachabilityProb(0.0);
+							curProbState.setStateTerminal(false);
+							curProbState.setShortestTime(Double.POSITIVE_INFINITY);
+							System.out.println("Actually happened");
+							continue;
+						}
+						
 						for (int i = 0; i < nc; i++) {
 							// Look at each transition in the choice
 							//System.out.println("\nA choice\n");
@@ -1011,6 +1019,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 									//double mapStart = System.currentTimeMillis();
 									
 									double leavingProb = tranProb * curStateReachability;
+
 									nxtProbState.addToReachability(leavingProb);
 									nxtProbState.updateShortestTime(curTime + exitRateInverse);
 									//curProbState.subtractFromReachability(leavingProb);
