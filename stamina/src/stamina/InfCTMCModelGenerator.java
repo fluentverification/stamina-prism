@@ -875,6 +875,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		else {
 			probInitState = new ProbState(initState);
 			probInitState.setCurReachabilityProb(1.0);
+			probInitState.updateShortestTime(0.0);
 			// Add initial state(s) to 'explore', 'states' and to the model
 			globalStateSet.put(initState, probInitState);
 			
@@ -926,14 +927,32 @@ public class InfCTMCModelGenerator implements ModelGenerator
 				
 				
 				double curStateReachability = curProbState.getCurReachabilityProb();
+				double curTime = curProbState.getShortestTime();
+				if (curTime > 0.3) {
+					curProbState.setCurReachabilityProb(0.0);
+					continue;
+				}
 				/*System.out.println("\nState");
 				System.out.println(curProbState);
 				System.out.println(curStateReachability);*/
-				if(!curProbState.isStateTerminal() || curStateReachability >= reachabilityThreshold) {
+				if( (!curProbState.isStateTerminal() || curStateReachability >= reachabilityThreshold)) {
 					//prismTime += System.currentTimeMillis() - trackPrismTime
 
 					if(curStateReachability == 0) {
+						double exitRateSum = 0.0;
+						//trackPrismTime = System.currentTimeMillis();
+						// Look at each outgoing choice in turn
 						int nc = modelGen.getNumChoices();
+						for (int i = 0; i < nc; i++) {
+							// Look at each transition in the choice
+							int nt = modelGen.getNumTransitions(i);
+							for (int j = 0; j < nt; j++) {
+								exitRateSum += modelGen.getTransitionProbability(i, j);
+							}
+						}
+						double exitRateInverse = 1.0/exitRateSum;
+
+
 						for (int i = 0; i < nc; i++) {
 							// Look at each transition in the choice
 							int nt = modelGen.getNumTransitions(i);
@@ -942,6 +961,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 								boolean stateIsExisting = globalStateSet.containsKey(nxtSt);
 								if(stateIsExisting) {
 									ProbState nxtProbState = globalStateSet.get(nxtSt);
+									nxtProbState.updateShortestTime(curTime + exitRateInverse);
 									if(statesK.add(nxtProbState)) {
 										exploredK.addLast(nxtProbState);
 									}
@@ -962,7 +982,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 								exitRateSum += modelGen.getTransitionProbability(i, j);
 							}
 						}
-						//double exitRateInverse = 1.0/exitRateSum; 
+						double exitRateInverse = 1.0/exitRateSum; 
 						for (int i = 0; i < nc; i++) {
 							// Look at each transition in the choice
 							//System.out.println("\nA choice\n");
@@ -991,6 +1011,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 									
 									double leavingProb = tranProb * curStateReachability;
 									nxtProbState.addToReachability(leavingProb);
+									nxtProbState.updateShortestTime(curTime + exitRateInverse);
 									//curProbState.subtractFromReachability(leavingProb);
 									//nxtProbState.setNextReachabilityProbToCurrent();
 
@@ -1024,6 +1045,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 									//double mapStart = System.currentTimeMillis();
 									double leavingProb = tranProb*curStateReachability;
 									nxtProbState.addToReachability(leavingProb);
+									nxtProbState.updateShortestTime(curTime + exitRateInverse);
 									//curProbState.subtractFromReachability(leavingProb);
 									//nxtProbState.setNextReachabilityProbToCurrent();
 									//predMapTime += System.currentTimeMillis() - mapStart;
@@ -1047,7 +1069,8 @@ public class InfCTMCModelGenerator implements ModelGenerator
 						}
 					}
 					curProbState.setCurReachabilityProb(0.0);
-					curProbState.setStateTerminal(false);	
+					curProbState.setStateTerminal(false);
+					curProbState.setShortestTime(Double.POSITIVE_INFINITY);	
 				}
 				
 
@@ -1063,10 +1086,10 @@ public class InfCTMCModelGenerator implements ModelGenerator
 			//statesK.clear();
 			exploredK.clear();
 			statesK.clear();
+			probInitState.setShortestTime(0.0);
 			exploredK.add(probInitState);
 			statesK.add(probInitState);
 			perimReachability = 0;
-
 			//double findPerimTime = System.currentTimeMillis();
 			for (ProbState localSt: globalStateSet.values()) {
 				

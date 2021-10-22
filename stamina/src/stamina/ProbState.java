@@ -10,6 +10,7 @@ public class ProbState extends State{
 	
 	private boolean isStateTerminal;
 	private boolean isStateAbsorbing;
+	private double shortestTime;
 	
 	/**
 	 * Constructor. Sets the current reachability probability to 0,
@@ -23,9 +24,24 @@ public class ProbState extends State{
 		
 		isStateTerminal = true;
 		isStateAbsorbing = false;
+		shortestTime = Double.POSITIVE_INFINITY;
 		
 	}
 	
+	public double getShortestTime(){
+		return shortestTime;
+	}
+
+	public void updateShortestTime(double newTime){
+		if (newTime < shortestTime) {
+			shortestTime = newTime;
+		}
+	}
+
+	public void setShortestTime(double newTime){
+		shortestTime = newTime;
+	}
+
 	/**
 	 * Gets whether or not the state is terminal.
 	 * @return Whether or not the state is terminal
