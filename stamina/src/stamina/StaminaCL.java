@@ -531,7 +531,7 @@ public class StaminaCL {
 		mainLog.println("========");
 		mainLog.println();
 		mainLog.println("-kappa <k>.......................... ReachabilityThreshold for first iteration [default: 1.0]");
-		mainLog.println("-reducekappa <f>.................... Reduction factor for ReachabilityThreshold(kappa) for refinement step.  [default: 2.0]");
+		mainLog.println("-reducekappa <f>.................... Reduction factor for ReachabilityThreshold(kappa) for refinement step.  [default: 1.25]");
 		mainLog.println("-approxFactor <f>................... Factor to estimate how far off our reachability predictions will be  [default: 2.0]");
 		mainLog.println("-pbwin <e>.......................... Probability window between lower and upperbound for termination. [default: 1.0e-3]");
 		mainLog.println("-maxapproxcount <n>................. Maximum number of approximation iteration. [default: 10]");
