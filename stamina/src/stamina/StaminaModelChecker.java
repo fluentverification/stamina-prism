@@ -341,15 +341,17 @@ public class StaminaModelChecker extends Prism {
 						
 						double ans_min = 0.0;
 						double ans_max;
-
+						
+						// Check if the model has an abosrbing state (i.e. not all are generated)
+						// If it it does, it will be the first state and we don't want to add it to
+						// ans_min, so we start the for loop and i=1
 						if(infModelGen.finalModelHasAbsorbing()) {
 							for(int i=1; i<super.getBuiltModelExplicit().getNumStates(); ++i) {
 							
 								if(b2.get(i)) ans_min += (double) probsExpl.getValue(i);
 								
 							}
-							
-							// TODO: need the index of absorbing state
+
 							ans_max = ans_min + (double) probsExpl.getValue(0);
 							ans_max = ans_max > 1 ? 1.0 : ans_max;
 						}
@@ -359,8 +361,7 @@ public class StaminaModelChecker extends Prism {
 								if(b2.get(i)) ans_min += (double) probsExpl.getValue(i);
 								
 							}
-							
-							// TODO: need the index of absorbing state
+							// If there is no absorbing state, we know the solution exactly.
 							ans_max = ans_min;
 						}
 						
@@ -437,7 +438,10 @@ public class StaminaModelChecker extends Prism {
 					}
 					
 					
-					// Reduce kappa for refinement
+					// We need to check how far off our current results are from our goal
+					// If we are way off, our estimate is further off than we want, so we update
+					// the misprediction factor in proportion to our percentage off.
+					// Here we multiply the percentoff by four but cap it at 100. Both 4 and 100 were determined heuristically through testing.
 					double percentOff = 4*((((Double)res_min_max[1].getResult())-((Double)res_min_max[0].getResult()))/Options.getProbErrorWindow());
 					if(percentOff > 100) {
 						percentOff = 100;
@@ -509,12 +513,17 @@ public class StaminaModelChecker extends Prism {
 	 */
 	private void printTransitionActions(InfCTMCModelGenerator modelGen, String exportFileName) throws PrismException{
 		
+		// Stamina naturally sorts states in the order it encounters them, but PRISM prints out transitions
+		// sorted in the natural ordering of their variable values. So, we need to sort the states the same 
+		// was as PRISM before printing them out to be consistent. 
 		HashMap<State, ProbState> globalStateSet = modelGen.getGlobalStateSet();
 		TreeSet<State> sortedStates = new TreeSet<State>(globalStateSet.keySet());
 		if(modelGen.finalModelHasAbsorbing()) {
 			sortedStates.add(modelGen.getAbsorbingState());
 		}
 		HashMap<State, Integer> stateIndex = new HashMap<State,Integer>();
+
+		// This loops gets the indexes that PRISM would use
 		int spot = 0;
 		for (State sortState : sortedStates) {
 			stateIndex.put(sortState, spot);
@@ -539,19 +548,27 @@ public class StaminaModelChecker extends Prism {
 							currentList = new ArrayList<Integer>();
 							
 						}
+						// This is a single list where the even elements are the choices and the odd
+						// elements are the transitions. This keeps track of the transitions in the
+						// order that PRISM would use.
 						currentList.add(i);
 						currentList.add(j);
+
 						sortedTrans.put(stateNew, currentList);					
 					}
 				}
+
+				// Print out the sorted list of transitions
 				while(!sortedTrans.isEmpty()) {
 					Map.Entry<State, ArrayList<Integer>> mapping = sortedTrans.pollFirstEntry();
 					State stateNew = mapping.getKey();
 					ArrayList<Integer> indexList = mapping.getValue();
 					int size = indexList.size() / 2;
 					for (int k = 0; k < size; k++) {
+						// Get the next choice transition combination from the list
 						int i = indexList.get(2*k);
 						int j = indexList.get(2*k + 1);
+
 						out.write(stateIndex.get(exploredState) + " " + stateIndex.get(stateNew) + " " + PrismUtils.formatDouble(modelGen.getTransitionProbability(i,j)) + " " + modelGen.getTransitionAction(i,j));
 						out.newLine();
 					}
@@ -564,95 +581,7 @@ public class StaminaModelChecker extends Prism {
 			e.printStackTrace();
 		}
 
-		/*	
-		// Model info
-		ModelType modelType;
-		// State storage
-		StateStorage<State> states;
-		LinkedList<State> explore;
-		State state, stateNew;
-		// Explicit model storage
-		ModelSimple modelSimple = null;
-		//DTMCSimple dtmc = null;
-		CTMCSimple ctmc = null;
-		ModelExplicit model = null;
 		
-		//Distribution distr = null;
-		// Observation info
-		List<String> observableVars = null;
-		List<String> unobservableVars = null;
-		// Misc
-		int i, j, nc, nt, src, dest;
-		long timer;
-
-		mainLog.println("Exporting transitions to a file...");
-
-		try {
-			BufferedWriter out = new BufferedWriter(new FileWriter(exportFileName));
-		
-		
-
-			// Get model info
-			modelType = modelGen.getModelType();
-			
-			// Display a warning if there are unbounded vars
-			
-			// Initialise states storage
-			states = new IndexedSet<State>(true);
-			explore = new LinkedList<State>();
-			// Add initial state(s) to 'explore', 'states' and to the model
-			for (State initState : modelGen.getInitialStatesForTransitionFile()) {
-				explore.add(initState);
-				states.add(initState);
-			}
-			// Explore...
-			src = -1;
-			while (!explore.isEmpty()) {
-				// Pick next state to explore
-				// (they are stored in order found so know index is src+1)
-				state = explore.removeFirst();
-				src++;
-				// Explore all choices/transitions from this state
-				modelGen.exploreState(state);
-				// Look at each outgoing choice in turn
-				nc = modelGen.getNumChoices();
-				for (i = 0; i < nc; i++) {
-					// Look at each transition in the choice
-					nt = modelGen.getNumTransitions(i);
-					for (j = 0; j < nt; j++) {
-						stateNew = modelGen.computeTransitionTarget(i, j);
-						// Is this a new state?
-						if (states.add(stateNew)) {
-							// If so, add to the explore list
-							explore.add(stateNew);
-
-						}
-						// Get index of state in state set
-						dest = states.getIndexOfLastAdd();
-						// Add transitions to model
-						if (!justReach) {
-							switch (modelType) {
-							case CTMC:
-								//ctmc.addToProbability(src, dest, modelGen.getTransitionProbability(i, j));
-								out.write(src + " " + dest + " " + modelGen.getTransitionAction(i,j));
-								out.newLine();
-								break;
-							default:
-								throw new PrismNotSupportedException("Model construction not supported for " + modelType + "s");
-							}
-						}
-					}
-
-				}
-
-			}
-			out.close();
-		}
-		catch (Exception e) {
-			System.out.println("An error occurred creating the transition file");
-			e.printStackTrace();
-		}
-		*/
 
 	}
 	

@@ -2,12 +2,13 @@ package stamina;
 
 public class Options {
 
-	//Probabilistic state search termination value : Defined by kappa in command line argument
+	//Probabilistic state search termination value, should start at 1 in most normal cases : Defined by kappa in command line argument
 	private static double reachabilityThreshold = 1;
 	
 	// Kappa reduction factor
 	private static double kappaReductionFactor = 1.25;
 
+	// The amount we divide our estimated perimeter reachabilty by before comparing it to the target
 	private static double mispredictionFactor = 2;
 	
 	// max number of refinement count 
@@ -19,8 +20,10 @@ public class Options {
 	// Use property based refinement
 	private static boolean noPropRefine = false;
 
+	// Rank transitions
 	private static boolean rankTransitions = false;
 
+	// Set cudd Memory limit
 	private static String cuddMemoryLimit = "1g";	
 
 	// Saving variables
@@ -29,8 +32,11 @@ public class Options {
 	// Saving filenames
 	private static String exportFileName = null;
 
+
+	//Variables for exporting perimeter states
 	private static boolean exportPerimeterStates = false;
 	private static String exportPerimeterFilename = null;
+
     // Import variables
     private static boolean importModel = false;
 
@@ -41,7 +47,9 @@ public class Options {
     private static boolean specificProperty = false;
     private static String property = null;
 
+	// Should the transitions be exported to a file?
 	private static String exportTransitionsToFile = null;
+	
 	/**
 	 * Gets reachability threshold (&kappa;) as double.
 	 * @return The reachability threshold.

@@ -33,6 +33,7 @@ public class ProbState extends State{
 	public boolean isStateTerminal(){
 		return isStateTerminal;
 	}
+	
 	/**
 	 * Sets whether or not the state is terminal.
 	 * @param flag Whether or not the state is terminal.
