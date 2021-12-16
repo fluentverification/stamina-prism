@@ -890,7 +890,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		// Start the exploration
 		
 		int prevStateCount = globalStateSet.size();
-
+		double maxTime = Options.getMaximumTime();
 		// Perim reachability is our estimate of Prob_max - Prob_min, it starts at 1 because we don't have any info
 		double perimReachability = 1;
 		//Repeatedly do the state search until the below condition is meant, meaning we are confident we have enough
@@ -922,20 +922,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 				
 				
 				double curStateReachability = curProbState.getCurReachabilityProb();
-<<<<<<< HEAD
 				double curTime = curProbState.getShortestTime();
-				/*if (curTime > 12) {
-					System.out.println("It actually ran");
-					curProbState.setCurReachabilityProb(0.0);
-					continue;
-				}*/
-				/*System.out.println("\nState");
-				System.out.println(curProbState);
-				System.out.println(curStateReachability);*/
-				if( (!curProbState.isStateTerminal() || curStateReachability >= reachabilityThreshold)) {
-					//prismTime += System.currentTimeMillis() - trackPrismTime
-=======
->>>>>>> master
 
 				// If the state isn't terminal, we have explored it before, so we should again
 				// If not, only explore it if it's reachability is above the threshold
@@ -989,11 +976,10 @@ public class InfCTMCModelGenerator implements ModelGenerator
 							}
 						}
 						double exitRateInverse = 1.0/exitRateSum; 
-						if (curTime + exitRateInverse > 1000) {
+						if (curTime + exitRateInverse > maxTime) {
+							// Our maximum allowed time is exceeded, don't allow this reachability to pass on
 							curProbState.setCurReachabilityProb(0.0);
-							curProbState.setStateTerminal(false);
 							curProbState.setShortestTime(Double.POSITIVE_INFINITY);
-							System.out.println("Actually happened");
 							continue;
 						}
 						
@@ -1019,11 +1005,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 									double leavingProb = tranProb * curStateReachability;
 
 									nxtProbState.addToReachability(leavingProb);
-									nxtProbState.updateShortestTime(curTime + exitRateInverse);
-									//curProbState.subtractFromReachability(leavingProb);
-									//nxtProbState.setNextReachabilityProbToCurrent();
-
-									//predMapTime += System.currentTimeMillis() - mapStart;		
+									nxtProbState.updateShortestTime(curTime + exitRateInverse);		
 	
 									
 									// These lines check if we have already explored this state IN THIS ITERATION
@@ -1044,9 +1026,6 @@ public class InfCTMCModelGenerator implements ModelGenerator
 									double leavingProb = tranProb*curStateReachability;
 									nxtProbState.addToReachability(leavingProb);
 									nxtProbState.updateShortestTime(curTime + exitRateInverse);
-									//curProbState.subtractFromReachability(leavingProb);
-									//nxtProbState.setNextReachabilityProbToCurrent();
-									//predMapTime += System.currentTimeMillis() - mapStart;
 									
 									//Update the global state graph
 									globalStateSet.put(nxtSt, nxtProbState);
@@ -1065,6 +1044,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 					// Also, since it was explored, it is no longer a terminal state
 					curProbState.setCurReachabilityProb(0.0);
 					curProbState.setStateTerminal(false);
+					// We have passed on all the reachability that came from the current shortes possible time to get here
 					curProbState.setShortestTime(Double.POSITIVE_INFINITY);	
 				}
 				

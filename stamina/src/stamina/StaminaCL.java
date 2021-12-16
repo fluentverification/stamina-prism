@@ -378,6 +378,11 @@ public class StaminaCL {
 					noPropRefine = true;
 					
 				}
+				else if (sw.equals("maxTime")) {
+					
+					Options.setMaximumTime(Double.parseDouble(args[++i].trim()));
+					
+				}
 				else if (sw.equals("maxapproxcount")) {
 					
 					maxApproxCount = Integer.parseInt(args[++i].trim());
@@ -535,6 +540,7 @@ public class StaminaCL {
 		mainLog.println("-approxFactor <f>................... Factor to estimate how far off our reachability predictions will be  [default: 2.0]");
 		mainLog.println("-pbwin <e>.......................... Probability window between lower and upperbound for termination. [default: 1.0e-3]");
 		mainLog.println("-maxapproxcount <n>................. Maximum number of approximation iteration. [default: 10]");
+		mainLog.println("-maxTime <n>........................ Upper time bound to consider for reachability estimations flow through the statespace. Useful if the property being checked includes an upper time bound that holds a significant impact on the result. [default: Infinity]");
 		mainLog.println("-noproprefine ...................... Do not use property based refinement. If given, model exploration method will reduce the kappa and do the property independent refinement. [default: off]");
 		mainLog.println("-cuddmaxmem <memory>................ Maximum cudd memory. Expects the same format as prism [default: 1g]");
 		mainLog.println("-export <filename>.................. Export model to a file. Please provide a filename without an extension");

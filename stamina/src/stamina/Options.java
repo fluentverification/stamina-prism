@@ -16,6 +16,9 @@ public class Options {
 	
 	// termination Error window
 	private static double probErrorWindow = 1.0e-3;
+
+	// Maximum time window to consider for exploration
+	private static double maximumTime = Double.POSITIVE_INFINITY;
 	
 	// Use property based refinement
 	private static boolean noPropRefine = false;
@@ -49,6 +52,8 @@ public class Options {
 
 	// Should the transitions be exported to a file?
 	private static String exportTransitionsToFile = null;
+
+
 	
 	/**
 	 * Gets reachability threshold (&kappa;) as double.
@@ -124,6 +129,23 @@ public class Options {
 	public static void setProbErrorWindow(double w) {
 		probErrorWindow = w;
 	}
+
+	/**
+	 * Sets the maximum continuous time to consider during statespace construction
+	 * @param t The maximum time to use
+	 */
+	public static void setMaximumTime(double t) {
+		maximumTime = t;
+	}
+
+	/**
+	 * Gets the maximum continuous time to consider during statespace construction
+	 * @return The maximum time
+	 */
+	public static double getMaximumTime() {
+		return maximumTime;
+	}
+
 	/**
 	 * Sets whether or not we are using property based refinement.
 	 * @param o Whether or not to use property based refinement.
