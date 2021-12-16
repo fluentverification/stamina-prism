@@ -48,7 +48,7 @@ Currently, STAMINA does not inherit options in PRISM. To customize the maximum h
 ## All command line options
 
 ```
-Usage: stamina <model-file> <properties-file> [options]
+Usage: stamina [options] <model-file> <properties-file>
 
 <model-file> .................... Prism model file. Extensions: .prism, .sm
 <properties-file> ............... Property file. Extensions: .csl
@@ -56,17 +56,19 @@ Usage: stamina <model-file> <properties-file> [options]
 Options:
 ========
 
--kappa <k>.......................... Probability estimate threshold [default: 1.0e-6]
--reducekappa <f>.................... Reduction factor for probability estimate threshold for refinement step.  [default: 1000.0]
--pbwin <e>.......................... Probability precision - probability window between lower and upper bound. [default: 1.0e-3]
+-kappa <k>.......................... ReachabilityThreshold for first iteration [default: 1.0]
+-reducekappa <f>.................... Reduction factor for ReachabilityThreshold(kappa) for refinement step.  [default: 1.25]
+-approxFactor <f>................... Factor to estimate how far off our reachability predictions will be  [default: 2.0]
+-pbwin <e>.......................... Probability window between lower and upperbound for termination. [default: 1.0e-3]
 -maxapproxcount <n>................. Maximum number of approximation iteration. [default: 10]
--noproprefine ...................... Do not use property-guided refinement. State exploration performs property-agnostic state expansion. [default: off]
+-noproprefine ...................... Do not use property based refinement. If given, model exploration method will reduce the kappa and do the property independent refinement. [default: off]
 -cuddmaxmem <memory>................ Maximum cudd memory. Expects the same format as prism [default: 1g]
 -export <filename>.................. Export model to a file. Please provide a filename without an extension
 -exportPerimeterStates <filename>... Export perimeter states to a file. Please provide a filename. This will append to the file if it is existing
--import <filename>.................. Import model to a file. Please provide a filename without an extension. The files must be in the current working directory.
+-import <filename>.................. Import model to a file. Please provide a filename without an extension
 -property <property>................ Specify a specific property to check in a model file that contains many
 -const <vals> ...................... Comma separated values for constants
+-exportTrans <filename>............. Export the list of transitions and actions to a specified file name, or to trans.txt if no file name is specified. Transitions exported in the format srcStateIndex destStateIndex actionLabel
 	Examples:
 	-const a=1,b=5.6,c=true
 
@@ -82,4 +84,4 @@ Other Options:
 ```
 
 ## Running case studies
-There are few case studies form different domain included with STAMINA. You can run the toggle example from stamina/stamina directory using ``./bin/stamina -kappa 1e-03 -reducekappa 1000 -maxapproxcount 5 -pbwin 0.001  ../case-studies/Toggle/toggle_IPTG_100.prism ../case-studies/Toggle/toggle_IPTG_100.csl``. Please refer to the description of case studies for more details about the examples.
+There are few case studies form different domain included with STAMINA. You can run the toggle example from stamina/stamina directory using ``./bin/stamina -maxapproxcount 5 -pbwin 0.001  ../case-studies/Toggle/toggle_IPTG_100.prism ../case-studies/Toggle/toggle_IPTG_100.csl``. Please refer to the description of case studies for more details about the examples.
