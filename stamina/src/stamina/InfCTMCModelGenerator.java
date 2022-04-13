@@ -846,7 +846,8 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	 */
 	public void doReachabilityAnalysis() throws PrismException {
 		
-	 	
+	 	int currentStateId = 1;
+		HashMap<ProbState, Integer> stateToId = new HashMap<ProbState, Integer>();	
 		// Model gen from file
 	 	ModulesFileModelGenerator modelGen = new ModulesFileModelGenerator(modulesFile, parent);
 	
@@ -881,6 +882,8 @@ public class InfCTMCModelGenerator implements ModelGenerator
 			globalStateSet.put(initState, probInitState);
 			
 		}
+		stateToId.put(probInitState, currentStateId);
+		currentStateId++;
 		// Add state to exploration queue
 		
 		exploredK.add(probInitState);
@@ -895,16 +898,20 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		//Repeatedly do the state search until the below condition is meant, meaning we are confident we have enough
 		//states to achieve the desired probability window
 		while(perimReachability >= Options.getProbErrorWindow() / Options.getMispredictionFactor()) {
+			System.out.println(perimReachability + " ?>= " + Options.getProbErrorWindow() / Options.getMispredictionFactor());
+			System.out.println("Explored " + (globalStateSet.size()) + " states");
+			System.out.println("Perimeter reachability: " + perimReachability);
 			// State Search 
 			while (!exploredK.isEmpty()) {
 				ProbState curProbState = exploredK.removeFirst();
+			//	System.out.println("Dequeued stated " + curProbState);
 				// Set this state as the current state to explore
 				modelGen.exploreState(curProbState);
 
 				// This if block implements the property-guided state truncation
 				// If we already know how the property evaluates in this state, we don't
 				// need it's succesors, we just continue.
-				if (propertyExpression != null) {
+				/*if (propertyExpression != null) {
 					
 					ExpressionTemporal tempProp = (ExpressionTemporal) propertyExpression;
 					
@@ -917,11 +924,11 @@ public class InfCTMCModelGenerator implements ModelGenerator
 						curProbState.setStateTerminal(false);
 						continue;
 					}
-				}
+				}*/
 				
 				
 				double curStateReachability = curProbState.getCurReachabilityProb();
-
+				//System.out.println("Reachability is " + curStateReachability);
 				// If the state isn't terminal, we have explored it before, so we should again
 				// If not, only explore it if it's reachability is above the threshold
 				if(!curProbState.isStateTerminal() || curStateReachability >= reachabilityThreshold) {
@@ -941,6 +948,10 @@ public class InfCTMCModelGenerator implements ModelGenerator
 									ProbState nxtProbState = globalStateSet.get(nxtSt);
 									if(statesK.add(nxtProbState)) {
 										exploredK.addLast(nxtProbState);
+										System.out.println("Enqueuing state after 0 prob " + stateToId.get(nxtProbState) + " with previous state " + stateToId.get(curProbState));
+									}
+									else {
+										System.out.println("Not enqueuing state " + stateToId.get( nxtProbState) + " because prevProb=0 but was already in statesK");
 									}
 								}
 							}
@@ -986,6 +997,10 @@ public class InfCTMCModelGenerator implements ModelGenerator
 									// i.e. with this kappa. If we haven't, we want to 
 									if(statesK.add(nxtProbState)) {
 										exploredK.addLast(nxtProbState);
+										System.out.println("Enqueuing re-explored state " + stateToId.get(nxtProbState) + " with previous state " + stateToId.get(curProbState));
+									}
+									else {
+										System.out.println("Not enqueuing state " + stateToId.get(nxtProbState) + " because state exists and is in exploredK");
 									}
 										
 
@@ -996,7 +1011,10 @@ public class InfCTMCModelGenerator implements ModelGenerator
 
 									ProbState nxtProbState = new ProbState(nxtSt);
 									double tranRate = modelGen.getTransitionProbability(i, j);
+									stateToId.put(nxtProbState, currentStateId);
+									currentStateId++;
 									double tranProb = tranRate/exitRateSum;
+									// System.out.println("Creating new ProbState and setting as terminal " + (j + 1));
 									double leavingProb = tranProb*curStateReachability;
 									nxtProbState.addToReachability(leavingProb);
 									
@@ -1007,6 +1025,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 									// i.e. with this kappa. If we haven't, we want to
 									statesK.add(nxtProbState);
 									exploredK.addLast(nxtProbState);
+									System.out.println("Enqueuing new state " + currentStateId + " with previous state " + stateToId.get(curProbState));
 
 								}						
 							}
@@ -1016,7 +1035,12 @@ public class InfCTMCModelGenerator implements ModelGenerator
 					// succesors, so now it shouldn't have any. It has all moved on.
 					// Also, since it was explored, it is no longer a terminal state
 					curProbState.setCurReachabilityProb(0.0);
-					curProbState.setStateTerminal(false);	
+					//if (curProbState.isStateTerminal()) {
+					//System.out.println("Setting state " + curProbState + " to nonterminal");	}
+					curProbState.setStateTerminal(false);
+				}
+				else {
+				//	System.out.println("Continuing without enqueuing successors to " + curProbState + " (since kappa = " + reachabilityThreshold);
 				}
 				
 				// Print some progress info occasionally
@@ -1039,6 +1063,8 @@ public class InfCTMCModelGenerator implements ModelGenerator
 			//Calucalte our estimate of the perimeter reachability (Prob_max-Prob_min estimate)
 			//to determine if we should stop or keep going with a lower threshold
 			perimReachability = 0;
+			System.out.printf("At this iteration, the following states are terminal:");
+			int tStates = 0;
 			for (ProbState localSt: globalStateSet.values()) {
 				
 				// To simplify the computation, we simply add the threshold for each perim state
@@ -1046,9 +1072,11 @@ public class InfCTMCModelGenerator implements ModelGenerator
 				// their estimated reachability
 				if (localSt.isStateTerminal()) {
 					perimReachability += reachabilityThreshold; 
+					tStates++; //System.out.printf("A,");
 				}
 				
 			}
+			System.out.println(tStates);
 	
 			// Reduce the threshold for the next iteration
 			reachabilityThreshold /= Options.getKappaReductionFactor();
@@ -1068,6 +1096,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 					}
 				});
 			}*/
+			System.out.println("At this iteration, kappa = " + reachabilityThreshold);
 		}
 
 		// At this point in the loop, we want to update the globally accessible threshold
