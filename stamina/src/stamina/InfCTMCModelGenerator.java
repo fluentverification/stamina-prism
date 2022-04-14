@@ -1025,7 +1025,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 									// i.e. with this kappa. If we haven't, we want to
 									statesK.add(nxtProbState);
 									exploredK.addLast(nxtProbState);
-									System.out.println("Enqueuing new state " + currentStateId + " with previous state " + stateToId.get(curProbState));
+									System.out.println("Enqueuing new state " + stateToId.get(nxtProbState) + " with previous state " + stateToId.get(curProbState));
 
 								}						
 							}
