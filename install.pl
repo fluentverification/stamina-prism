@@ -1,5 +1,12 @@
 #!/usr/bin/perl
 
+##########################################
+# DEPRICATED INSTALL SCRIPT
+# 
+# Rather than using this script, use the install.py script
+# included in this directory
+##########################################
+
 use Cwd qw(cwd);
 
 # First we need to clone prism
