@@ -892,13 +892,19 @@ public class InfCTMCModelGenerator implements ModelGenerator
 
 		// Perim reachability is our estimate of Prob_max - Prob_min, it starts at 1 because we don't have any info
 		double perimReachability = 1;
-		//Repeatedly do the state search until the below condition is meant, meaning we are confident we have enough
-		//states to achieve the desired probability window
-		while(perimReachability >= Options.getProbErrorWindow() / Options.getMispredictionFactor()) {
-			// State Search 
+		// State Search 
+		while(perimReachability >= Options.getProbErrorWindow()/Options.getMisPredictionFactor()) {
+			/*double startTime = System.currentTimeMillis();
+			double predMapTime = 0;// Explore...
+			double prismTime = 0.0;
+			double propCheckTime = 0.0;*/
 			while (!exploredK.isEmpty()) {
 				ProbState curProbState = exploredK.removeFirst();
-				// Set this state as the current state to explore
+				//statesK.remove(curProbState);
+				
+				//System.out.println("\nExplored exactly one time\n");
+				// Explore all choices/transitions from this state
+				//double trackPrismTime = System.currentTimeMillis();
 				modelGen.exploreState(curProbState);
 
 				// This if block implements the property-guided state truncation

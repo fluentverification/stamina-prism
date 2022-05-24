@@ -16,6 +16,7 @@ public class ProbState extends State{
 	 * and the state to terminal and not absorbing.
 	 * @param s The state we are building from.
 	 */
+	
 	public ProbState(State s) {
 		super(s);
 		
@@ -76,6 +77,7 @@ public class ProbState extends State{
 	 * Adds to reachability probability, maxing at 1.0
 	 * @param newReach Amount to add to reachability probability.
 	 */
+	
 	public void addToReachability(double newReach) {
 		curReachabilityProb += newReach;
 		if(curReachabilityProb >= 1.0) {
@@ -86,6 +88,7 @@ public class ProbState extends State{
 	 * Subtracts from reachability probability, min at 0.0.
 	 * @param minusReach The amount to subtract from reachability probability.
 	 */
+
 	public void subtractFromReachability(double minusReach) {
 		curReachabilityProb -= minusReach;
 		if(curReachabilityProb <= 0.0) {
