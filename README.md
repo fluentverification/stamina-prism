@@ -6,7 +6,10 @@ STAMINA is an infinite-state CTMC model-checker integrated with the PRISM probab
 
 ##### Contributor(s):  Riley Roberts, Trent Wall, Brett Jepsen, Thakur Neupane, Zhen Zhang, Chris Myers, Curtis Madsen, Hao Zheng, and Chris Winstead
 
-#### To cite STAMINA, please use the most recent tool paper from CAV'19:
+#### To cite the most recent release of STAMINA, STAMINA 2.0, please use the tool paper from VMCAI'22:
+Roberts R., Neupane T., Buecherl L., Myers C.J., Zhang Z. (2022) STAMINA 2.0: Improving Scalability of Infinite-State Stochastic Model Checking. In: Bernd F., Wies, T. (eds) Verification, Model Checking, and Abstract Interpretation. VMCAI 2022. Lecture Notes in Computer Science, Springer, Cham. Download link: https://link.springer.com/chapter/10.1007/978-3-030-94583-1_16
+
+#### To cite the previous version of STAMINA, STAMINA 1.0, please use the tool paper from CAV'19:
 Neupane T., Myers C.J., Madsen C., Zheng H., Zhang Z. (2019) STAMINA: STochastic Approximate Model-Checker for INfinite-State Analysis. In: Dillig I., Tasiran S. (eds) Computer Aided Verification. CAV 2019. Lecture Notes in Computer Science, vol 11561. Springer, Cham. Download link: https://link.springer.com/chapter/10.1007/978-3-030-25540-4_31
 
 ## Installing STAMINA
