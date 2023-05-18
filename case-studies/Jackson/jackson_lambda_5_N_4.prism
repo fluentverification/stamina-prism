@@ -1,5 +1,4 @@
-stochastic
-
+ctmc
 
 const double num_stations = 4;
 const double unif_prob = 1 / (num_stations + 1.0);

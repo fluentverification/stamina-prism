@@ -1,2 +1,2 @@
 // probability first queue becomes full in T time units
-P=? [ true U<=0.25 sc=2047 ]
+P=? [ true U[0.0,0.25] sc=2047 ]
