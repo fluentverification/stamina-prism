@@ -236,7 +236,7 @@ public class StaminaModelChecker extends Prism {
 					if(Options.getNoPropRefine()) {
 						switchToCombinedCTMC = false;
 					}
-				    	
+						
 					if(switchToCombinedCTMC) {
 						
 						//////////////////////////Approximation Step///////////////////////////
@@ -248,26 +248,26 @@ public class StaminaModelChecker extends Prism {
 						
 						
 						// Explicitely invoke model build
-                        if(Options.getImportModel()) {
-                            File sf=null, lf = null, srf = null, mf = null;
-                            try {
-                                String filename = Options.getImportFileName();
-                                String transFile = filename + ".tra";
-                                String stateRewardsFile = filename + "srew";
-                                String transRewardsFile = filename + ".trew";
-                                String statesFile = filename + ".sta";
-                                String labelsFile = filename + ".lab";
-                                sf = new File(statesFile);
-                                lf = new File(labelsFile);
-                                srf = new File(stateRewardsFile);
-                                mf = new File(transFile);
-                                super.loadModelFromExplicitFiles(sf, mf, lf, srf, ModelType.CTMC);
-                            } catch (Exception e) {
-                                throw new PrismException(e.toString());
-                            }
-                        }
-    
-    				    super.buildModel();
+						if(Options.getImportModel()) {
+							File sf=null, lf = null, srf = null, mf = null;
+							try {
+								String filename = Options.getImportFileName();
+								String transFile = filename + ".tra";
+								String stateRewardsFile = filename + "srew";
+								String transRewardsFile = filename + ".trew";
+								String statesFile = filename + ".sta";
+								String labelsFile = filename + ".lab";
+								sf = new File(statesFile);
+								lf = new File(labelsFile);
+								srf = new File(stateRewardsFile);
+								mf = new File(transFile);
+								super.loadModelFromExplicitFiles(sf, mf, lf, srf, ModelType.CTMC);
+							} catch (Exception e) {
+								throw new PrismException(e.toString());
+							}
+						}
+	
+						super.buildModel();
 
 						if (Options.getExportModel()) {
 							try {
@@ -382,8 +382,8 @@ public class StaminaModelChecker extends Prism {
 						
 						// Print result to log
 						mainLog.print("\nResult: " + res_min_max[1].getResultString() + "\n");
-                        String filename = "results.txt";
-                        try {
+						String filename = "results.txt";
+						try {
 							File file = new File(filename);
 							file.delete();
 							FileWriter writer = new FileWriter("results.txt");
@@ -392,10 +392,10 @@ public class StaminaModelChecker extends Prism {
 							writer.write(Double.toString(ans_max));
 							writer.write("\r\n");
 							writer.close();
-                        } 
-                        catch(IOException e) {
-                            // Do nothing for now
-                        }
+						} 
+						catch(IOException e) {
+							// Do nothing for now
+						}
 					}
 					
 					else {
@@ -423,7 +423,7 @@ public class StaminaModelChecker extends Prism {
 						mainLog.println("Verifying Upper Bound for " + prop_max.getName() + " .....");
 						res_min_max[1] = super.modelCheck(propertiesFile, prop_max);
 						String filename = "results.txt";
-                        try {
+						try {
 							File file = new File(filename);
 							file.delete();
 							FileWriter writer = new FileWriter("results.txt");
@@ -432,9 +432,9 @@ public class StaminaModelChecker extends Prism {
 							writer.write(res_min_max[1].toString());
 							writer.write("\r\n");
 							writer.close();
-                        } catch(IOException e) {
-                            // Do nothing for now
-                        }
+						} catch(IOException e) {
+							// Do nothing for now
+						}
 					}
 					
 					

@@ -919,7 +919,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 					
 					if(!(b1 && (!b2))) {
 						curProbState.setStateAbsorbing(true);
-						perimeterStates.addElement(curProbState.toString());
+						// perimeterStates.addElement(curProbState.toString());
 						curProbState.setStateTerminal(false);
 						continue;
 					}
@@ -1059,7 +1059,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 			// Reduce the threshold for the next iteration
 			reachabilityThreshold /= Options.getKappaReductionFactor();
 
-			//TODO: I'm not sure what this is, it may still need to be implemented                     
+			//TODO: I'm not sure what this is, it may still need to be implemented					 
 			/*if(Options.getRankTransitions()) {
 				exploredK.sort(new Comparator<ProbState>(){
 					@Override
