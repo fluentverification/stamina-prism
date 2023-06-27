@@ -250,17 +250,31 @@ public class StaminaCL {
 		try {
 
 			// Configure options
-			if (reachabilityThreshold >= 0.0) { Options.setReachabilityThreshold(reachabilityThreshold); }
-			if (kappaReductionFactor >= 0.0 ) { Options.setKappaReductionFactor(kappaReductionFactor); }
-			if (mispredictionFactor >= 0.0 ) { Options.setMispredictionFactor(mispredictionFactor); }
-			if (maxApproxCount >= 0) { Options.setMaxRefinementCount(maxApproxCount); }
-			if (probErrorWindow >= 0.0) { Options.setProbErrorWindow(probErrorWindow); }
-			if (exportTransitionsToFile != null) { Options.setExportTransitionsToFile(exportTransitionsToFile); }
+			if (reachabilityThreshold >= 0.0) {
+				Options.setReachabilityThreshold(reachabilityThreshold);
+			}
+			if (kappaReductionFactor >= 0.0 ) {
+				Options.setKappaReductionFactor(kappaReductionFactor);
+			}
+			if (mispredictionFactor >= 0.0 ) {
+				Options.setMispredictionFactor(mispredictionFactor);
+			}
+			if (maxApproxCount >= 0) {
+				Options.setMaxRefinementCount(maxApproxCount);
+			}
+			if (probErrorWindow >= 0.0) {
+				Options.setProbErrorWindow(probErrorWindow);
+			}
+			if (exportTransitionsToFile != null) {
+				Options.setExportTransitionsToFile(exportTransitionsToFile);
+			}
 
 			Options.setRankTransitions(rankTransitions);
 			Options.setNoPropRefine(noPropRefine);
 
-			if (maxLinearSolnIter >= 0) { staminaMC.setMaxIters(maxLinearSolnIter); }
+			if (maxLinearSolnIter >= 0) {
+				staminaMC.setMaxIters(maxLinearSolnIter);
+			}
 
 			if (solutionMethod != null) {
 
