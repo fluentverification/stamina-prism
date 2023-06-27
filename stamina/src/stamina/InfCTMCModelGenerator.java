@@ -893,7 +893,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		// Perim reachability is our estimate of Prob_max - Prob_min, it starts at 1 because we don't have any info
 		double perimReachability = 1;
 		// State Search 
-		while(perimReachability >= Options.getProbErrorWindow()/Options.getMisPredictionFactor()) {
+		while(perimReachability >= Options.getProbErrorWindow()/Options.getMispredictionFactor()) {
 			/*double startTime = System.currentTimeMillis();
 			double predMapTime = 0;// Explore...
 			double prismTime = 0.0;
