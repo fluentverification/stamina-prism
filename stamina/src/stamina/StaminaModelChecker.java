@@ -1,7 +1,5 @@
 package stamina;
 
-
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -42,7 +40,6 @@ import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.List;
 
-
 import common.IterableStateSet;
 import common.iterable.IterableInt;
 import common.iterable.MappingIterator;
@@ -63,10 +60,7 @@ import prism.PrismPrintStreamLog;
 import prism.ProgressDisplay;
 import prism.UndefinedConstants;
 
-
-
 public class StaminaModelChecker extends Prism {
-
 
 	////////////////////////////////////
 	private InfCTMCModelGenerator infModelGen = null;
@@ -81,7 +75,7 @@ public class StaminaModelChecker extends Prism {
 			super.setCUDDMaxMem(Options.getCuddMemoryLimit());
 		}
 		catch (Exception e) {
-
+			mainLog.println("Got error when trying to set CUDD max memory limit:" + e);
 		}
 	}
 
@@ -93,9 +87,9 @@ public class StaminaModelChecker extends Prism {
 	 */
 	private void modifyExpression(Expression expr, boolean isMin) throws PrismLangException {
 
-		if(expr instanceof ExpressionBinaryOp) {
+		if (expr instanceof ExpressionBinaryOp) {
 			Expression op1 = ((ExpressionBinaryOp) expr).getOperand1();
-			if(op1 instanceof ExpressionVar && ExpressionBinaryOp.isRelOp(((ExpressionBinaryOp) expr).getOperator()) ) {
+			if (op1 instanceof ExpressionVar && ExpressionBinaryOp.isRelOp(((ExpressionBinaryOp) expr).getOperator()) ) {
 
 				State absSt = infModelGen.getAbsorbingState();
 				String varName = ((ExpressionVar) op1).getName();
@@ -105,7 +99,7 @@ public class StaminaModelChecker extends Prism {
 
 				Expression abs = new ExpressionBinaryOp(ExpressionBinaryOp.EQ, ((ExpressionBinaryOp) expr).getOperand1(), new ExpressionLiteral(TypeInt.getInstance(), absSt.varValues[getPRISMModel().getVarIndex(varName)]));
 
-				if(isMin) {
+				if (isMin) {
 					Expression newOp2 = new ExpressionUnaryOp(ExpressionUnaryOp.PARENTH, new ExpressionUnaryOp(ExpressionUnaryOp.NOT, abs));
 
 					((ExpressionBinaryOp) expr).setOperator("&");
@@ -113,30 +107,26 @@ public class StaminaModelChecker extends Prism {
 					((ExpressionBinaryOp) expr).setOperand2(newOp2);
 				}
 				else {
-
 					Expression newOp2 = new ExpressionUnaryOp(ExpressionUnaryOp.PARENTH, abs);
 
 					((ExpressionBinaryOp) expr).setOperator("|");
 					((ExpressionBinaryOp) expr).setOperand1(newOp1);
 					((ExpressionBinaryOp) expr).setOperand2(newOp2);
-
 				}
-
-
 			}
 			else {
 				modifyExpression(((ExpressionBinaryOp) expr).getOperand1(), isMin);
 				modifyExpression(((ExpressionBinaryOp) expr).getOperand2(), isMin);
 			}
 		}
-		else if(expr instanceof ExpressionProb) {
+		else if (expr instanceof ExpressionProb) {
 			modifyExpression(((ExpressionProb) expr).getExpression(), isMin);
 		}
-		else if(expr instanceof ExpressionTemporal) {
+		else if (expr instanceof ExpressionTemporal) {
 			modifyExpression(((ExpressionTemporal) expr).getOperand1(), isMin);
 			modifyExpression(((ExpressionTemporal) expr).getOperand2(), isMin);
 		}
-		else if(expr instanceof ExpressionUnaryOp) {
+		else if (expr instanceof ExpressionUnaryOp) {
 			modifyExpression(((ExpressionUnaryOp) expr).getOperand(), isMin);
 		}
 
@@ -152,12 +142,11 @@ public class StaminaModelChecker extends Prism {
 	 * we were successful in state space approximation.
 	 */
 	private boolean terminateModelCheck(Object minProb, Object maxProb, double termParam) {
-
-		if((minProb instanceof Boolean) && (maxProb instanceof Boolean)){
+		if ((minProb instanceof Boolean) && (maxProb instanceof Boolean)){
 				boolean terminateRefinment = !(((boolean) minProb) ^ ((boolean) maxProb));
 				return terminateRefinment;
 		}
-		else if((minProb instanceof Double) && (maxProb instanceof Double)) {
+		else if ((minProb instanceof Double) && (maxProb instanceof Double)) {
 
 			boolean terminateRefinment = (((double) maxProb) - ((double) minProb)) <= termParam;
 			return terminateRefinment;
@@ -165,8 +154,6 @@ public class StaminaModelChecker extends Prism {
 		else {
 			return false;
 		}
-
-
 	}
 
 	/**
@@ -212,30 +199,30 @@ public class StaminaModelChecker extends Prism {
 		boolean switchToCombinedCTMC = false;
 
 		Expression exprProp = prop.getExpression();
-		if(exprProp instanceof ExpressionProb) {
+		if (exprProp instanceof ExpressionProb) {
 
 
 			while(numRefineIteration==0 || ((!terminateModelCheck(res_min_max[0].getResult(), res_min_max[1].getResult(), Options.getProbErrorWindow())) && (numRefineIteration < Options.getMaxApproxCount()))) {
 				reachTh = Options.getReachabilityThreshold();
 				Expression expr = ((ExpressionProb) exprProp).getExpression();
-				if(expr instanceof ExpressionTemporal) {
+				if (expr instanceof ExpressionTemporal) {
 
 				//	expr = Expression.convertSimplePathFormulaToCanonicalForm(expr);
 					ExpressionTemporal exprTemp = (ExpressionTemporal) expr.deepCopy();
 
-					if(exprTemp.isPathFormula(false) && (exprTemp.getOperator()==ExpressionTemporal.P_U) && (!Options.getNoPropRefine())) {
+					if (exprTemp.isPathFormula(false) && (exprTemp.getOperator()==ExpressionTemporal.P_U) && (!Options.getNoPropRefine())) {
 						infModelGen.setPropertyExpression(exprTemp);
 					}
 
-					if(exprTemp.isPathFormula(false) && (exprTemp.getOperator()==ExpressionTemporal.P_U)) {
+					if (exprTemp.isPathFormula(false) && (exprTemp.getOperator()==ExpressionTemporal.P_U)) {
 						switchToCombinedCTMC = true;
 					}
 
-					if(Options.getNoPropRefine()) {
+					if (Options.getNoPropRefine()) {
 						switchToCombinedCTMC = false;
 					}
 
-					if(switchToCombinedCTMC) {
+					if (switchToCombinedCTMC) {
 
 						//////////////////////////Approximation Step///////////////////////////
 						mainLog.println();
@@ -246,8 +233,8 @@ public class StaminaModelChecker extends Prism {
 
 
 						// Explicitely invoke model build
-						if(Options.getImportModel()) {
-							File sf=null, lf = null, srf = null, mf = null;
+						if (Options.getImportModel()) {
+							File sf = null, lf = null, srf = null, mf = null;
 							try {
 								String filename = Options.getImportFileName();
 								String transFile = filename + ".tra";
@@ -324,7 +311,7 @@ public class StaminaModelChecker extends Prism {
 							uTime = -1;
 						}
 
-						if(lTime>0.0) throw new PrismException("Currently only supports [0,t] time bound.");
+						if (lTime>0.0) throw new PrismException("Currently only supports [0,t] time bound.");
 
 						// verification step
 						mainLog.println();
@@ -343,10 +330,10 @@ public class StaminaModelChecker extends Prism {
 						// Check if the model has an abosrbing state (i.e. not all are generated)
 						// If it it does, it will be the first state and we don't want to add it to
 						// ans_min, so we start the for loop and i=1
-						if(infModelGen.finalModelHasAbsorbing()) {
+						if (infModelGen.finalModelHasAbsorbing()) {
 							for(int i=1; i<super.getBuiltModelExplicit().getNumStates(); ++i) {
 
-								if(b2.get(i)) ans_min += (double) probsExpl.getValue(i);
+								if (b2.get(i)) ans_min += (double) probsExpl.getValue(i);
 
 							}
 
@@ -355,9 +342,7 @@ public class StaminaModelChecker extends Prism {
 						}
 						else {
 							for(int i=0; i<super.getBuiltModelExplicit().getNumStates(); ++i) {
-
-								if(b2.get(i)) ans_min += (double) probsExpl.getValue(i);
-
+								if (b2.get(i)) ans_min += (double) probsExpl.getValue(i);
 							}
 							// If there is no absorbing state, we know the solution exactly.
 							ans_max = ans_min;
@@ -461,11 +446,11 @@ public class StaminaModelChecker extends Prism {
 					// If we are way off, our estimate is further off than we want, so we update
 					// the misprediction factor in proportion to our percentage off.
 					// Here we multiply the percentoff by four but cap it at 100. Both 4 and 100 were determined heuristically through testing.
-					double percentOff = 4*((((Double)res_min_max[1].getResult())-((Double)res_min_max[0].getResult()))/Options.getProbErrorWindow());
-					if(percentOff > 100) {
+					double percentOff = 4 * ((Double) res_min_max[1].getResult() - (Double) res_min_max[0].getResult()) / Options.getProbErrorWindow();
+					if (percentOff > 100) {
 						percentOff = 100;
 					}
-					Options.setMispredictionFactor(Options.getMispredictionFactor()*percentOff);
+					Options.setMispredictionFactor(Options.getMispredictionFactor() * percentOff);
 
 					// increment refinement count
 					if (Options.getExportPerimeterStates()) {
@@ -473,7 +458,7 @@ public class StaminaModelChecker extends Prism {
 							FileWriter writer = new FileWriter(Options.getExportPerimeterFilename(), true);
 							Vector<String> values = infModelGen.getPerimeterStatesVector();
 							writer.write("Iteration: " + Integer.toString(numRefineIteration) + "\r\n");
-							for (int i = 0; i<infModelGen.getNumVars(); ++i) {
+							for (int i = 0; i < infModelGen.getNumVars(); ++i) {
 								writer.write(infModelGen.getVarName(i) + ",");
 							}
 							writer.write("Current Reachability Probability\r\n");
@@ -490,10 +475,8 @@ public class StaminaModelChecker extends Prism {
 					}
 					infModelGen.clearPerimeterStatesVector();
 					++numRefineIteration;
-
 				}
 			}
-
 		}
 
 		// Print the final result
@@ -514,12 +497,11 @@ public class StaminaModelChecker extends Prism {
 		catch(FileNotFoundException e) {
 			System.out.println("File could not be found for transition exporting");
 		}*/
-		if(Options.getExportTransitionsToFile() != null) {
+		if (Options.getExportTransitionsToFile() != null) {
 			mainLog.println("\n\n Exporting transition list...");
 			printTransitionActions(infModelGen, Options.getExportTransitionsToFile());
 			mainLog.println("Export Complete");
 		}
-
 
 		return res_min_max[0];
 
@@ -537,7 +519,7 @@ public class StaminaModelChecker extends Prism {
 		// was as PRISM before printing them out to be consistent.
 		HashMap<State, ProbState> globalStateSet = modelGen.getGlobalStateSet();
 		TreeSet<State> sortedStates = new TreeSet<State>(globalStateSet.keySet());
-		if(modelGen.finalModelHasAbsorbing()) {
+		if (modelGen.finalModelHasAbsorbing()) {
 			sortedStates.add(modelGen.getAbsorbingState());
 		}
 		HashMap<State, Integer> stateIndex = new HashMap<State,Integer>();
