@@ -1,4 +1,5 @@
 apply plugin: 'java'
+apply plugin: 'application'
 
 // Defines the source and output directories
 sourceSets {
@@ -9,26 +10,31 @@ sourceSets {
 	}
 }
 
+def prismLocation = '/opt/verificationTools/prism-source/prism' // System.getenv('PRISM_LOCATION')
 
-// Start by seeing if the PRISM_LOCATION environment variable is set. If so, use that
-def prismLocation = System.getenv('PRISM_LOCATION')
+// If it is not set, then prompt the user for it.
+if (!prismLocation) {
+	println 'This is current prismLocation $prismLocation'
+	println 'Please enter the location of your PRISM installation:'
+	prismLocation = System.in.newReader().readLine()
+	// throw new GradleException("PRISM_LOCATION not set!")
+} else if (!file(prismLocation).exists()) {
+	throw new GradleException("PRISM directory not found at location: $prismLocation")
+}
+
+dependencies {
+	compile fileTree(dir: prismLocation, include: '**/*.class')
+}
 
 // This allows us to enter into the main class StaminaCL
 task run(type: JavaExec) {
 	main = 'stamina.StaminaCL'
+	// Start by seeing if the PRISM_LOCATION environment variable is set. If so, use that
 	doFirst {
-		// If it is not set, then prompt the user for it.
-		if (!prismLocation) {
-			println 'Please enter the location of your PRISM installation:'
-			prismLocation = System.console().readLine()
-		} else if (!file(prismLocation).exists()) {
-			throw new GradleException("PRISM directory not found at location: $prismLocation")
-		}
+		sourceSets.main.runtimeClasspath += fileTree(dir: prismLocation, include: '**/*.class')
 	}
-	classpath sourceSets.main.runtimeClasspath + files(prismLocation)
 }
 
 // Make it so when you run `gradle build` it knows it depends on `run`
 build.dependsOn(run)
 
-sourceSets.main.runtimeClasspath += fileTree(dir: prismLocation, include: '**/*.class')
