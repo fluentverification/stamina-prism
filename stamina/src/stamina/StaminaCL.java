@@ -20,8 +20,11 @@ import prism.UndefinedConstants;
 
 public class StaminaCL {
 	// Version
-	final private int versionMajor = 1;
-	final private int versionMinor = 1;
+	public static final int versionMajor = 2;
+	public static final int versionMinor = 1;
+
+	// Argument parser
+	ArgumentParser argParse;
 
 	// Stamina Object
 	private StaminaModelChecker staminaMC = null;
@@ -110,11 +113,12 @@ public class StaminaCL {
 		Result res;
 
 		// Parse options
-		doParsing(args);
+// 		doParsing(args);
+		argParse.setupArgs();
+		argParse.parseArguments(args);
 
 		//Initialize
 		initializeSTAMINA();
-
 		parseModelProperties();
 
 		// Process options
@@ -496,34 +500,6 @@ public class StaminaCL {
 	 * Print a -help message, i.e. a list of the command-line switches.
 	 */
 	private void printHelp() {
-		StaminaLog.log("Usage: " + "stamina" + " [options]" + " <model-file> <properties-file>");
-		StaminaLog.log("<model-file> .................... Prism model file. Extensions: .prism, .sm");
-		StaminaLog.log("<properties-file> ............... Property file. Extensions: .csl");
-		StaminaLog.log("Options:");
-		StaminaLog.log("========");
-		StaminaLog.log("-kappa <k>.......................... ReachabilityThreshold for first iteration [default: 1.0]");
-		StaminaLog.log("-reducekappa <f>.................... Reduction factor for ReachabilityThreshold(kappa) for refinement step.  [default: 1.25]");
-		StaminaLog.log("-approxFactor <f>................... Factor to estimate how far off our reachability predictions will be  [default: 2.0]");
-		StaminaLog.log("-pbwin <e>.......................... Probability window between lower and upperbound for termination. [default: 1.0e-3]");
-		StaminaLog.log("-maxapproxcount <n>................. Maximum number of approximation iteration. [default: 10]");
-		StaminaLog.log("-noproprefine ...................... Do not use property based refinement. If given, model exploration method will reduce the kappa and do the property independent refinement. [default: off]");
-		StaminaLog.log("-cuddmaxmem <memory>................ Maximum cudd memory. Expects the same format as prism [default: 1g]");
-		StaminaLog.log("-export <filename>.................. Export model to a file. Please provide a filename without an extension");
-		StaminaLog.log("-exportPerimeterStates <filename>... Export perimeter states to a file. Please provide a filename. This will append to the file if it is existing");
-		StaminaLog.log("-import <filename>.................. Import model to a file. Please provide a filename without an extension");
-		StaminaLog.log("-property <property>................ Specify a specific property to check in a model file that contains many");
-		StaminaLog.log("-const <vals> ...................... Comma separated values for constants");
-		StaminaLog.log("-exportTrans <filename>............. Export the list of transitions and actions to a specified file name, or to trans.txt if no file name is specified. Transitions exported in the format srcStateIndex destStateIndex actionLabel");
-		StaminaLog.log("\tExamples:");
-		StaminaLog.log("\t-const a=1,b=5.6,c=true");
-		StaminaLog.log("Other Options:");
-		StaminaLog.log("========");
-		StaminaLog.log("-rankTransitions ................... Rank transitions before expanding. [default: false]");
-		StaminaLog.log("-maxiters <n> ...................... Maximum iteration for solution. [default: 10000]");
-		StaminaLog.log("-power ............................. Power method");
-		StaminaLog.log("-jacobi ............................ Jacobi method");
-		StaminaLog.log("-gaussseidel ....................... Gauss-Seidel method");
-		StaminaLog.log("-bgaussseidel ...................... Backward Gauss-Seidel method");
-
+		argParse.printHelp();
 	}
 }

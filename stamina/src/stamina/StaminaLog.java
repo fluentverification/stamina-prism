@@ -51,6 +51,10 @@ class StaminaLog {
 		out.println(message);
 	}
 
+	public static void print(String message) {
+		out.print(message);
+	}
+
 	/**
 	 * Prints the message as a "header", meaning that it has lines on top and bottom
 	 *
