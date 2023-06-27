@@ -54,11 +54,11 @@ public class StaminaCL {
 	private String constSwitch = null;
 
 	//Probabilistic state search termination value : Defined by kappa in command line argument
-	private static double reachabilityThreshold = -1.0;
-
-	// Kappa reduction factor
-	private static double kappaReductionFactor = -1;
-	private static double mispredictionFactor = -1;
+// 	private static double reachabilityThreshold = -1.0;
+//
+// 	Kappa reduction factor
+// 	private static double kappaReductionFactor = -1;
+// 	private static double mispredictionFactor = -1;
 
 	// max number of refinement count
 	private static int maxApproxCount = -1;

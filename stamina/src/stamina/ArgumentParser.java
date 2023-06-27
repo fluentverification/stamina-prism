@@ -2,6 +2,7 @@ package stamina;
 
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 import prism.PrismLog;
 
@@ -20,19 +21,22 @@ class ArgumentParser {
 		public String name;
 		public String description;
 		public ArgumentType type;
+		public Consumer<String> validateAndAccept;
 		/**
 		 * Constructor for Argument type
 		 * */
-		public Argument(String name, ArgumentType type, String description) {
+		public Argument(String name, ArgumentType type, String description, Consumer<String> validateAndAccept) {
 			this.name = name;
 			this.description = description;
 			this.type = type;
+			this.validateAndAccept = validateAndAccept;
 		}
 
-		public Argument(String name, String description) {
+		public Argument(String name, String description, Consumer<String> validateAndAccept) {
 			this.name = name;
 			this.description = description;
 			this.type = ArgumentType.NONE;
+			this.validateAndAccept = validateAndAccept;
 		}
 
 		public boolean hasValue() {
@@ -52,24 +56,134 @@ class ArgumentParser {
 	 * */
 	public void setupArgs() {
 		// We have two arguments: Model file and properties file, both string
-		addArgument("MODEL FILE", "Prism model file. Extensions: .prism, .sm");
-		addArgument("PROPERTIES FILE", "Property file. Extensions: .csl");
+		addArgument("MODEL FILE"
+			, "Prism model file. Extensions: .prism, .sm"
+			, model -> {
+				// TODO: Add this to Options
+				Options.setModelFileName(model);
+			}
+		);
+		addArgument("PROPERTIES FILE"
+			, "Property file. Extensions: .csl"
+			, prop -> {
+				// TODO: Add this to Options
+				Options.setPropertyFileName(prop);
+			}
+		);
 		// These are the possible flags, in order of importance
-		addFlag("kappa", ArgumentType.DOUBLE, "Reachability threshold for first iteration [default: 1.0]");
-		addFlag("rKappa", ArgumentType.DOUBLE, "Reduction factor for ReachabilityThreshold (kappa) for refinement step. [default: 1.25]");
-		addFlag("approxFactor", ArgumentType.DOUBLE, "Factor to estimate how far off our reachability predictions will be [default: 2.0]");
-		addFlag("probWin", ArgumentType.DOUBLE, "Probability window between lower and upper bound for termination. [default: 1.0e-3]");
-		addFlag("cuddMaxMemory", ArgumentType.STRING, "Maximum cudd memory. Expects the same format as PRISM [default: \"1g\"]");
-		addFlag("export", ArgumentType.STRING, "Export model to a series of files with provided name (no extension)");
-		addFlag("exportPerimeterStates", ArgumentType.STRING, "Export perimeter states to a file. Please provide a filename. This will append to the file if it is existing.");
-		addFlag("import", ArgumentType.STRING, "Import model to a file. Please provide a filename without an extension");
-		addFlag("property", ArgumentType.STRING, "Choose a specific property to check in a model file that contains many");
-		addFlag("noPropRefine", ArgumentType.NONE, "Do not use property based refinement. If given, model exploration method will reduce the kappa and do the property independent refinement. [default: off]");
-		addFlag("maxApproxCount", ArgumentType.INTEGER, "Maximum number of approximation iterations. [default: 10]");
-		addFlag("maxIters", ArgumentType.INTEGER, "Maximum number of iterations to find solution. [default: 10000]");
+		addFlag("kappa"
+			, ArgumentType.DOUBLE
+			, "Reachability threshold for first iteration [default: 1.0]"
+			, k -> {
+				double kappa = Double.parseDouble(k);
+				if (kappa < 0 || kappa >= 1) {
+					StaminaLog.errorAndExit("Reachability threshold 'kappa' should be in the range [0, 1)!", 1);
+				}
+				Options.setReachabilityThreshold(kappa);
+			}
+		);
+		addFlag("rKappa"
+			, ArgumentType.DOUBLE
+			, "Reduction factor for ReachabilityThreshold (kappa) for refinement step. [default: 1.25]"
+			, rk -> {
+				double rKappa = Double.parseDouble(k);
+				if (rKappa <= 1) {
+					StaminaLog.errorAndExit("Reduction factor 'rKappa' must be greater than 1!", 1);
+				}
+				Options.setKappaReductionFactor(rKappa);
+			}
+		);
+		addFlag("approxFactor"
+			, ArgumentType.DOUBLE
+			, "Factor to estimate how far off our reachability predictions will be [default: 2.0]"
+			, approx -> {
+				double approxFactor = Double.parseDouble(approxFactor);
+				if (approxFactor < 0) {
+					StaminaLog.errorAndExit("Misprediction factor 'approxFactor' should be greater than or equal to 0!");
+				}
+				Options.setMispredictionFactor(approxFactor);
+			}
+		);
+		addFlag("probWin"
+			, ArgumentType.DOUBLE
+			, "Probability window between lower and upper bound for termination. [default: 1.0e-3]"
+			, w -> {
+				double window = Double.parseDouble(w);
+				if (window <= 0 || window >= 1) {
+					StaminaLog.errorAndExit("Probability window 'probWin' should be in the range (0, 1)!", 1);
+				}
+				Options.setProbErrorWindow(window);
+			}
+		);
+		addFlag("cuddMaxMemory"
+			, ArgumentType.STRING
+			, "Maximum cudd memory. Expects the same format as PRISM [default: \"1g\"]"
+			, mem -> { Options.setCuddMemoryLimit(mem); }
+		);
+		addFlag("export"
+			, ArgumentType.STRING
+			, "Export model to a series of files with provided name (no extension)"
+			, filename -> {
+				Options.setExportModel(true);
+				Options.setExportFileName(filename);
+			}
+		);
+		addFlag("exportPerimeterStates"
+			, ArgumentType.STRING
+			, "Export perimeter states to a file. Please provide a filename. This will append to the file if it is existing."
+			, filename -> {
+				Options.setExportPerimeterStates(true);
+				Options.setExportPerimeterFilename(filename);
+			}
+		);
+		addFlag("import"
+			, ArgumentType.STRING
+			, "Import model to a file. Please provide a filename without an extension"
+			, filename -> {
+				Options.setImportModel(true);
+				Options.setImportFileName(filename);
+			}
+		);
+		addFlag("property"
+			, ArgumentType.STRING
+			, "Choose a specific property to check in a model file that contains many"
+			, name -> {
+				Options.setSpecificProperty(true);
+				Options.setPropertyName(name);
+			}
+		);
+		addFlag(
+			"noPropRefine"
+			, ArgumentType.NONE
+			, "Do not use property based refinement. If given, model exploration method will reduce the kappa and do the property independent refinement. [default: off]"
+			, p -> { Options.setNoPropRefine(true); }
+		);
+		addFlag("maxApproxCount"
+			, ArgumentType.INTEGER
+			, "Maximum number of approximation iterations. [default: 10]"
+			, mac -> {
+				int maxApproxCount = Integer.parseInt(mac);
+				if (maxApproxCount <= 0) {
+					StaminaLog.errorAndExit("Parameter 'maxApproxCount' must be greater than 0!", 1);
+				}
+				Options.setMaxRefinementCount(maxApproxCount);
+			}
+		);
+		addFlag("maxIters"
+			, ArgumentType.INTEGER
+			, "Maximum number of iterations to find solution. [default: 10000]"
+			, mi -> {
+				int maxIters = Integer.parseInt(mi);
+				if (maxIters <= 0) {
+					StaminaLog.errorAndExit("Parameter 'maxIters' must be greater than 0!");
+				}
+				// TODO: Add this to Options
+				Options.setMaxIterations(maxIters);
+			}
+		);
 		addFlag("method", ArgumentType.STRING, "Method to solve CTMC. Supported methods are 'power', 'jacobi', 'gaussseidel', and 'bgaussseidel'.");
 		addFlag("const", ArgumentType.STRING, "Comma separated values for constants (ex: \"a=1,b=5.6,c=true\")");
-		addFlag("rankTransitions", ArgumentType.NONE, "");
+		addFlag("rankTransitions", ArgumentType.NONE, "Rank transitions before expanding [default: false]");
 		addFlag("exportTrans", ArgumentType.STRING, "Export the list of transitions and actions to a specified file name, or to trans.txt if no file name is specified. Transitions exported in the format srcStateIndex destStateIndex actionLabe");
 	}
 
