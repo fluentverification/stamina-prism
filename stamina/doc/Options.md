@@ -15,7 +15,7 @@ The reachability threshold is passed into STAMINA via the `kappa` command line a
 
 </div>
 
-**Definition:** The threshold probability that a particular state must be at to be considered "reachable". Since we are in a Continuous Time Markov Chain, transitions are represented by a "rate" rather than a flat probability, meaning that a rate of 0.0 is undefined for a state transition. However, the number of states that the "reduced" state space model can reach is determined by this threshold. In the reachability analysis method of the `InfCTMCModelGenerator()` class, a truncated state space is created, based on this reachability threshold.
+**Definition:** The threshold probability that a particular state must be at to be considered "reachable". Since we are in a Continuous Time Markov Chain, transitions are represented by a "rate" rather than a flat probability, meaning that a rate of 0.0 is undefined for a state transition. However, the number of states that the "reduced" state space model can reach is determined by this threshold. In the reachability analysis method of the `StaminaModelGenerator()` class, a truncated state space is created, based on this reachability threshold.
 
 STAMINA only includes states where the probability mass is clustered, starting breadth-first from the initial state. This means that states less likely to be chosen and included in the truncated model if:
 
@@ -37,7 +37,7 @@ The probability threshold is the probabilistic state search termination value; i
 **Associated methods:**
 
 1. `getReachabilityThreshold()`: returns the reachability threshold.
-2. `setReachabilityThreshold(double)`: sets the reachability threshold. Currently does not check the range that it ought to be in. 
+2. `setReachabilityThreshold(double)`: sets the reachability threshold. Currently does not check the range that it ought to be in.
     - TODO: maybe implement a check that warns about memory limits for too small of a reachability threshold.?
 
 ## Kappa (&kappa;) reduction factor (r<sub>&kappa;</sub>)
@@ -54,7 +54,7 @@ The &kappa; reduction factor is used to compute the lower bound probability P<su
 
 ## Misprediction Factor (m)
 
-**Definition:** This is used in determining the termination of the exploration. If &Pi; is the probability we are in a terminal state, then exploration is terminated when &Pi; < w / m. Additionally, if the bound between  P<sub>max</sub> and P<sub>min</sub> is greater than the window, the misprediction factor will be updated accordingly. This updating is done in `InfCTMCModelGenerator.doReachabilityAnalysis()`.
+**Definition:** This is used in determining the termination of the exploration. If &Pi; is the probability we are in a terminal state, then exploration is terminated when &Pi; < w / m. Additionally, if the bound between  P<sub>max</sub> and P<sub>min</sub> is greater than the window, the misprediction factor will be updated accordingly. This updating is done in `StaminaModelGenerator.doReachabilityAnalysis()`.
 
 **Associated methods:**
 
@@ -106,7 +106,7 @@ The &kappa; reduction factor is used to compute the lower bound probability P<su
 
 ## CUDD Memory Limit
 
-**Definition:** A string representing the memory limit available to STAMINA and the associated PRISM model we are building. 
+**Definition:** A string representing the memory limit available to STAMINA and the associated PRISM model we are building.
 
 <div style="background-color: #ff6666; padding: 10px; border-radius: 5px;">
 
@@ -156,7 +156,7 @@ Problems could arise if there are more states needed to be built than memory ava
 **Associated methods:**
 
 1. `getExportPerimeterFilename()`: gets the filename to which we would export the perimeter states.
-2. `setExportPerimeterFilename(String)`: sets the filename to which the perimeter states would be exported. 
+2. `setExportPerimeterFilename(String)`: sets the filename to which the perimeter states would be exported.
 
 ## Import Model
 
@@ -192,7 +192,7 @@ Problems could arise if there are more states needed to be built than memory ava
 
 ## Export Transitions to File
 
-**Definition:** The filename where the export transitions will be sent. 
+**Definition:** The filename where the export transitions will be sent.
 
 **Associated methods:**
 

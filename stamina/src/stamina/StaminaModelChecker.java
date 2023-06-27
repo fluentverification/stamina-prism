@@ -63,7 +63,7 @@ import prism.UndefinedConstants;
 public class StaminaModelChecker extends Prism {
 
 	////////////////////////////////////
-	private InfCTMCModelGenerator infModelGen = null;
+	private StaminaModelGenerator infModelGen = null;
 
 	/**
 	 * Construct a new Prism object.
@@ -169,7 +169,7 @@ public class StaminaModelChecker extends Prism {
 		double reachTh = Options.getReachabilityThreshold();
 
 		// Instantiate and load model generator
-		infModelGen = new InfCTMCModelGenerator(getPRISMModel(), this);
+		infModelGen = new StaminaModelGenerator(getPRISMModel(), this);
 		super.loadModelGenerator(infModelGen);
 
 		// Time bounds
@@ -479,12 +479,12 @@ public class StaminaModelChecker extends Prism {
 
 	}
 	/**
-	 * Prints all transition actions taken by the InfCTMCModelGenerator to a file.
+	 * Prints all transition actions taken by the StaminaModelGenerator to a file.
 	 * @param modelGen The model generator we're using.
 	 * @param exportFileName The file we're exporting to.
 	 * @throws PrismException
 	 */
-	private void printTransitionActions(InfCTMCModelGenerator modelGen, String exportFileName) throws PrismException{
+	private void printTransitionActions(StaminaModelGenerator modelGen, String exportFileName) throws PrismException{
 
 		// Stamina naturally sorts states in the order it encounters them, but PRISM prints out transitions
 		// sorted in the natural ordering of their variable values. So, we need to sort the states the same

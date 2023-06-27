@@ -35,7 +35,7 @@ import simulator.ModulesFileModelGenerator;
 import simulator.RandomNumberGenerator;
 import simulator.TransitionList;
 import simulator.Updater;
-public class InfCTMCModelGenerator implements ModelGenerator
+public class StaminaModelGenerator implements ModelGenerator
 {
 	// Parent PrismComponent (logs, settings etc.)
 	protected PrismComponent parent;
@@ -83,7 +83,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	 * Build a ModulesFileModelGenerator for a particular PRISM model, represented by a ModuleFile instance.
 	 * @param modulesFile The PRISM model
 	 */
-	public InfCTMCModelGenerator(ModulesFile modulesFile) throws PrismException {
+	public StaminaModelGenerator(ModulesFile modulesFile) throws PrismException {
 		this(modulesFile, null);
 	}
 
@@ -91,7 +91,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	 * Build a ModulesFileModelGenerator for a particular PRISM model, represented by a ModuleFile instance.
 	 * @param modulesFile The PRISM model
 	 */
-	public InfCTMCModelGenerator(ModulesFile modulesFile, PrismComponent parent) throws PrismException {
+	public StaminaModelGenerator(ModulesFile modulesFile, PrismComponent parent) throws PrismException {
 		this.parent = parent;
 
 		// No support for PTAs yet

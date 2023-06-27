@@ -26,12 +26,12 @@ Returns the current reachability probability.
 
 <div style="background-color: #ffeecc; padding: 10px; color: #222222; border-radius: 5px;">
 
-This method does **not** perform a reachability analysis on the entire CTMC. It simply returns the current reachability probability of the current state we are looking at, last modified by the previous reachability analysis done on the CTMC (last done by `InfCTMCModelGenerator.doReachabilityAnalysis()`).
+This method does **not** perform a reachability analysis on the entire CTMC. It simply returns the current reachability probability of the current state we are looking at, last modified by the previous reachability analysis done on the CTMC (last done by `StaminaModelGenerator.doReachabilityAnalysis()`).
 
 </div>
 
 ### `setCurReachabilityProb(double)`
-Sets the current reachability probabilty. This method is used by `InfCTMCModelGenerator.doReachabilityAnalysis()` when performing a reachability analysis for the entire CTMC.
+Sets the current reachability probabilty. This method is used by `StaminaModelGenerator.doReachabilityAnalysis()` when performing a reachability analysis for the entire CTMC.
 
 ### `addToReachability(double)`
 Adds probabilty to reachability. If probability exceeds `1.0`, maxes to `1.0` so as not to break the rules of probability.
