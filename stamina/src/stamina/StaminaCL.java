@@ -111,11 +111,12 @@ public class StaminaCL {
 	public void run(String[] args) {
 
 		Result res;
-
+		argParse = new ArgumentParser();
 		// Parse options
 // 		doParsing(args);
 		argParse.setupArgs();
 		argParse.parseArguments(args);
+		argParse.printHelp();
 
 		//Initialize
 		initializeSTAMINA();
@@ -405,7 +406,6 @@ public class StaminaCL {
 					}
 				}
 				else {
-					printHelp();
 					exit();
 				}
 
@@ -494,12 +494,5 @@ public class StaminaCL {
 			staminaMC.closeDown();
 		}
 		StaminaLog.errorAndExit(s + ".", StaminaLog.GENERAL_ERROR);
-	}
-
-	/**
-	 * Print a -help message, i.e. a list of the command-line switches.
-	 */
-	private void printHelp() {
-		argParse.printHelp();
 	}
 }

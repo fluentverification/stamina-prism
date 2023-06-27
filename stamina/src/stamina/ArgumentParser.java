@@ -7,8 +7,8 @@ import prism.PrismLog;
 
 class ArgumentParser {
 	// The size of the column when printing
-	private final int COLUMN_WIDTH = 32;
-	private final char SEPARATOR = '.';
+	private static final int COLUMN_WIDTH = 42;
+	private static final char SEPARATOR = '.';
 	public enum ArgumentType {
 		DOUBLE
 		, INTEGER
@@ -40,6 +40,13 @@ class ArgumentParser {
 		}
 	}
 
+	public ArgumentParser() {
+		index = 0;
+		flags = new HashMap<String, Argument>();
+		orderedFlags = new ArrayList<Argument>();
+		arguments = new ArrayList<Argument>();
+	}
+
 	/**
 	 * Sets the default arguments
 	 * */
@@ -67,7 +74,7 @@ class ArgumentParser {
 	}
 
 	public void addArgument(String name, String description) {
-		arguments.add(new Argument(name, description));
+		arguments.add(new Argument(name, ArgumentType.STRING, description));
 	}
 
 	public void addArgument(String name, ArgumentType type, String description) {
@@ -97,11 +104,33 @@ class ArgumentParser {
 		}
 	}
 	private void parseArgument(String [] args) {
-
+		String arg = args[index];
+		// Get the switch if it's a switch
+		boolean isFlag = arg.length() > 0 && arg.charAt(0) == '-';
+		String flag = arg.substring(1);
+		// Trim as many leading '-' characters as needed so as to support -flags and --flags
+		while (flag.charAt(0) == '-') {
+			flag = flag.substring(1);
+		}
+		// Some built-in arguments to the argument parser
+		if (flag.equals("help")) {
+			printHelp();
+		}
+		else if (flag.equals("usage")) {
+			printUsage();
+			System.exit(0);
+		}
+		else if (flag.equals("about") || flag.equals("version")) {
+			printDescription();
+			System.exit(0);
+		}
+		if (!flags.containsKey(flag)) {
+			StaminaLog.errorAndExit("Argument '" + flag + "' not supported!", 1);
+		}
 		++index;
 	}
 
-	private void printDescriptionAndUsage() {
+	private void printDescription() {
 		StaminaLog.log("STAMINA/PRISM: a PRISM-based infinite CTMC model checker (https://staminachecker.org)");
 		StaminaLog.log("\tAuthors: Thakur Neupane, Riley Roberts, Joshua Jeppson, Zhen Zhang, and others...");
 		StaminaLog.log("Version: " + StaminaCL.versionMajor + "." + StaminaCL.versionMinor);
@@ -109,7 +138,6 @@ class ArgumentParser {
 	}
 
 	private void printUsage() {
-		printDescriptionAndUsage();
 		String argsString = "";
 		for (Argument arg : arguments) {
 			argsString += " [" + arg.name + "]";
@@ -118,14 +146,15 @@ class ArgumentParser {
 	}
 
 	public void printHelp() {
+		printDescription();
 		printUsage();
 		StaminaLog.endSection();
 		for (Argument arg : arguments) {
 			// the left column is the argument name and the type
 			String leftColumn = arg.name + " (" + typeEnumToString(arg.type) + ")";
 			String spaces = "";
-			for (int i = leftColumn.length - 1; i < COLUMN_WIDTH; ++i) {
-				spaces += SEPARATOR;
+			for (int i = leftColumn.length() - 1; i < ArgumentParser.COLUMN_WIDTH; ++i) {
+				spaces += ArgumentParser.SEPARATOR;
 			}
 			StaminaLog.log(leftColumn + spaces + arg.description);
 		}
@@ -136,32 +165,33 @@ class ArgumentParser {
 				leftColumn += " (" + typeEnumToString(flag.type) + ")";
 			}
 			String spaces = "";
-			for (int i = leftColumn.length - 1; i < COLUMN_WIDTH; ++i) {
-				spaces += SEPARATOR;
+			for (int i = leftColumn.length() - 1; i < ArgumentParser.COLUMN_WIDTH; ++i) {
+				spaces += ArgumentParser.SEPARATOR;
 			}
 			StaminaLog.log(leftColumn + spaces + flag.description);
 		}
 		StaminaLog.endSection();
-		StaminaLog.log("To show this message again, use the '-help'/'--help' flags. To show usage, use the '-usage'/'--usage' flags");
+		StaminaLog.log("To show this message again, use the '-help'/'--help' flags. To show usage, use the '-usage'/'--usage' flags. To show an 'about' message, use the '-about'/'--about' flags.");
+		System.exit(0);
 	}
 
 	private String typeEnumToString(ArgumentType type) {
 		switch (type) {
-			case ArgumentType.DOUBLE:
+			case DOUBLE:
 				return "double";
-			case ArgumentType.INTEGER:
+			case INTEGER:
 				return "int";
-			case ArgumentType.STRING:
+			case STRING:
 				return "string";
-			case ArgumentType.NONE:
+			case NONE:
 				return "null";
 			default:
 				return "unknown";
 		}
 	}
 
-	private int index = 0;
-	private HashMap<String, Argument> flags = new HashMap<String, Argument>();
-	private ArrayList<Argument> orderedFlags = new HashMap<Argument>();
-	private ArrayList<Argument> arguments = new HashMap<Argument>();
+	private int index;
+	private HashMap<String, Argument> flags;
+	private ArrayList<Argument> orderedFlags;
+	private ArrayList<Argument> arguments;
 }
