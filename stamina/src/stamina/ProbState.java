@@ -5,28 +5,27 @@ import java.util.Map;
 import parser.State;
 
 public class ProbState extends State{
-	
+
 	private double curReachabilityProb;
-	
+
 	private boolean isStateTerminal;
 	private boolean isStateAbsorbing;
-	
+
 	/**
 	 * Constructor. Sets the current reachability probability to 0,
 	 * and the state to terminal and not absorbing.
 	 * @param s The state we are building from.
 	 */
-	
 	public ProbState(State s) {
 		super(s);
-		
+
 		curReachabilityProb = 0.0;
-		
+
 		isStateTerminal = true;
 		isStateAbsorbing = false;
-		
+
 	}
-	
+
 	/**
 	 * Gets whether or not the state is terminal.
 	 * @return Whether or not the state is terminal
@@ -34,7 +33,7 @@ public class ProbState extends State{
 	public boolean isStateTerminal(){
 		return isStateTerminal;
 	}
-	
+
 	/**
 	 * Sets whether or not the state is terminal.
 	 * @param flag Whether or not the state is terminal.
@@ -42,6 +41,7 @@ public class ProbState extends State{
 	public void setStateTerminal(boolean flag) {
 		isStateTerminal = flag;
 	}
+
 	/**
 	 * Gets whether or not the state is absorbing
 	 * @return Whether the state is absorbing or not.
@@ -63,9 +63,10 @@ public class ProbState extends State{
 	 * Gets the current reachability probability of this state.
 	 * @return The current reachability probability.
 	 */
-	public double getCurReachabilityProb() {	
+	public double getCurReachabilityProb() {
 		return curReachabilityProb;
 	}
+
 	/**
 	 * Sets the current reachability probability.
 	 * @param reachProb The new reachability probability.
@@ -77,7 +78,7 @@ public class ProbState extends State{
 	 * Adds to reachability probability, maxing at 1.0
 	 * @param newReach Amount to add to reachability probability.
 	 */
-	
+
 	public void addToReachability(double newReach) {
 		curReachabilityProb += newReach;
 		if(curReachabilityProb >= 1.0) {
@@ -95,10 +96,9 @@ public class ProbState extends State{
 			curReachabilityProb = 0.0;
 		}
 	}
-	
 
 	/**
-	 * Get string representation, e.g. "(0,true,5)". 
+	 * Get string representation, e.g. "(0,true,5)".
 	 */
 	@Override
 	public String toString()
@@ -110,10 +110,8 @@ public class ProbState extends State{
 			s += varValues[i];
 			s += ",";
 		}
-		
+
 		s += curReachabilityProb;
 		return s;
 	}
-	
-
 }
