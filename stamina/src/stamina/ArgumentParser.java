@@ -9,7 +9,7 @@ class ArgumentParser {
 			StaminaLog.warning("It appears arguments have already been parsed! Will re-parse with this new list.");
 			index = 0;
 		}
-		while (index < args.length()) {
+		while (index < args.length) {
 			parseArgument(args);
 		}
 	}

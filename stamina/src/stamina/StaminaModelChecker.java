@@ -69,13 +69,13 @@ public class StaminaModelChecker extends Prism {
 	 * Construct a new Prism object.
 	 * @param mainLog PrismLog where all output will be sent.
 	 */
-	public StaminaModelChecker(PrismLog mainLog) {
-		super(mainLog);
+	public StaminaModelChecker() {
+		super(StaminaLog.getMainLog());
 		try {
 			super.setCUDDMaxMem(Options.getCuddMemoryLimit());
 		}
 		catch (Exception e) {
-			mainLog.println("Got error when trying to set CUDD max memory limit:" + e);
+			StaminaLog.error("Got error when trying to set CUDD max memory limit:" + e);
 		}
 	}
 
@@ -147,7 +147,6 @@ public class StaminaModelChecker extends Prism {
 				return terminateRefinment;
 		}
 		else if ((minProb instanceof Double) && (maxProb instanceof Double)) {
-
 			boolean terminateRefinment = (((double) maxProb) - ((double) minProb)) <= termParam;
 			return terminateRefinment;
 		}
@@ -188,7 +187,6 @@ public class StaminaModelChecker extends Prism {
 		prop_max.setName(propName+"_max");
 		modifyExpression(prop_max.getExpression(), false);
 
-
 		// timer
 		long timer = 0;
 
@@ -201,8 +199,7 @@ public class StaminaModelChecker extends Prism {
 		Expression exprProp = prop.getExpression();
 		if (exprProp instanceof ExpressionProb) {
 
-
-			while(numRefineIteration==0 || ((!terminateModelCheck(res_min_max[0].getResult(), res_min_max[1].getResult(), Options.getProbErrorWindow())) && (numRefineIteration < Options.getMaxApproxCount()))) {
+			while (numRefineIteration == 0 || ((!terminateModelCheck(res_min_max[0].getResult(), res_min_max[1].getResult(), Options.getProbErrorWindow())) && (numRefineIteration < Options.getMaxApproxCount()))) {
 				reachTh = Options.getReachabilityThreshold();
 				Expression expr = ((ExpressionProb) exprProp).getExpression();
 				if (expr instanceof ExpressionTemporal) {
@@ -224,13 +221,9 @@ public class StaminaModelChecker extends Prism {
 
 					if (switchToCombinedCTMC) {
 
-						//////////////////////////Approximation Step///////////////////////////
-						mainLog.println();
-						mainLog.println("========================================================================");
-						mainLog.println("Approximation<" + (numRefineIteration+1) + "> : kappa = " + reachTh);
-						mainLog.println("========================================================================");
+						// Approximation Step
+						StaminaLog.header("Approximation<" + (numRefineIteration + 1) + "> : kappa = " + reachTh);
 						infModelGen.setReachabilityThreshold(reachTh);
-
 
 						// Explicitely invoke model build
 						if (Options.getImportModel()) {
@@ -269,7 +262,6 @@ public class StaminaModelChecker extends Prism {
 								super.exportStatesToFile(exportType, new File(statesFile));
 								super.exportLabelsToFile(propertiesFile, exportType, new File(labelsFile));
 							} catch (FileNotFoundException e) {
-								// throw e;
 								throw new PrismException("Cannot open file for exporting " + e.toString());
 							} catch (Exception e) {
 								throw new PrismException(e.toString());
@@ -314,10 +306,8 @@ public class StaminaModelChecker extends Prism {
 						if (lTime>0.0) throw new PrismException("Currently only supports [0,t] time bound.");
 
 						// verification step
-						mainLog.println();
-						mainLog.println("---------------------------------------------------------------------");
-						mainLog.println();
-						mainLog.println("Verifying " + propName + " .....");
+						StaminaLog.endSection();
+						StaminaLog.log("Verifying " + propName + " .....");
 
 						timer = System.currentTimeMillis();
 
@@ -332,9 +322,7 @@ public class StaminaModelChecker extends Prism {
 						// ans_min, so we start the for loop and i=1
 						if (infModelGen.finalModelHasAbsorbing()) {
 							for(int i=1; i<super.getBuiltModelExplicit().getNumStates(); ++i) {
-
-								if (b2.get(i)) ans_min += (double) probsExpl.getValue(i);
-
+								if (b2.get(i)) { ans_min += (double) probsExpl.getValue(i); }
 							}
 
 							ans_max = ans_min + (double) probsExpl.getValue(0);
@@ -342,7 +330,7 @@ public class StaminaModelChecker extends Prism {
 						}
 						else {
 							for(int i=0; i<super.getBuiltModelExplicit().getNumStates(); ++i) {
-								if (b2.get(i)) ans_min += (double) probsExpl.getValue(i);
+								if (b2.get(i)) { ans_min += (double) probsExpl.getValue(i); }
 							}
 							// If there is no absorbing state, we know the solution exactly.
 							ans_max = ans_min;
@@ -351,20 +339,20 @@ public class StaminaModelChecker extends Prism {
 
 
 						timer = System.currentTimeMillis() - timer;
-						mainLog.println("\nTime for model checking: " + timer / 1000.0 + " seconds.");
+						StaminaLog.log("\nTime for model checking: " + timer / 1000.0 + " seconds.");
 
 						// set results
 						res_min_max[0] = new Result(ans_min);
 						res_min_max[0].setExplanation("Minimum Bound".toLowerCase());
 
 						// Print result to log
-						mainLog.print("\nResult: " + res_min_max[0].getResultString() + "\n");
+						StaminaLog.log("Result: " + res_min_max[0].getResultString());
 
 						res_min_max[1] = new Result(ans_max);
 						res_min_max[1].setExplanation("Maximum Bound".toLowerCase());
 
 						// Print result to log
-						mainLog.print("\nResult: " + res_min_max[1].getResultString() + "\n");
+						StaminaLog.log("Result: " + res_min_max[1].getResultString());
 						String filename = "results.txt";
 						try {
 							File file = new File(filename);
@@ -383,26 +371,19 @@ public class StaminaModelChecker extends Prism {
 
 					else {
 
-						//////////////////////////Approximation Step///////////////////////////
-						mainLog.println();
-						mainLog.println("========================================================================");
-						mainLog.println("Approximation<" + (numRefineIteration+1) + "> : kappa = " + reachTh);
-						mainLog.println("========================================================================");
+						// Approximation Step
+						StaminaLog.header("Approximation<" + (numRefineIteration+1) + "> : kappa = " + reachTh);
 						infModelGen.setReachabilityThreshold(reachTh);
 
 						// Explicitely invoke model build
 						super.buildModel();
 
-						mainLog.println();
-						mainLog.println("---------------------------------------------------------------------");
-						mainLog.println();
-						mainLog.println("Verifying Lower Bound for " + prop_min.getName() + " .....");
+						StaminaLog.endSection();
+						StaminaLog.log("Verifying Lower Bound for " + prop_min.getName() + " .....");
 						res_min_max[0] = super.modelCheck(propertiesFile, prop_min);
 
-						mainLog.println();
-						mainLog.println("---------------------------------------------------------------------");
-						mainLog.println();
-						mainLog.println("Verifying Upper Bound for " + prop_max.getName() + " .....");
+						StaminaLog.endSection();
+						StaminaLog.log("Verifying Upper Bound for " + prop_max.getName() + " .....");
 						res_min_max[1] = super.modelCheck(propertiesFile, prop_max);
 						String filename = "results.txt";
 						try {
@@ -480,16 +461,7 @@ public class StaminaModelChecker extends Prism {
 		}
 
 		// Print the final result
-		mainLog.println();
-		mainLog.println("========================================================================");
-		mainLog.println();
-		mainLog.println("Property: " + prop);
-		mainLog.println();
-		mainLog.println("ProbMin: " + res_min_max[0].getResultString());
-		mainLog.println();
-		mainLog.println("ProbMax: " + res_min_max[1].getResultString());
-		mainLog.println();
-		mainLog.println("========================================================================");
+		StaminaLog.logResult(prop.toString(), res_min_max[0].getResultString(), res_min_max[1].getResultString());
 
 		/*try{
 			super.exportTransToFile(true, Prism.EXPORT_PLAIN, new File("test.txt"));
@@ -498,9 +470,9 @@ public class StaminaModelChecker extends Prism {
 			System.out.println("File could not be found for transition exporting");
 		}*/
 		if (Options.getExportTransitionsToFile() != null) {
-			mainLog.println("\n\n Exporting transition list...");
+			StaminaLog.log("\n\nExporting transition list...");
 			printTransitionActions(infModelGen, Options.getExportTransitionsToFile());
-			mainLog.println("Export Complete");
+			StaminaLog.log("Export Complete");
 		}
 
 		return res_min_max[0];
@@ -578,13 +550,8 @@ public class StaminaModelChecker extends Prism {
 			out.close();
 		}
 		catch (Exception e) {
-			System.out.println("An error occurred creating the transition file");
+			StaminaLog.error("An error occurred creating the transition file");
 			e.printStackTrace();
 		}
-
-
-
 	}
-
-
 }

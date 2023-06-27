@@ -23,9 +23,6 @@ public class StaminaCL {
 	final private int versionMajor = 1;
 	final private int versionMinor = 1;
 
-	// logs
-	private PrismLog mainLog = null;
-
 	// Stamina Object
 	private StaminaModelChecker staminaMC = null;
 
@@ -111,7 +108,6 @@ public class StaminaCL {
 	public void run(String[] args) {
 
 		Result res;
-		mainLog = new PrismFileLog("stdout");
 
 		// Parse options
 		doParsing(args);
@@ -157,7 +153,7 @@ public class StaminaCL {
 				} catch (PrismException e) {
 					// in case of error, report it, store as result for any properties, and go on to the next model
 					// (might happen for example if overflow or another numerical problem is detected at this stage)
-					mainLog.println("\nError: " + e.getMessage() + ".");
+					StaminaLog.log("\nError: " + e.getMessage() + ".");
 					for (int j = 0; j < numPropertiesToCheck; j++) {
 						results[j].setMultipleErrors(definedMFConstants, null, e);
 					}
@@ -187,7 +183,7 @@ public class StaminaCL {
 
 
 						} catch (PrismException e) {
-							mainLog.println("\nError: " + e.getMessage() + ".");
+							StaminaLog.log("\nError: " + e.getMessage() + ".");
 							res = new Result(e);
 						}
 
@@ -210,7 +206,7 @@ public class StaminaCL {
 			}
 
 		} catch (PrismException e) {
-			errorAndExit(e.getMessage());
+			StaminaLog.errorAndExit(e.getMessage(), StaminaLog.GENERAL_ERROR);
 		}
 
 	}
@@ -223,21 +219,17 @@ public class StaminaCL {
 		//init prism
 		try {
 			// Create a log for PRISM output (hidden or stdout)
-			//mainLog = new PrismDevNullLog();
-			mainLog = new PrismFileLog("stdout");
 
 			// Print our version
-			mainLog.println("STAMINA\n=====\nVersion: " + Integer.toString(versionMajor) + "." + Integer.toString(versionMinor) + "\n");
+			StaminaLog.log("STAMINA\n=====\nVersion: " + Integer.toString(versionMajor) + "." + Integer.toString(versionMinor) + "\n");
 			// Initialise PRISM engine
-			staminaMC = new StaminaModelChecker(mainLog);
+			staminaMC = new StaminaModelChecker();
 			staminaMC.initialise();
 
 			staminaMC.setEngine(Prism.EXPLICIT);
 
-
 		} catch (PrismException e) {
-			mainLog.println("Error: " + e.getMessage());
-			System.exit(1);
+			StaminaLog.errorAndExit(e.getMessage(), StaminaLog.GENERAL_ERROR);
 		}
 	}
 
@@ -328,7 +320,7 @@ public class StaminaCL {
 						reachabilityThreshold = Double.parseDouble(args[++i].trim());
 					}
 					else {
-						mainLog.println("reachabilityThreshold(kappa) not defined.");
+						StaminaLog.log("reachabilityThreshold(kappa) not defined.");
 					}
 				}
 				else if (sw.equals("reducekappa")) {
@@ -336,7 +328,7 @@ public class StaminaCL {
 						kappaReductionFactor = Double.parseDouble(args[++i].trim());
 					}
 					else {
-						mainLog.println("kappaReductionFactor not defined.");
+						StaminaLog.log("kappaReductionFactor not defined.");
 					}
 				}
 				else if (sw.equals("approxFactor")) {
@@ -344,7 +336,7 @@ public class StaminaCL {
 						mispredictionFactor = Double.parseDouble(args[++i].trim());
 					}
 					else {
-						mainLog.println("mispredictionFactor not defined.");
+						StaminaLog.log("mispredictionFactor not defined.");
 					}
 				}
 				else if (sw.equals("pbwin")) {
@@ -352,7 +344,7 @@ public class StaminaCL {
 						probErrorWindow = Double.parseDouble(args[++i].trim());
 					}
 					else {
-						mainLog.println("Probability error window not given.");
+						StaminaLog.log("Probability error window not given.");
 					}
 				}
 				else if (sw.equals("cuddmaxmem")) {
@@ -404,7 +396,7 @@ public class StaminaCL {
 						exportTransitionsToFile = args[++i].trim();
 					}
 					else {
-						mainLog.println("File to export transitions not defined, using trans.txt by default");
+						StaminaLog.log("File to export transitions not defined, using trans.txt by default");
 						exportTransitionsToFile = "trans.txt";
 					}
 				}
@@ -485,7 +477,7 @@ public class StaminaCL {
 		if (staminaMC != null) {
 			staminaMC.closeDown();
 		}
-		mainLog.flush();
+		StaminaLog.flushLogs();
 		System.exit(1);
 	}
 
@@ -497,48 +489,41 @@ public class StaminaCL {
 		if(staminaMC != null) {
 			staminaMC.closeDown();
 		}
-		mainLog.println("\nError: " + s + ".");
-		mainLog.flush();
-		System.exit(1);
+		StaminaLog.errorAndExit(s + ".", StaminaLog.GENERAL_ERROR);
 	}
 
 	/**
 	 * Print a -help message, i.e. a list of the command-line switches.
 	 */
 	private void printHelp() {
-		mainLog.println("Usage: " + "stamina" + " [options]" + " <model-file> <properties-file>");
-		mainLog.println();
-		mainLog.println("<model-file> .................... Prism model file. Extensions: .prism, .sm");
-		mainLog.println("<properties-file> ............... Property file. Extensions: .csl");
-		mainLog.println();
-		mainLog.println("Options:");
-		mainLog.println("========");
-		mainLog.println();
-		mainLog.println("-kappa <k>.......................... ReachabilityThreshold for first iteration [default: 1.0]");
-		mainLog.println("-reducekappa <f>.................... Reduction factor for ReachabilityThreshold(kappa) for refinement step.  [default: 1.25]");
-		mainLog.println("-approxFactor <f>................... Factor to estimate how far off our reachability predictions will be  [default: 2.0]");
-		mainLog.println("-pbwin <e>.......................... Probability window between lower and upperbound for termination. [default: 1.0e-3]");
-		mainLog.println("-maxapproxcount <n>................. Maximum number of approximation iteration. [default: 10]");
-		mainLog.println("-noproprefine ...................... Do not use property based refinement. If given, model exploration method will reduce the kappa and do the property independent refinement. [default: off]");
-		mainLog.println("-cuddmaxmem <memory>................ Maximum cudd memory. Expects the same format as prism [default: 1g]");
-		mainLog.println("-export <filename>.................. Export model to a file. Please provide a filename without an extension");
-		mainLog.println("-exportPerimeterStates <filename>... Export perimeter states to a file. Please provide a filename. This will append to the file if it is existing");
-		mainLog.println("-import <filename>.................. Import model to a file. Please provide a filename without an extension");
-		mainLog.println("-property <property>................ Specify a specific property to check in a model file that contains many");
-		mainLog.println("-const <vals> ...................... Comma separated values for constants");
-		mainLog.println("-exportTrans <filename>............. Export the list of transitions and actions to a specified file name, or to trans.txt if no file name is specified. Transitions exported in the format srcStateIndex destStateIndex actionLabel");
-		mainLog.println("\tExamples:");
-		mainLog.println("\t-const a=1,b=5.6,c=true");
-		mainLog.println();
-		mainLog.println("Other Options:");
-		mainLog.println("========");
-		mainLog.println();
-		mainLog.println("-rankTransitions ................... Rank transitions before expanding. [default: false]");
-		mainLog.println("-maxiters <n> ...................... Maximum iteration for solution. [default: 10000]");
-		mainLog.println("-power ............................. Power method");
-		mainLog.println("-jacobi ............................ Jacobi method");
-		mainLog.println("-gaussseidel ....................... Gauss-Seidel method");
-		mainLog.println("-bgaussseidel ...................... Backward Gauss-Seidel method");
-		mainLog.println();
+		StaminaLog.log("Usage: " + "stamina" + " [options]" + " <model-file> <properties-file>");
+		StaminaLog.log("<model-file> .................... Prism model file. Extensions: .prism, .sm");
+		StaminaLog.log("<properties-file> ............... Property file. Extensions: .csl");
+		StaminaLog.log("Options:");
+		StaminaLog.log("========");
+		StaminaLog.log("-kappa <k>.......................... ReachabilityThreshold for first iteration [default: 1.0]");
+		StaminaLog.log("-reducekappa <f>.................... Reduction factor for ReachabilityThreshold(kappa) for refinement step.  [default: 1.25]");
+		StaminaLog.log("-approxFactor <f>................... Factor to estimate how far off our reachability predictions will be  [default: 2.0]");
+		StaminaLog.log("-pbwin <e>.......................... Probability window between lower and upperbound for termination. [default: 1.0e-3]");
+		StaminaLog.log("-maxapproxcount <n>................. Maximum number of approximation iteration. [default: 10]");
+		StaminaLog.log("-noproprefine ...................... Do not use property based refinement. If given, model exploration method will reduce the kappa and do the property independent refinement. [default: off]");
+		StaminaLog.log("-cuddmaxmem <memory>................ Maximum cudd memory. Expects the same format as prism [default: 1g]");
+		StaminaLog.log("-export <filename>.................. Export model to a file. Please provide a filename without an extension");
+		StaminaLog.log("-exportPerimeterStates <filename>... Export perimeter states to a file. Please provide a filename. This will append to the file if it is existing");
+		StaminaLog.log("-import <filename>.................. Import model to a file. Please provide a filename without an extension");
+		StaminaLog.log("-property <property>................ Specify a specific property to check in a model file that contains many");
+		StaminaLog.log("-const <vals> ...................... Comma separated values for constants");
+		StaminaLog.log("-exportTrans <filename>............. Export the list of transitions and actions to a specified file name, or to trans.txt if no file name is specified. Transitions exported in the format srcStateIndex destStateIndex actionLabel");
+		StaminaLog.log("\tExamples:");
+		StaminaLog.log("\t-const a=1,b=5.6,c=true");
+		StaminaLog.log("Other Options:");
+		StaminaLog.log("========");
+		StaminaLog.log("-rankTransitions ................... Rank transitions before expanding. [default: false]");
+		StaminaLog.log("-maxiters <n> ...................... Maximum iteration for solution. [default: 10000]");
+		StaminaLog.log("-power ............................. Power method");
+		StaminaLog.log("-jacobi ............................ Jacobi method");
+		StaminaLog.log("-gaussseidel ....................... Gauss-Seidel method");
+		StaminaLog.log("-bgaussseidel ...................... Backward Gauss-Seidel method");
+
 	}
 }
