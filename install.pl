@@ -1,5 +1,12 @@
 #!/usr/bin/perl
 
+##########################################
+# DEPRICATED INSTALL SCRIPT
+# 
+# Rather than using this script, use the install.py script
+# included in this directory
+##########################################
+
 use Cwd qw(cwd);
 
 # First we need to clone prism
@@ -18,7 +25,7 @@ sub installPrism($originalCwd) {
 sub installStamina() {
     my $dir = cwd;
     my @command = (
-        "cd $originalCwd && rm -rf stamina && git clone https://github.com/fluentverification/stamina.git && cd stamina/stamina && make -j4 PRISM_HOME=$dir/prism/prism"
+        "cd $originalCwd && rm -rf stamina-prism && git clone https://github.com/fluentverification/stamina-prism.git && cd stamina-prism/stamina && make -j4 PRISM_HOME=$dir/prism/prism"
     );
     system(shift @command);
 }
