@@ -408,7 +408,6 @@ public class StaminaModelChecker extends Prism {
 						// Explicitely invoke model build
 						super.buildModel();
 
-
 						mainLog.println();
 						mainLog.println("---------------------------------------------------------------------");
 						mainLog.println();
@@ -437,12 +436,12 @@ public class StaminaModelChecker extends Prism {
 						if (Options.getExportModel()) {
 							try {
 								int exportType = 1; // EXPORT_PLAIN
-								String filename = Options.getExportFileName();
-								String transFile = filename + ".tra";
-								String stateRewardsFile = filename + "srew";
-								String transRewardsFile = filename + ".trew";
-								String statesFile = filename + ".sta";
-								String labelsFile = filename + ".lab";
+								String exportFilename = Options.getExportFileName();
+								String transFile = exportFilename + ".tra";
+								String stateRewardsFile = exportFilename + "srew";
+								String transRewardsFile = exportFilename + ".trew";
+								String statesFile = exportFilename + ".sta";
+								String labelsFile = exportFilename + ".lab";
 								super.exportTransToFile(true, exportType, new File(transFile));
 								super.exportStateRewardsToFile(1, new File (stateRewardsFile));
 								super.exportTransRewardsToFile(true, exportType, new File(transRewardsFile));

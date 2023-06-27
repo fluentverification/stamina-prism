@@ -10,11 +10,11 @@ sourceSets {
 	}
 }
 
-def prismLocation = '/opt/verificationTools/prism-source/prism' // System.getenv('PRISM_LOCATION')
+def prismLocation = System.getenv('PRISM_LOCATION')
 
 // If it is not set, then prompt the user for it.
 if (!prismLocation) {
-	println 'This is current prismLocation $prismLocation'
+	println "This is current prismLocation $prismLocation"
 	println 'Please enter the location of your PRISM installation:'
 	prismLocation = System.in.newReader().readLine()
 	// throw new GradleException("PRISM_LOCATION not set!")

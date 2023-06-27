@@ -250,17 +250,17 @@ public class StaminaCL {
 		try {
 
 			// Configure options
-			if (reachabilityThreshold >= 0.0 )	Options.setReachabilityThreshold(reachabilityThreshold);
-			if (kappaReductionFactor >= 0.0 )	Options.setKappaReductionFactor(kappaReductionFactor);
-			if (mispredictionFactor >= 0.0 )	Options.setMispredictionFactor(mispredictionFactor);
-			if (maxApproxCount >= 0) Options.setMaxRefinementCount(maxApproxCount);
-			if (probErrorWindow >= 0.0) Options.setProbErrorWindow(probErrorWindow);
-			if (exportTransitionsToFile != null) Options.setExportTransitionsToFile(exportTransitionsToFile);
-			Options.setRankTransitions(rankTransitions);
+			if (reachabilityThreshold >= 0.0) { Options.setReachabilityThreshold(reachabilityThreshold); }
+			if (kappaReductionFactor >= 0.0 ) { Options.setKappaReductionFactor(kappaReductionFactor); }
+			if (mispredictionFactor >= 0.0 ) { Options.setMispredictionFactor(mispredictionFactor); }
+			if (maxApproxCount >= 0) { Options.setMaxRefinementCount(maxApproxCount); }
+			if (probErrorWindow >= 0.0) { Options.setProbErrorWindow(probErrorWindow); }
+			if (exportTransitionsToFile != null) { Options.setExportTransitionsToFile(exportTransitionsToFile); }
 
+			Options.setRankTransitions(rankTransitions);
 			Options.setNoPropRefine(noPropRefine);
 
-			if (maxLinearSolnIter >= 0) staminaMC.setMaxIters(maxLinearSolnIter);
+			if (maxLinearSolnIter >= 0) { staminaMC.setMaxIters(maxLinearSolnIter); }
 
 			if (solutionMethod != null) {
 
@@ -300,59 +300,46 @@ public class StaminaCL {
 	void parseArguments(String[] args) {
 
 		String sw;
-
 		constSwitch = "";
-
 		for (int i=0; i<args.length; i++) {
-
 			// if is a switch...
 			if (args[i].length() > 0 && args[i].charAt(0) == '-') {
-
 				// Remove "-"
 				sw = args[i].substring(1);
 				if (sw.length() == 0) {
 					errorAndExit("Invalid empty switch");
 				}
-
 				if (sw.equals("kappa")) {
-
 					if (i < args.length - 1) {
 						reachabilityThreshold = Double.parseDouble(args[++i].trim());
 					}
 					else {
 						mainLog.println("reachabilityThreshold(kappa) not defined.");
 					}
-
 				}
 				else if (sw.equals("reducekappa")) {
-
 					if (i < args.length - 1) {
 						kappaReductionFactor = Double.parseDouble(args[++i].trim());
 					}
 					else {
 						mainLog.println("kappaReductionFactor not defined.");
 					}
-
 				}
 				else if (sw.equals("approxFactor")) {
-
 					if (i < args.length - 1) {
 						mispredictionFactor = Double.parseDouble(args[++i].trim());
 					}
 					else {
 						mainLog.println("mispredictionFactor not defined.");
 					}
-
 				}
 				else if (sw.equals("pbwin")) {
-
 					if (i < args.length - 1) {
 						probErrorWindow = Double.parseDouble(args[++i].trim());
 					}
 					else {
 						mainLog.println("Probability error window not given.");
 					}
-
 				}
 				else if (sw.equals("cuddmaxmem")) {
 					Options.setCuddMemoryLimit(args[++i].trim());
@@ -374,25 +361,18 @@ public class StaminaCL {
 					Options.setPropertyName(args[++i].trim());
 				}
 				else if (sw.equals("noproprefine")) {
-
 					noPropRefine = true;
-
 				}
 				else if (sw.equals("maxapproxcount")) {
-
 					maxApproxCount = Integer.parseInt(args[++i].trim());
-
 				}
 				else if (sw.equals("maxiters")) {
-
 					maxLinearSolnIter = Integer.parseInt(args[++i].trim());
-
 				}
 				else if (sw.equals("power") || sw.equals("jacobi") || sw.equals("gaussseidel") || sw.equals("bgaussseidel") ) {
 					solutionMethod = sw;
 				}
 				else if (sw.equals("const")) {
-
 					if (i < args.length - 1) {
 						// store argument for later use (append if already partially specified)
 						if ("".equals(constSwitch))
@@ -401,16 +381,13 @@ public class StaminaCL {
 							constSwitch += "," + args[++i].trim();
 					}
 				}
-				else if (sw.equals("rankTransitions"))
-				{
+				else if (sw.equals("rankTransitions")) {
 					rankTransitions = true;
 				}
-				else if (sw.equals("exportTrans"))
-				{
+				else if (sw.equals("exportTrans")) {
 					if (i < args.length - 1) {
 						// store argument for later use (append if already partially specified)
 						exportTransitionsToFile = args[++i].trim();
-
 					}
 					else {
 						mainLog.println("File to export transitions not defined, using trans.txt by default");
@@ -434,12 +411,8 @@ public class StaminaCL {
 			else {
 				errorAndExit("Invalid argument syntax");
 			}
-
 		}
-
 	}
-
-
 
 	/**
 	 * parse model and properties file
@@ -459,7 +432,7 @@ public class StaminaCL {
 				numPropertiesToCheck = 0;
 			}
 			// unless specified, verify all properties
-			else{
+			else {
 				if (Options.getSpecificProperty()) {
 					int tempProperties = propertiesFile.getNumProperties();
 					for (int i = 0; i<tempProperties; ++i) {
@@ -494,9 +467,8 @@ public class StaminaCL {
 	/**
 	 * Report a (fatal) error and exit cleanly (with exit code 1).
 	 */
-	private void exit()
-	{
-		if(staminaMC!=null) {
+	private void exit() {
+		if (staminaMC != null) {
 			staminaMC.closeDown();
 		}
 		mainLog.flush();
@@ -507,9 +479,8 @@ public class StaminaCL {
 	 * Report a (fatal) error and exit cleanly (with exit code 1).
 	 * @param s Error message
 	 */
-	private void errorAndExit(String s)
-	{
-		if(staminaMC!=null) {
+	private void errorAndExit(String s) {
+		if(staminaMC != null) {
 			staminaMC.closeDown();
 		}
 		mainLog.println("\nError: " + s + ".");
@@ -520,8 +491,7 @@ public class StaminaCL {
 	/**
 	 * Print a -help message, i.e. a list of the command-line switches.
 	 */
-	private void printHelp()
-	{
+	private void printHelp() {
 		mainLog.println("Usage: " + "stamina" + " [options]" + " <model-file> <properties-file>");
 		mainLog.println();
 		mainLog.println("<model-file> .................... Prism model file. Extensions: .prism, .sm");
