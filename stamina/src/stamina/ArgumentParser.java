@@ -24,6 +24,10 @@ class ArgumentParser {
 		public String description;
 		public ArgumentType type;
 		public Consumer<T> validateAndAccept;
+		// If default value is not null then this argument will allow the flag but
+		// if there is no value associated with it (passed in with the flag via argv),
+		// the Argument use a this value
+		T defaultValue = null;
 		/**
 		 * Constructor for Argument type
 		 * @param name the name of the command-line argument
@@ -320,12 +324,10 @@ class ArgumentParser {
 		Argument flagData = flags.get(flag);
 		if (flagData.type == ArgumentType.NONE) {
 			flagData.parseValidateAndAccept(null);
-			StaminaLog.log("It has no value needed");
 		}
 		else if (args.length > index + 1) {
 			String value = args[++index];
 			flagData.parseValidateAndAccept(value);
-			StaminaLog.log("It needs a value and is given one");
 		}
 		// TODO: Add another else if condition here for argument that can optionally not
 		// take a value but has a default value.
