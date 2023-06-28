@@ -21,7 +21,7 @@ class ArgumentParser {
 		public String name;
 		public String description;
 		public ArgumentType type;
-		public Consumer<Object> validateAndAccept;
+		public Consumer<T> validateAndAccept;
 		/**
 		 * Constructor for Argument type
 		 * @param name the name of the command-line argument
@@ -56,25 +56,22 @@ class ArgumentParser {
 		 * @param input The text-input (or null)
 		 * */
 		public void parseValidateAndAccept(String input) {
-			Object parsedValue = null;
 			switch (this.type) {
 				case DOUBLE:
-					parsedValue = new Double(input);
 					// Call validateAndAccept
-					((Consumer<Double>) this.validateAndAccept).accept(parsedValue);
+					((Consumer<Double>) this.validateAndAccept).accept(new Double(input));
 					break;
 				case INTEGER:
-					parsedValue = new Integer(input);
 					// Call validateAndAccept
-					((Consumer<Integer>) this.validateAndAccept).accept(parsedValue);
+					((Consumer<Integer>) this.validateAndAccept).accept(new Integer(input));
 					break;
 				case STRING:
-					parsedValue = input;
 					// Call validateAndAccept
-					((Consumer<String>) this.validateAndAccept).accept(parsedValue);
+					((Consumer<String>) this.validateAndAccept).accept(input);
 					break;
 				default:
 					// Leave it null
+					this.validateAndAccept.accept(null);
 			}
 		}
 	}
@@ -151,7 +148,7 @@ class ArgumentParser {
 		addFlag("cuddMaxMemory"
 			, ArgumentType.STRING
 			, "Maximum cudd memory. Expects the same format as PRISM [default: \"1g\"]"
-			, mem -> { Options.setCuddMemoryLimit(mem); }
+			, (Consumer<String>) mem -> { Options.setCuddMemoryLimit(mem); }
 		);
 		addFlag("export"
 			, ArgumentType.STRING
@@ -195,7 +192,7 @@ class ArgumentParser {
 			, ArgumentType.INTEGER
 			, "Maximum number of approximation iterations. [default: 10]"
 			, (Consumer<Integer>) mac -> {
-				int maxApproxCount = mac.integerValue();
+				int maxApproxCount = mac.intValue();
 				if (maxApproxCount <= 0) {
 					StaminaLog.errorAndExit("Parameter 'maxApproxCount' must be greater than 0!", 1);
 				}
@@ -206,7 +203,7 @@ class ArgumentParser {
 			, ArgumentType.INTEGER
 			, "Maximum number of iterations to find solution. [default: 10000]"
 			, (Consumer<Integer>) mi -> {
-				int maxIters = mi.integerValue();
+				int maxIters = mi.intValue();
 				if (maxIters <= 0) {
 					StaminaLog.errorAndExit("Parameter 'maxIters' must be greater than 0!", 1);
 				}
@@ -230,7 +227,7 @@ class ArgumentParser {
 			, ArgumentType.STRING
 			, "Comma separated values for constants (ex: \"a=1,b=5.6,c=true\")"
 			, (Consumer<String>) consts -> {
-				Options.appendUndefinedConsts();
+				Options.appendUndefinedConsts(consts);
 			}
 		);
 		addFlag("rankTransitions"
@@ -252,23 +249,11 @@ class ArgumentParser {
 	}
 
 	public void addArgument(String name, String description, Consumer<String> validateAndAccept) {
-		arguments.add(new Argument<String>(name, ArgumentType.STRING, description, (Consumer<String>) validateAndAccept));
+		arguments.add(new Argument(name, ArgumentType.STRING, description, validateAndAccept));
 	}
 
-	public void addArgument(String name, ArgumentType type, String description, Consumer<Object> validateAndAccept) {
-		arguments.add(new Argument<Object>(name, type, description, validateAndAccept));
-	}
-
-	public void addArgument(String name, ArgumentType type, String description, Consumer<Double> validateAndAccept) {
-		arguments.add(new Argument<Double>(name, type, description, validateAndAccept));
-	}
-
-	public void addArgument(String name, ArgumentType type, String description, Consumer<Integer> validateAndAccept) {
-		arguments.add(new Argument<Integer>(name, type, description, validateAndAccept));
-	}
-
-	public void addArgument(String name, ArgumentType type, String description, Consumer<String> validateAndAccept) {
-		arguments.add(new Argument<String>(name, type, description, validateAndAccept));
+	public void addArgument(String name, ArgumentType type, String description, Consumer validateAndAccept) {
+		arguments.add(new Argument(name, type, description, validateAndAccept));
 	}
 
 	public void addFlag(String name, String description, Consumer<Object> validateAndAccept) {
@@ -277,26 +262,8 @@ class ArgumentParser {
 		orderedFlags.add(flag);
 	}
 
-	public void addFlag(String name, ArgumentType type, String description, Consumer<Object> validateAndAccept) {
-		Argument<Object> flag = new Argument<Object>(name, type, description, validateAndAccept);
-		flags.put(name, flag);
-		orderedFlags.add(flag);
-	}
-
-	public void addFlag(String name, ArgumentType type, String description, Consumer<Double> validateAndAccept) {
-		Argument<Object> flag = new Argument<Double>(name, type, description, validateAndAccept);
-		flags.put(name, flag);
-		orderedFlags.add(flag);
-	}
-
-	public void addFlag(String name, ArgumentType type, String description, Consumer<Integer> validateAndAccept) {
-		Argument<Object> flag = new Argument<Integer>(name, type, description, validateAndAccept);
-		flags.put(name, flag);
-		orderedFlags.add(flag);
-	}
-
-	public void addFlag(String name, ArgumentType type, String description, Consumer<String> validateAndAccept) {
-		Argument<Object> flag = new Argument<String>(name, type, description, validateAndAccept);
+	public void addFlag(String name, ArgumentType type, String description, Consumer validateAndAccept) {
+		Argument flag = new Argument(name, type, description, validateAndAccept);
 		flags.put(name, flag);
 		orderedFlags.add(flag);
 	}
@@ -339,7 +306,7 @@ class ArgumentParser {
 		if (flagData.type == ArgumentType.NONE) {
 			flagData.parseValidateAndAccept(null);
 		}
-		else if (args.length() > index + 1) {
+		else if (args.length > index + 1) {
 			String value = args[++index];
 			flagData.parseValidateAndAccept(value);
 		}
