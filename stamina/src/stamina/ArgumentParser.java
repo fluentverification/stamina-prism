@@ -253,6 +253,11 @@ class ArgumentParser {
 				Options.setExportTransitionsToFile(filename);
 			}
 		);
+		addFlag("mrmc"
+			, ArgumentType.NONE
+			, "Exports an MRMC file, only works if `export` also selected"
+			, b -> { Options.setMrmc(true); }
+		);
 	}
 
 	public void addArgument(String name, String description, Consumer<String> validateAndAccept) {

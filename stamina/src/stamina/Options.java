@@ -60,6 +60,17 @@ public class Options {
 	// Undefined constants
 	private static String undefinedConstants = null;
 
+	// Export to MRMC
+	private static boolean mrmc = false;
+
+	public static void setMrmc(boolean m) {
+		mrmc = m;
+	}
+
+	public static boolean getMrmc() {
+		return mrmc;
+	}
+
 	public static void setModelFileName(String model) {
 		modelFileName = model;
 	}
