@@ -3,12 +3,14 @@ package stamina;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.function.Consumer;
+import java.lang.*;
 
 import prism.PrismLog;
 
 class ArgumentParser {
 	// The size of the column when printing
-	private static final int COLUMN_WIDTH = 42;
+	private static final int COLUMN_WIDTH = 32;
+	private static final int MAX_DESCRIPTION_WIDTH = 42;
 	private static final char SEPARATOR = '.';
 	public enum ArgumentType {
 		DOUBLE
@@ -56,6 +58,7 @@ class ArgumentParser {
 		 * @param input The text-input (or null)
 		 * */
 		public void parseValidateAndAccept(String input) {
+			StaminaLog.log("Called parseValidateAndAccept on " + this.name);
 			switch (this.type) {
 				case DOUBLE:
 					// Call validateAndAccept
@@ -78,6 +81,7 @@ class ArgumentParser {
 
 	public ArgumentParser() {
 		index = 0;
+		argIndex = 0;
 		flags = new HashMap<String, Argument<Object>>();
 		orderedFlags = new ArrayList<Argument<Object>>();
 		arguments = new ArrayList<Argument<Object>>();
@@ -275,18 +279,34 @@ class ArgumentParser {
 			index = 0;
 		}
 		while (index < args.length) {
+			StaminaLog.log("Length: " + args.length + " and index " + index);
 			parseArgument(args);
 		}
 	}
 	private void parseArgument(String [] args) {
 		String arg = args[index];
+		StaminaLog.log("Argument: " + arg);
 		// Get the switch if it's a switch
 		boolean isFlag = arg.length() > 0 && arg.charAt(0) == '-';
+		// If it's not a flag, it is a generic argument
+		if (!isFlag) {
+			StaminaLog.log("it is not a flag");
+			if (argIndex >= arguments.size()) {
+				StaminaLog.log("Too many arguments");
+				printUsage();
+			}
+			Argument currentArg = arguments.get(argIndex);
+			currentArg.parseValidateAndAccept(arg);
+			argIndex++;
+			index++;
+			return;
+		}
 		String flag = arg.substring(1);
 		// Trim as many leading '-' characters as needed so as to support -flags and --flags
 		while (flag.charAt(0) == '-') {
 			flag = flag.substring(1);
 		}
+		StaminaLog.log("Flag: " + flag);
 		// Some built-in arguments to the argument parser
 		if (flag.equals("help")) {
 			printHelp();
@@ -305,10 +325,12 @@ class ArgumentParser {
 		Argument flagData = flags.get(flag);
 		if (flagData.type == ArgumentType.NONE) {
 			flagData.parseValidateAndAccept(null);
+			StaminaLog.log("It has no value needed");
 		}
 		else if (args.length > index + 1) {
 			String value = args[++index];
 			flagData.parseValidateAndAccept(value);
+			StaminaLog.log("It needs a value and is given one");
 		}
 		// TODO: Add another else if condition here for argument that can optionally not
 		// take a value but has a default value.
@@ -334,6 +356,10 @@ class ArgumentParser {
 	}
 
 	public void printHelp() {
+		String blankSpaces = "";
+		for (int i = 0; i <= ArgumentParser.COLUMN_WIDTH; ++i) {
+			blankSpaces += " ";
+		}
 		printDescription();
 		printUsage();
 		StaminaLog.endSection();
@@ -344,7 +370,13 @@ class ArgumentParser {
 			for (int i = leftColumn.length() - 1; i < ArgumentParser.COLUMN_WIDTH; ++i) {
 				spaces += ArgumentParser.SEPARATOR;
 			}
-			StaminaLog.log(leftColumn + spaces + arg.description);
+			// Break the lines in the description of the argument
+			int startIndex = 0;
+			while (startIndex < arg.description.length()) {
+				String left = startIndex == 0 ? leftColumn + spaces : blankSpaces;
+				StaminaLog.log(left + arg.description.substring(startIndex, Math.min(startIndex + ArgumentParser.MAX_DESCRIPTION_WIDTH, arg.description.length() - 1)));
+				startIndex += ArgumentParser.COLUMN_WIDTH;
+			}
 		}
 		StaminaLog.endSection();
 		for (Argument<Object> flag : orderedFlags) {
@@ -356,7 +388,13 @@ class ArgumentParser {
 			for (int i = leftColumn.length() - 1; i < ArgumentParser.COLUMN_WIDTH; ++i) {
 				spaces += ArgumentParser.SEPARATOR;
 			}
-			StaminaLog.log(leftColumn + spaces + flag.description);
+			int startIndex = 0;
+			while (startIndex < flag.description.length()) {
+				String left = startIndex == 0 ? leftColumn + spaces : blankSpaces;
+				StaminaLog.log(left + flag.description.substring(startIndex, Math.min(startIndex + ArgumentParser.MAX_DESCRIPTION_WIDTH, flag.description.length())));
+				startIndex += ArgumentParser.COLUMN_WIDTH;
+			}
+// 			StaminaLog.log(leftColumn + spaces + flag.description);
 		}
 		StaminaLog.endSection();
 		StaminaLog.log("To show this message again, use the '-help'/'--help' flags. To show usage, use the '-usage'/'--usage' flags. To show an 'about' message, use the '-about'/'--about' flags.");
@@ -379,6 +417,7 @@ class ArgumentParser {
 	}
 
 	private int index;
+	private int argIndex;
 	private HashMap<String, Argument<Object>> flags;
 	private ArrayList<Argument<Object>> orderedFlags;
 	private ArrayList<Argument<Object>> arguments;

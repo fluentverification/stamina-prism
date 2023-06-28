@@ -116,7 +116,6 @@ public class StaminaCL {
 // 		doParsing(args);
 		argParse.setupArgs();
 		argParse.parseArguments(args);
-		argParse.printHelp();
 
 		//Initialize
 		initializeSTAMINA();
