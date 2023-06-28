@@ -58,7 +58,6 @@ class ArgumentParser {
 		 * @param input The text-input (or null)
 		 * */
 		public void parseValidateAndAccept(String input) {
-			StaminaLog.log("Called parseValidateAndAccept on " + this.name);
 			switch (this.type) {
 				case DOUBLE:
 					// Call validateAndAccept
@@ -279,18 +278,15 @@ class ArgumentParser {
 			index = 0;
 		}
 		while (index < args.length) {
-			StaminaLog.log("Length: " + args.length + " and index " + index);
 			parseArgument(args);
 		}
 	}
 	private void parseArgument(String [] args) {
 		String arg = args[index];
-		StaminaLog.log("Argument: " + arg);
 		// Get the switch if it's a switch
 		boolean isFlag = arg.length() > 0 && arg.charAt(0) == '-';
 		// If it's not a flag, it is a generic argument
 		if (!isFlag) {
-			StaminaLog.log("it is not a flag");
 			if (argIndex >= arguments.size()) {
 				StaminaLog.log("Too many arguments");
 				printUsage();
@@ -306,7 +302,6 @@ class ArgumentParser {
 		while (flag.charAt(0) == '-') {
 			flag = flag.substring(1);
 		}
-		StaminaLog.log("Flag: " + flag);
 		// Some built-in arguments to the argument parser
 		if (flag.equals("help")) {
 			printHelp();
@@ -374,8 +369,15 @@ class ArgumentParser {
 			int startIndex = 0;
 			while (startIndex < arg.description.length()) {
 				String left = startIndex == 0 ? leftColumn + spaces : blankSpaces;
-				StaminaLog.log(left + arg.description.substring(startIndex, Math.min(startIndex + ArgumentParser.MAX_DESCRIPTION_WIDTH, arg.description.length() - 1)));
-				startIndex += ArgumentParser.COLUMN_WIDTH;
+				StaminaLog.log(left + arg.description.substring(
+						startIndex
+						, Math.min(
+							startIndex + ArgumentParser.MAX_DESCRIPTION_WIDTH
+							, arg.description.length()
+						)
+					).trim()
+				);
+				startIndex += ArgumentParser.MAX_DESCRIPTION_WIDTH;
 			}
 		}
 		StaminaLog.endSection();
@@ -391,8 +393,15 @@ class ArgumentParser {
 			int startIndex = 0;
 			while (startIndex < flag.description.length()) {
 				String left = startIndex == 0 ? leftColumn + spaces : blankSpaces;
-				StaminaLog.log(left + flag.description.substring(startIndex, Math.min(startIndex + ArgumentParser.MAX_DESCRIPTION_WIDTH, flag.description.length())));
-				startIndex += ArgumentParser.COLUMN_WIDTH;
+				StaminaLog.log(left + flag.description.substring(
+						startIndex
+						, Math.min(
+							startIndex + ArgumentParser.MAX_DESCRIPTION_WIDTH
+							, flag.description.length()
+						)
+					).trim()
+				);
+				startIndex += ArgumentParser.MAX_DESCRIPTION_WIDTH;
 			}
 // 			StaminaLog.log(leftColumn + spaces + flag.description);
 		}
