@@ -51,26 +51,31 @@ class ArgumentParser {
 		}
 
 		/**
-		 * Parses the
+		 * Parses the string input (if null, ignores) and calls the validateAndAccept consumer
 		 *
+		 * @param input The text-input (or null)
 		 * */
 		public void parseValidateAndAccept(String input) {
 			Object parsedValue = null;
 			switch (this.type) {
 				case DOUBLE:
 					parsedValue = new Double(input);
+					// Call validateAndAccept
+					((Consumer<Double>) this.validateAndAccept).accept(parsedValue);
 					break;
 				case INTEGER:
 					parsedValue = new Integer(input);
+					// Call validateAndAccept
+					((Consumer<Integer>) this.validateAndAccept).accept(parsedValue);
 					break;
 				case STRING:
 					parsedValue = input;
+					// Call validateAndAccept
+					((Consumer<String>) this.validateAndAccept).accept(parsedValue);
 					break;
 				default:
 					// Leave it null
 			}
-			// Call validateAndAccept
-			this.validateAndAccept.accept(parsedValue);
 		}
 	}
 
@@ -127,7 +132,7 @@ class ArgumentParser {
 			, approx -> {
 				double approxFactor = approx.doubleValue();
 				if (approxFactor < 0) {
-					StaminaLog.errorAndExit("Misprediction factor 'approxFactor' should be greater than or equal to 0!");
+					StaminaLog.errorAndExit("Misprediction factor 'approxFactor' should be greater than or equal to 0!", 1);
 				}
 				Options.setMispredictionFactor(approxFactor);
 			}
@@ -203,7 +208,7 @@ class ArgumentParser {
 			, mi -> {
 				int maxIters = mi.integerValue();
 				if (maxIters <= 0) {
-					StaminaLog.errorAndExit("Parameter 'maxIters' must be greater than 0!");
+					StaminaLog.errorAndExit("Parameter 'maxIters' must be greater than 0!", 1);
 				}
 				Options.setMaxIterations(maxIters);
 			}
@@ -211,13 +216,13 @@ class ArgumentParser {
 		addFlag("method"
 			, ArgumentType.STRING
 			, "Method to solve CTMC. Supported methods are 'power', 'jacobi', 'gaussseidel', and 'bgaussseidel'."
-			method -> {
+			, method -> {
 				if (method.equals("power") || method.equals("jacobi")
 					|| method.equals("gaussseidel") || method.equals("bgaussseidel")) {
 					// TODO: set method
 				}
 				else {
-					StaminaLog.errorAndExit("Method '" + method + "' is not supported!");
+					StaminaLog.errorAndExit("Method '" + method + "' is not supported!", 1);
 				}
 			}
 		);
@@ -299,6 +304,19 @@ class ArgumentParser {
 		}
 		if (!flags.containsKey(flag)) {
 			StaminaLog.errorAndExit("Argument '" + flag + "' not supported!", 1);
+		}
+		Argument flagData = flags.get(flag);
+		if (flagData.type == ArgumentType.NONE) {
+			flagData.parseValidateAndAccept(null);
+		}
+		else if (args.length() > index + 1) {
+			String value = args[++index];
+			flagData.parseValidateAndAccept(value);
+		}
+		// TODO: Add another else if condition here for argument that can optionally not
+		// take a value but has a default value.
+		else {
+			StaminaLog.errorAndExit("Argument '" + flagData.name + "' should have been given a value of type " + typeEnumToString(flagData.type), 1);
 		}
 		++index;
 	}
