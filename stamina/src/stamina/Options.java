@@ -1,6 +1,11 @@
 package stamina;
 
+import prism.Prism; // For method enum
+
 public class Options {
+	// Model and property file names
+	private static String modelFileName;
+	private static String propertyFileName;
 
 	//Probabilistic state search termination value, should start at 1 in most normal cases : Defined by kappa in command line argument
 	private static double reachabilityThreshold = 1;
@@ -32,7 +37,6 @@ public class Options {
 	// Saving filenames
 	private static String exportFileName = null;
 
-
 	//Variables for exporting perimeter states
 	private static boolean exportPerimeterStates = false;
 	private static String exportPerimeterFilename = null;
@@ -49,6 +53,28 @@ public class Options {
 
 	// Should the transitions be exported to a file?
 	private static String exportTransitionsToFile = null;
+
+	// Max iterations
+	private static int maxIterations = 10000;
+
+	// Undefined constants
+	private static String undefinedConstants = null;
+
+	public static void setModelFileName(String model) {
+		modelFileName = model;
+	}
+
+	public static String getModelFileName() {
+		return modelFileName;
+	}
+
+	public static void setPropertyFileName(String prop) {
+		propertyFileName = prop;
+	}
+
+	public static String getPropertyFileName() {
+		return propertyFileName;
+	}
 
 	/**
 	 * Gets reachability threshold (&kappa;) as double.
@@ -293,5 +319,25 @@ public class Options {
 	 */
 	public static void setExportTransitionsToFile(String b) {
 		exportTransitionsToFile = b;
+	}
+
+	public static void setMaxIterations(int mi) {
+		maxIterations = mi;
+	}
+
+	public static int getMaxIterations() {
+		return maxIterations;
+	}
+
+	public static void appendUndefinedConsts(String newConstants) {
+		if (undefinedConstants == null) {
+			undefinedConstants = newConstants;
+			return;
+		}
+		undefinedConstants += "," + newConstants;
+	}
+
+	public static String getUndefinedConstants() {
+		return undefinedConstants;
 	}
 }

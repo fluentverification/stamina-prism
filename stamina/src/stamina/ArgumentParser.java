@@ -21,18 +21,25 @@ class ArgumentParser {
 		public String name;
 		public String description;
 		public ArgumentType type;
-		public Consumer<String> validateAndAccept;
+		public Consumer<Object> validateAndAccept;
 		/**
 		 * Constructor for Argument type
+		 * @param name the name of the command-line argument
+		 * @param type the argument type (to be validated)
+		 * @param description A short description of the argument
+		 * @param validateAndAccept A lambda function which validates and accepts the given argument. Note that
+		 * if the `type` is `ArgumentType.NONE`, then a `null` object will be passed into this lambda. Additionally,
+		 * an Integer object (not an int primitive) and a Double object (not a `double` primitive) will be passed in
+		 * if those types are chosen
 		 * */
-		public Argument(String name, ArgumentType type, String description, Consumer<String> validateAndAccept) {
+		public Argument(String name, ArgumentType type, String description, Consumer<Object> validateAndAccept) {
 			this.name = name;
 			this.description = description;
 			this.type = type;
 			this.validateAndAccept = validateAndAccept;
 		}
 
-		public Argument(String name, String description, Consumer<String> validateAndAccept) {
+		public Argument(String name, String description, Consumer<Object> validateAndAccept) {
 			this.name = name;
 			this.description = description;
 			this.type = ArgumentType.NONE;
@@ -41,6 +48,29 @@ class ArgumentParser {
 
 		public boolean hasValue() {
 			return this.type != ArgumentType.NONE;
+		}
+
+		/**
+		 * Parses the
+		 *
+		 * */
+		public void parseValidateAndAccept(String input) {
+			Object parsedValue = null;
+			switch (this.type) {
+				case DOUBLE:
+					parsedValue = new Double(input);
+					break;
+				case INTEGER:
+					parsedValue = new Integer(input);
+					break;
+				case STRING:
+					parsedValue = input;
+					break;
+				default:
+					// Leave it null
+			}
+			// Call validateAndAccept
+			this.validateAndAccept.accept(parsedValue);
 		}
 	}
 
@@ -59,14 +89,12 @@ class ArgumentParser {
 		addArgument("MODEL FILE"
 			, "Prism model file. Extensions: .prism, .sm"
 			, model -> {
-				// TODO: Add this to Options
 				Options.setModelFileName(model);
 			}
 		);
 		addArgument("PROPERTIES FILE"
 			, "Property file. Extensions: .csl"
 			, prop -> {
-				// TODO: Add this to Options
 				Options.setPropertyFileName(prop);
 			}
 		);
@@ -75,7 +103,7 @@ class ArgumentParser {
 			, ArgumentType.DOUBLE
 			, "Reachability threshold for first iteration [default: 1.0]"
 			, k -> {
-				double kappa = Double.parseDouble(k);
+				double kappa = k.doubleValue();
 				if (kappa < 0 || kappa >= 1) {
 					StaminaLog.errorAndExit("Reachability threshold 'kappa' should be in the range [0, 1)!", 1);
 				}
@@ -86,7 +114,7 @@ class ArgumentParser {
 			, ArgumentType.DOUBLE
 			, "Reduction factor for ReachabilityThreshold (kappa) for refinement step. [default: 1.25]"
 			, rk -> {
-				double rKappa = Double.parseDouble(k);
+				double rKappa = rk.doubleValue();
 				if (rKappa <= 1) {
 					StaminaLog.errorAndExit("Reduction factor 'rKappa' must be greater than 1!", 1);
 				}
@@ -97,7 +125,7 @@ class ArgumentParser {
 			, ArgumentType.DOUBLE
 			, "Factor to estimate how far off our reachability predictions will be [default: 2.0]"
 			, approx -> {
-				double approxFactor = Double.parseDouble(approxFactor);
+				double approxFactor = approx.doubleValue();
 				if (approxFactor < 0) {
 					StaminaLog.errorAndExit("Misprediction factor 'approxFactor' should be greater than or equal to 0!");
 				}
@@ -108,7 +136,7 @@ class ArgumentParser {
 			, ArgumentType.DOUBLE
 			, "Probability window between lower and upper bound for termination. [default: 1.0e-3]"
 			, w -> {
-				double window = Double.parseDouble(w);
+				double window = w.doubleValue();
 				if (window <= 0 || window >= 1) {
 					StaminaLog.errorAndExit("Probability window 'probWin' should be in the range (0, 1)!", 1);
 				}
@@ -162,7 +190,7 @@ class ArgumentParser {
 			, ArgumentType.INTEGER
 			, "Maximum number of approximation iterations. [default: 10]"
 			, mac -> {
-				int maxApproxCount = Integer.parseInt(mac);
+				int maxApproxCount = mac.integerValue();
 				if (maxApproxCount <= 0) {
 					StaminaLog.errorAndExit("Parameter 'maxApproxCount' must be greater than 0!", 1);
 				}
@@ -173,36 +201,67 @@ class ArgumentParser {
 			, ArgumentType.INTEGER
 			, "Maximum number of iterations to find solution. [default: 10000]"
 			, mi -> {
-				int maxIters = Integer.parseInt(mi);
+				int maxIters = mi.integerValue();
 				if (maxIters <= 0) {
 					StaminaLog.errorAndExit("Parameter 'maxIters' must be greater than 0!");
 				}
-				// TODO: Add this to Options
 				Options.setMaxIterations(maxIters);
 			}
 		);
-		addFlag("method", ArgumentType.STRING, "Method to solve CTMC. Supported methods are 'power', 'jacobi', 'gaussseidel', and 'bgaussseidel'.");
-		addFlag("const", ArgumentType.STRING, "Comma separated values for constants (ex: \"a=1,b=5.6,c=true\")");
-		addFlag("rankTransitions", ArgumentType.NONE, "Rank transitions before expanding [default: false]");
-		addFlag("exportTrans", ArgumentType.STRING, "Export the list of transitions and actions to a specified file name, or to trans.txt if no file name is specified. Transitions exported in the format srcStateIndex destStateIndex actionLabe");
+		addFlag("method"
+			, ArgumentType.STRING
+			, "Method to solve CTMC. Supported methods are 'power', 'jacobi', 'gaussseidel', and 'bgaussseidel'."
+			method -> {
+				if (method.equals("power") || method.equals("jacobi")
+					|| method.equals("gaussseidel") || method.equals("bgaussseidel")) {
+					// TODO: set method
+				}
+				else {
+					StaminaLog.errorAndExit("Method '" + method + "' is not supported!");
+				}
+			}
+		);
+		addFlag("const"
+			, ArgumentType.STRING
+			, "Comma separated values for constants (ex: \"a=1,b=5.6,c=true\")"
+			, consts -> {
+				Options.appendUndefinedConsts();
+			}
+		);
+		addFlag("rankTransitions"
+			, ArgumentType.NONE
+			, "Rank transitions before expanding [default: false]"
+			, rank -> {
+				Options.setRankTransitions(true);
+			}
+		);
+		addFlag(
+			"exportTrans"
+			, ArgumentType.STRING
+			, "Export the list of transitions and actions to a specified file name, or to trans.txt if no file name is specified. Transitions exported in the format srcStateIndex destStateIndex actionLabe"
+			, filename -> {
+				// TODO: Allow default value if no value provided to flag
+				Options.setExportTransitionsToFile(filename);
+			}
+		);
 	}
 
-	public void addArgument(String name, String description) {
-		arguments.add(new Argument(name, ArgumentType.STRING, description));
+	public void addArgument(String name, String description, Consumer<Object> validateAndAccept) {
+		arguments.add(new Argument(name, ArgumentType.STRING, description, validateAndAccept));
 	}
 
-	public void addArgument(String name, ArgumentType type, String description) {
-		arguments.add(new Argument(name, type, description));
+	public void addArgument(String name, ArgumentType type, String description, Consumer<Object> validateAndAccept) {
+		arguments.add(new Argument(name, type, description, validateAndAccept));
 	}
 
-	public void addFlag(String name, String description) {
-		Argument flag = new Argument(name, description);
+	public void addFlag(String name, String description, Consumer<Object> validateAndAccept) {
+		Argument flag = new Argument(name, description, validateAndAccept);
 		flags.put(name, flag);
 		orderedFlags.add(flag);
 	}
 
-	public void addFlag(String name, ArgumentType type, String description) {
-		Argument flag = new Argument(name, type, description);
+	public void addFlag(String name, ArgumentType type, String description, Consumer<Object> validateAndAccept) {
+		Argument flag = new Argument(name, type, description, validateAndAccept);
 		flags.put(name, flag);
 		orderedFlags.add(flag);
 	}

@@ -246,31 +246,8 @@ public class StaminaCL {
 
 		try {
 
-			// Configure options
-			if (reachabilityThreshold >= 0.0) {
-				Options.setReachabilityThreshold(reachabilityThreshold);
-			}
-			if (kappaReductionFactor >= 0.0 ) {
-				Options.setKappaReductionFactor(kappaReductionFactor);
-			}
-			if (mispredictionFactor >= 0.0 ) {
-				Options.setMispredictionFactor(mispredictionFactor);
-			}
-			if (maxApproxCount >= 0) {
-				Options.setMaxRefinementCount(maxApproxCount);
-			}
-			if (probErrorWindow >= 0.0) {
-				Options.setProbErrorWindow(probErrorWindow);
-			}
-			if (exportTransitionsToFile != null) {
-				Options.setExportTransitionsToFile(exportTransitionsToFile);
-			}
-
-			Options.setRankTransitions(rankTransitions);
-			Options.setNoPropRefine(noPropRefine);
-
 			if (maxLinearSolnIter >= 0) {
-				staminaMC.setMaxIters(maxLinearSolnIter);
+				staminaMC.setMaxIters(Options.getMaxIterations());
 			}
 
 			if (solutionMethod != null) {
@@ -433,10 +410,10 @@ public class StaminaCL {
 
 		try {
 			// Parse and load a PRISM model from a file
-			modulesFile = staminaMC.parseModelFile(new File(modelFilename));
+			modulesFile = staminaMC.parseModelFile(new File(Options.getModelFileName()));
 
 			// Parse and load a properties model for the model
-			propertiesFile = staminaMC.parsePropertiesFile(modulesFile, new File(propertiesFilename));
+			propertiesFile = staminaMC.parsePropertiesFile(modulesFile, new File(Options.getPropertyFileName()));
 
 			if (propertiesFile == null) {
 				numPropertiesToCheck = 0;
