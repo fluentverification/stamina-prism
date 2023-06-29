@@ -11,12 +11,7 @@ import parser.ast.ModulesFile;
 import parser.ast.PropertiesFile;
 import parser.ast.Property;
 import prism.Prism;
-import prism.PrismException;
-import prism.PrismFileLog;
-import prism.PrismLog;
-import prism.Result;
-import prism.ResultsCollection;
-import prism.UndefinedConstants;
+import prism.*;
 
 public class StaminaCL {
 	// Version

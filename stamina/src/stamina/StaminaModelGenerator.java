@@ -1,40 +1,18 @@
 package stamina;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Vector;
-import java.util.HashSet;
+import java.util.*;
 import explicit.IndexedSet;
 import explicit.StateStorage;
 import parser.State;
 import parser.Values;
 import parser.VarList;
-import parser.ast.DeclarationBool;
-import parser.ast.Expression;
-import parser.ast.ExpressionBinaryOp;
-import parser.ast.ExpressionLabel;
-import parser.ast.ExpressionLiteral;
-import parser.ast.ExpressionTemporal;
-import parser.ast.ExpressionUnaryOp;
-import parser.ast.LabelList;
-import parser.ast.ModulesFile;
-import parser.ast.RewardStruct;
+import parser.ast.*;
 import parser.type.Type;
 import parser.type.TypeBool;
-import prism.ModelGenerator;
-import prism.ModelType;
-import prism.PrismComponent;
-import prism.PrismException;
-import prism.PrismLangException;
-import prism.PrismNotSupportedException;
-import prism.ProgressDisplay;
-import simulator.ModulesFileModelGenerator;
-import simulator.RandomNumberGenerator;
-import simulator.TransitionList;
-import simulator.Updater;
+import prism.*;
+import simulator.*;
+
+
 public class StaminaModelGenerator implements ModelGenerator
 {
 	// Parent PrismComponent (logs, settings etc.)

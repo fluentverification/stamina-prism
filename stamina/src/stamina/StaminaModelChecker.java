@@ -1,64 +1,21 @@
 package stamina;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.util.BitSet;
-import java.util.Vector;
-import java.util.TreeSet;
-import java.util.TreeMap;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
-import explicit.CTMC;
-import explicit.CTMCModelChecker;
 import parser.State;
-import parser.ast.Expression;
-import parser.ast.ExpressionBinaryOp;
-import parser.ast.ExpressionLiteral;
-import parser.ast.ExpressionProb;
-import parser.ast.ExpressionTemporal;
-import parser.ast.ExpressionUnaryOp;
-import parser.ast.ExpressionVar;
-import parser.ast.PropertiesFile;
-import parser.ast.Property;
+import parser.ast.*;
 import parser.type.TypeInt;
 import prism.ModelType;
-import prism.Prism;
-import prism.PrismException;
-import prism.PrismLangException;
-import prism.PrismLog;
-import prism.PrismUtils;
-import prism.Result;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.LinkedList;
-import java.util.List;
+import prism.*;
 
 import common.IterableStateSet;
 import common.iterable.IterableInt;
 import common.iterable.MappingIterator;
 import parser.VarList;
-import explicit.IndexedSet;
-import explicit.StateStorage;
-import explicit.ModelSimple;
-import explicit.ModelExplicit;
-import explicit.CTMCSimple;
-import prism.ModelGenerator;
-import prism.ModelType;
-import prism.Prism;
-import prism.PrismComponent;
-import prism.PrismException;
-import prism.PrismLog;
-import prism.PrismNotSupportedException;
-import prism.PrismPrintStreamLog;
-import prism.ProgressDisplay;
-import prism.UndefinedConstants;
+import explicit.*;
+
+
 
 public class StaminaModelChecker extends Prism {
 
@@ -80,7 +37,7 @@ public class StaminaModelChecker extends Prism {
 	}
 
 	/**
-	 * Modifies an expression.
+	 * Modifies an expression to produce either the expression needed to calculate Pmin or Pmax.
 	 * @param expr Expression to modify.
 	 * @param isMin Expression is minimum.
 	 * @throws PrismLangException
@@ -180,11 +137,11 @@ public class StaminaModelChecker extends Prism {
 		String propName = prop.getName() == null ? "Prob" : prop.getName();
 
 		Property prop_min = new Property(prop.getExpression().deepCopy());
-		prop_min.setName(propName+"_min");
+		prop_min.setName(propName + "_min");
 		modifyExpression(prop_min.getExpression(), true);
 
 		Property prop_max = new Property(prop.getExpression().deepCopy());
-		prop_max.setName(propName+"_max");
+		prop_max.setName(propName + "_max");
 		modifyExpression(prop_max.getExpression(), false);
 
 		// timer
@@ -199,19 +156,18 @@ public class StaminaModelChecker extends Prism {
 		Expression exprProp = prop.getExpression();
 		if (exprProp instanceof ExpressionProb) {
 
-			while (numRefineIteration == 0 || ((!terminateModelCheck(res_min_max[0].getResult(), res_min_max[1].getResult(), Options.getProbErrorWindow())) && (numRefineIteration < Options.getMaxApproxCount()))) {
+			while (numRefineIteration == 0 ||
+				(!terminateModelCheck(res_min_max[0].getResult(), res_min_max[1].getResult(), Options.getProbErrorWindow()) && numRefineIteration < Options.getMaxApproxCount())) {
 				reachTh = Options.getReachabilityThreshold();
 				Expression expr = ((ExpressionProb) exprProp).getExpression();
 				if (expr instanceof ExpressionTemporal) {
-
-				//	expr = Expression.convertSimplePathFormulaToCanonicalForm(expr);
 					ExpressionTemporal exprTemp = (ExpressionTemporal) expr.deepCopy();
 
-					if (exprTemp.isPathFormula(false) && (exprTemp.getOperator()==ExpressionTemporal.P_U) && (!Options.getNoPropRefine())) {
+					if (exprTemp.isPathFormula(false) && (exprTemp.getOperator() == ExpressionTemporal.P_U) && !Options.getNoPropRefine()) {
 						infModelGen.setPropertyExpression(exprTemp);
 					}
 
-					if (exprTemp.isPathFormula(false) && (exprTemp.getOperator()==ExpressionTemporal.P_U)) {
+					if (exprTemp.isPathFormula(false) && (exprTemp.getOperator() == ExpressionTemporal.P_U)) {
 						switchToCombinedCTMC = true;
 					}
 
@@ -220,7 +176,6 @@ public class StaminaModelChecker extends Prism {
 					}
 
 					if (switchToCombinedCTMC) {
-
 						// Approximation Step
 						StaminaLog.header("Approximation<" + (numRefineIteration + 1) + "> : kappa = " + reachTh);
 						infModelGen.setReachabilityThreshold(reachTh);
@@ -464,12 +419,6 @@ public class StaminaModelChecker extends Prism {
 		// Print the final result
 		StaminaLog.logResult(prop.toString(), res_min_max[0].getResultString(), res_min_max[1].getResultString());
 
-		/*try{
-			super.exportTransToFile(true, Prism.EXPORT_PLAIN, new File("test.txt"));
-		}
-		catch(FileNotFoundException e) {
-			System.out.println("File could not be found for transition exporting");
-		}*/
 		if (Options.getExportTransitionsToFile() != null) {
 			StaminaLog.log("\n\nExporting transition list...");
 			printTransitionActions(infModelGen, Options.getExportTransitionsToFile());
