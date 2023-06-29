@@ -11,7 +11,7 @@ class ArgumentParser {
 	// The size of the column when printing
 	private static final int COLUMN_WIDTH = 32;
 	// The max size of the description in the right column
-	private static final int MAX_DESCRIPTION_WIDTH = 42;
+	private static final int MAX_DESCRIPTION_WIDTH = 52;
 	// The separator character that fills spaces between columns
 	private static final char SEPARATOR = '.';
 
@@ -302,7 +302,7 @@ class ArgumentParser {
 	 * @param description The description shown in the --help
 	 * @param validateAndAccept The Consumer lambda which will be called on the value given when this argument is encountered
 	 * */
-	public void addArgument(String name, ArgumentType type, String description, Consumer validateAndAccept) {
+	public void addArgument(String name, ArgumentType type, String description, Consumer validateAndAccept) throws Exception {
 		if (type == ArgumentType.NONE) {
 			throw new Exception("Arguments cannot have 'NONE' type! (Flags can, though. Perhaps you meant to add a flag?)");
 		}
@@ -440,7 +440,7 @@ class ArgumentParser {
 	}
 
 	/**
-	 * Prints the description for STAMINA/PRISM
+	 * Prints the description for STAMINA/PRISM. This is invoked if the `--about` or `--version` flags are passed in
 	 * */
 	private void printDescription() {
 		StaminaLog.log("STAMINA/PRISM: a PRISM-based infinite CTMC model checker (https://staminachecker.org)");
@@ -449,6 +449,9 @@ class ArgumentParser {
 
 	}
 
+	/**
+	 * Prints a short usage message which includes the program name and the arguments. Invoked by the `--usage` flag.
+	 * */
 	private void printUsage() {
 		String argsString = "";
 		for (Argument<Object> arg : arguments) {
@@ -457,6 +460,10 @@ class ArgumentParser {
 		StaminaLog.log("USAGE: pstamina" + argsString + " [OPTIONS...]");
 	}
 
+	/**
+	 * Prints what will be shown to the user if they pass in the --help flag. First shows the description
+	 * and usage strings, and then shows the arguments, in order, and then the flags, in the order they were specified by `addFlag()`
+	 * */
 	public void printHelp() {
 		String blankSpaces = "";
 		for (int i = 0; i <= ArgumentParser.COLUMN_WIDTH; ++i) {
@@ -488,6 +495,8 @@ class ArgumentParser {
 			}
 		}
 		StaminaLog.endSection();
+		// The flags
+		StaminaLog.log("OPTIONS:");
 		for (Argument<Object> flag : orderedFlags) {
 			String leftColumn = flag.name;
 			if (flag.hasValue()) {
@@ -513,10 +522,18 @@ class ArgumentParser {
 // 			StaminaLog.log(leftColumn + spaces + flag.description);
 		}
 		StaminaLog.endSection();
-		StaminaLog.log("To show this message again, use the '-help'/'--help' flags. To show usage, use the '-usage'/'--usage' flags. To show an 'about' message, use the '-about'/'--about' flags.");
+		StaminaLog.log("To show this message again, use the '-help'/'--help' flags. To show usage, use the "
+			+ "'-usage'/'--usage' flags. To show an 'about' message, use the '-about'/'--about' flags.");
 		System.exit(0);
 	}
 
+	/**
+	 * Takes an argument type and turns it into a string. This method is used when printing help to inform
+	 * the user what types they should pass into the program for different flags.
+	 *
+	 * @param type The type in ArgumentType enum form
+	 * @return A string representing the type
+	 * */
 	private String typeEnumToString(ArgumentType type) {
 		switch (type) {
 			case DOUBLE:
