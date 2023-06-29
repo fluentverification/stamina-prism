@@ -271,9 +271,7 @@ public class StaminaCL {
 	 * parse model and properties file
 	 */
 	void parseModelProperties(){
-
 		propertiesToCheck = new ArrayList<Property>();
-
 		try {
 			// Parse and load a PRISM model from a file
 			modulesFile = staminaMC.parseModelFile(new File(Options.getModelFileName()));
@@ -313,9 +311,7 @@ public class StaminaCL {
 			System.out.println("Error: " + e.getMessage());
 			System.exit(1);
 		}
-
 	}
-
 
 	/**
 	 * Report a (fatal) error and exit cleanly (with exit code 1).

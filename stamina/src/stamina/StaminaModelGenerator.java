@@ -374,9 +374,7 @@ public class StaminaModelGenerator implements ModelGenerator
 	 */
 	@Override
 	public State getInitialState() throws PrismException {
-
 		doReachabilityAnalysis();
-
 		return modulesFile.getDefaultInitialState();
 
 	}
@@ -575,9 +573,7 @@ public class StaminaModelGenerator implements ModelGenerator
 	public State computeTransitionTarget(int index, int offset) throws PrismException {
 		if (transitionListBuilt) {
 			State st = transitionList.getChoice(index).computeTarget(offset, exploreState);
-
 			ProbState prbSt = globalStateSet.get(st);
-
 			if (globalStateSet.get(exploreState).isStateAbsorbing()) return exploreState;
 			else {
 				if (prbSt == null) return absorbingState;
@@ -655,18 +651,22 @@ public class StaminaModelGenerator implements ModelGenerator
 		int n = rewStr.getNumItems();
 		double d = 0;
 		for (int i = 0; i < n; i++) {
-			if (rewStr.getRewardStructItem(i).isTransitionReward()) {
-				Expression guard = rewStr.getStates(i);
-				String cmdAction = rewStr.getSynch(i);
-				if (action == null ? (cmdAction.isEmpty()) : action.equals(cmdAction)) {
-					if (guard.evaluateBoolean(modulesFile.getConstantValues(), state)) {
-						double rew = rewStr.getReward(i).evaluateDouble(modulesFile.getConstantValues(), state);
-						if (Double.isNaN(rew))
-							throw new PrismLangException("Reward structure evaluates to NaN at state " + state, rewStr.getReward(i));
-						d += rew;
-					}
-				}
+			if (!rewStr.getRewardStructItem(i).isTransitionReward()) {
+				continue;
 			}
+			Expression guard = rewStr.getStates(i);
+			String cmdAction = rewStr.getSynch(i);
+			if ((action == null && cmdAction.isEmpty()) || action.equals(cmdAction)) {
+				continue;
+			}
+			if (!guard.evaluateBoolean(modulesFile.getConstantValues(), state)) {
+				continue;
+			}
+			double rew = rewStr.getReward(i).evaluateDouble(modulesFile.getConstantValues(), state);
+			if (Double.isNaN(rew))
+				throw new PrismLangException("Reward structure evaluates to NaN at state " + state, rewStr.getReward(i));
+			d += rew;
+
 		}
 		return d;
 	}
