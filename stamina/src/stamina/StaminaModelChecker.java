@@ -15,11 +15,8 @@ import common.iterable.MappingIterator;
 import parser.VarList;
 import explicit.*;
 
-
-
 public class StaminaModelChecker extends Prism {
 
-	////////////////////////////////////
 	private StaminaModelGenerator infModelGen = null;
 
 	/**
