@@ -10,8 +10,25 @@ import prism.PrismLog;
 class ArgumentParser {
 	// The size of the column when printing
 	private static final int COLUMN_WIDTH = 32;
+	// The max size of the description in the right column
 	private static final int MAX_DESCRIPTION_WIDTH = 42;
+	// The separator character that fills spaces between columns
 	private static final char SEPARATOR = '.';
+
+	// The current index we are on when parsing the arguments and flags PASSED IN FROM STDIN
+	private int index;
+	// The index in the `arguments` array list. This allows arguments to be dispersed throughout.
+	// E.g. [ARGUMENT] --flag1 --flag2 [FLAG VALUE] [ARGUMENT]
+	private int argIndex;
+	// Default values for flags
+	private int HashMap<String, String> defaults;
+	// Flags we support
+	private HashMap<String, Argument<Object>> flags;
+	// The flags we support in order of importance/order printed on --help
+	private ArrayList<Argument<Object>> orderedFlags;
+	// The non-flagged arguments we support, in order
+	private ArrayList<Argument<Object>> arguments;
+
 	public enum ArgumentType {
 		DOUBLE
 		, INTEGER
@@ -30,6 +47,7 @@ class ArgumentParser {
 		T defaultValue = null;
 		/**
 		 * Constructor for Argument type
+		 *
 		 * @param name the name of the command-line argument
 		 * @param type the argument type (to be validated)
 		 * @param description A short description of the argument
@@ -91,7 +109,7 @@ class ArgumentParser {
 	}
 
 	/**
-	 * Sets the default arguments
+	 * Sets the default arguments for STAMINA specifically.
 	 * */
 	public void setupArgs() {
 		// We have two arguments: Model file and properties file, both string
@@ -249,10 +267,11 @@ class ArgumentParser {
 			, ArgumentType.STRING
 			, "Export the list of transitions and actions to a specified file name, or to trans.txt if no file name is specified. Transitions exported in the format srcStateIndex destStateIndex actionLabe"
 			, (Consumer<String>) filename -> {
-				// TODO: Allow default value if no value provided to flag
 				Options.setExportTransitionsToFile(filename);
 			}
 		);
+		// Allow default value if no value provided to flag
+		addDefaultValue("exportTrans", "trans.txt");
 		addFlag("mrmc"
 			, ArgumentType.NONE
 			, "Exports an MRMC file, only works if `export` also selected"
@@ -280,6 +299,35 @@ class ArgumentParser {
 		orderedFlags.add(flag);
 	}
 
+	/**
+	 * Adds a default value for a particular flag
+	 *
+	 * @param flagName The name of the flag to have a default value
+	 * @param value The value (in String format), to give it. Parsing
+	 * is handled by the Argument object.
+	 * */
+	public void addDefaultValue(String flagName, String value) {
+		if (!flags.containsKey(flagName)) {
+			// TODO: should error if no flag can be set
+			return;
+		}
+		defaults.put(flagName, value);
+	}
+
+	/**
+	 * Checks to see if the next argument is a value for a flag
+	 * @param args the argument list we are currently parsing.
+	 * @return Whether the argument after the current index is a valid input for the current flag
+	 *     E.g., For [current arg] [next arg] as --foo someValue it will return true
+	 *     But for [current arg] [next arg] as --foo --someFlag it will return false
+	 *     Will also return false if there is no next arg.
+	 */
+	private boolean peekNextArgument(String [] args) {
+		return index + 1 < args.length             // There is a next arg
+			&& args[index + 1].length() > 0        // AND it is not an empty string
+			&& args[index + 1].charAt(0) != '-';   // AND it is not a flag
+	}
+
 	public void parseArguments(String [] args) {
 		// Index is updated in parseArgument
 		if (index != 0) {
@@ -290,6 +338,7 @@ class ArgumentParser {
 			parseArgument(args);
 		}
 	}
+
 	private void parseArgument(String [] args) {
 		String arg = args[index];
 		// Get the switch if it's a switch
@@ -324,18 +373,23 @@ class ArgumentParser {
 			System.exit(0);
 		}
 		if (!flags.containsKey(flag)) {
-			StaminaLog.errorAndExit("Argument '" + flag + "' not supported!", 1);
+			StaminaLog.error("Argument '" + flag + "' not supported! (Ignoring)");
+			++index;
+			return;
 		}
 		Argument flagData = flags.get(flag);
 		if (flagData.type == ArgumentType.NONE) {
 			flagData.parseValidateAndAccept(null);
 		}
-		else if (args.length > index + 1) {
+		else if (peekNextArgument(args)) {
 			String value = args[++index];
 			flagData.parseValidateAndAccept(value);
 		}
-		// TODO: Add another else if condition here for argument that can optionally not
-		// take a value but has a default value.
+		// Allow for a default argument. E.g., --flag "some value" but if "some value" is not provided, takes
+		// a default value.
+		else if (defaults.containsKey(flag)) {
+			flagData.parseValidateAndAccept(defaults.get(flag));
+		}
 		else {
 			StaminaLog.errorAndExit("Argument '" + flagData.name + "' should have been given a value of type " + typeEnumToString(flagData.type), 1);
 		}
@@ -432,9 +486,4 @@ class ArgumentParser {
 		}
 	}
 
-	private int index;
-	private int argIndex;
-	private HashMap<String, Argument<Object>> flags;
-	private ArrayList<Argument<Object>> orderedFlags;
-	private ArrayList<Argument<Object>> arguments;
 }
