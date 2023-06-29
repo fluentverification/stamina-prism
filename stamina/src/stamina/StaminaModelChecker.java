@@ -155,7 +155,7 @@ public class StaminaModelChecker extends Prism {
 
 		Expression exprProp = prop.getExpression();
 		if (!(exprProp instanceof ExpressionProb)) {
-			return;
+			return null;
 		}
 
 		Expression expr = ((ExpressionProb) exprProp).getExpression();
@@ -184,7 +184,7 @@ public class StaminaModelChecker extends Prism {
 				}
 				super.buildModel();
 				if (Options.getExportModel()) {
-					exportModel();
+					exportModel(propertiesFile);
 				}
 
 				// model check operands first for all states
@@ -284,7 +284,7 @@ public class StaminaModelChecker extends Prism {
 				writeResults(resultsMinMax); // TODO: allow this to turn off
 
 				if (Options.getExportModel()) {
-					exportModel();
+					exportModel(propertiesFile);
 				}
 			}
 
@@ -301,7 +301,7 @@ public class StaminaModelChecker extends Prism {
 
 			// increment refinement count
 			if (Options.getExportPerimeterStates()) {
-				exportPerimeterStates(infModelGen);
+				exportPerimeterStates(infModelGen, numRefineIteration);
 			}
 			infModelGen.clearPerimeterStatesVector();
 			++numRefineIteration;
@@ -397,7 +397,7 @@ public class StaminaModelChecker extends Prism {
 		}
 	}
 
-	private void exportModel() throws PrismException {
+	private void exportModel(PropertiesFile propertiesFile) throws PrismException {
 		try {
 			int exportType = Options.getMrmc() ? Prism.EXPORT_MRMC : Prism.EXPORT_PLAIN;
 			String suffix = Options.getMrmc() ? ".mrmc" : "";
@@ -458,7 +458,7 @@ public class StaminaModelChecker extends Prism {
 		}
 	}
 
-	private void exporPerimeterStates(StaminaModelGenerator infModelGen) throws PrismException {
+	private void exportPerimeterStates(StaminaModelGenerator infModelGen, int numRefineIteration) throws PrismException {
 		try {
 			FileWriter writer = new FileWriter(Options.getExportPerimeterFilename(), true);
 			Vector<String> values = infModelGen.getPerimeterStatesVector();
