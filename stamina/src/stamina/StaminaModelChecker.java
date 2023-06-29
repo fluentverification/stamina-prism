@@ -118,11 +118,8 @@ public class StaminaModelChecker extends Prism {
 	 * @param prop The property to check
 	 * @throws FileNotFoundException
 	 */
-	public Result modelCheckStamina(PropertiesFile propertiesFile, Property prop) throws PrismException
-	{
-
+	public Result modelCheckStamina(PropertiesFile propertiesFile, Property prop) throws PrismException {
 		Result[] resultsMinMax = new Result[2];
-
 		double reachTh = Options.getReachabilityThreshold();
 
 		// Instantiate and load model generator
@@ -133,9 +130,7 @@ public class StaminaModelChecker extends Prism {
 		double lTime, uTime;
 
 		// Split property into 2 to find P_min and P_max
-
 		String propName = prop.getName() == null ? "Prob" : prop.getName();
-
 		Property prop_min = new Property(prop.getExpression().deepCopy());
 		prop_min.setName(propName + "_min");
 		modifyExpression(prop_min.getExpression(), true);
@@ -218,7 +213,7 @@ public class StaminaModelChecker extends Prism {
 					uTime = -1;
 				}
 
-				if (lTime>0.0) throw new PrismException("Currently only supports [0,t] time bound.");
+				if (lTime > 0.0) throw new PrismException("Currently only supports [0,t] time bound.");
 
 				// verification step
 				StaminaLog.endSection();
@@ -254,17 +249,17 @@ public class StaminaModelChecker extends Prism {
 
 
 				timer = System.currentTimeMillis() - timer;
-				StaminaLog.log("\nTime for model checking: " + timer / 1000.0 + " seconds.");
+				StaminaLog.log("Time for model checking: " + timer / 1000.0 + " seconds.");
 
 				// set results
 				resultsMinMax[0] = new Result(ansMin);
-				resultsMinMax[0].setExplanation("Minimum Bound".toLowerCase());
+				resultsMinMax[0].setExplanation("minimum bound");
 
 				// Print result to log
 				StaminaLog.log("Result: " + resultsMinMax[0].getResultString());
 
 				resultsMinMax[1] = new Result(ansMax);
-				resultsMinMax[1].setExplanation("Maximum Bound".toLowerCase());
+				resultsMinMax[1].setExplanation("maximum bound");
 
 				// Print result to log
 				StaminaLog.log("Result: " + resultsMinMax[1].getResultString());

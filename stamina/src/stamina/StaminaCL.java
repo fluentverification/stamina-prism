@@ -43,18 +43,6 @@ public class StaminaCL {
 	// results
 	private ResultsCollection results[] = null;
 
-	//////////////////////// Command line options ///////////////////////
-
-	// argument to -const switch
-	private String constSwitch = null;
-
-	//Probabilistic state search termination value : Defined by kappa in command line argument
-// 	private static double reachabilityThreshold = -1.0;
-//
-// 	Kappa reduction factor
-// 	private static double kappaReductionFactor = -1;
-// 	private static double mispredictionFactor = -1;
-
 	// max number of refinement count
 	private static int maxApproxCount = -1;
 
@@ -118,7 +106,6 @@ public class StaminaCL {
 
 		// Process options
 		processOptions();
-
 		try {
 			// process info about undefined constant
 			undefinedMFConstants = new UndefinedConstants(modulesFile, null);
@@ -129,12 +116,10 @@ public class StaminaCL {
 			}
 
 			// then set up value using const switch definitions
-			undefinedMFConstants.defineUsingConstSwitch(constSwitch);
+			undefinedMFConstants.defineUsingConstSwitch(Options.getUndefinedConstants());
 			for (int i = 0; i < numPropertiesToCheck; i++) {
-				undefinedConstants[i].defineUsingConstSwitch(constSwitch);
+				undefinedConstants[i].defineUsingConstSwitch(Options.getUndefinedConstants());
 			}
-
-
 
 			// initialise storage for results
 			results = new ResultsCollection[numPropertiesToCheck];
@@ -144,7 +129,6 @@ public class StaminaCL {
 
 			// iterate through as many models as necessary
 			for (int i = 0; i < undefinedMFConstants.getNumModelIterations(); i++) {
-
 				// set values for ModulesFile constants
 				try {
 					definedMFConstants = undefinedMFConstants.getMFConstantValues();
@@ -217,16 +201,11 @@ public class StaminaCL {
 
 		//init prism
 		try {
-			// Create a log for PRISM output (hidden or stdout)
-
 			// Print our version
 			StaminaLog.log("STAMINA\n=====\nVersion: " + Integer.toString(versionMajor) + "." + Integer.toString(versionMinor) + "\n");
 			// Initialise PRISM engine
 			staminaMC = new StaminaModelChecker();
 			staminaMC.initialise();
-
-			staminaMC.setEngine(Prism.EXPLICIT);
-
 		} catch (PrismException e) {
 			StaminaLog.errorAndExit(e.getMessage(), StaminaLog.GENERAL_ERROR);
 		}
@@ -237,33 +216,15 @@ public class StaminaCL {
 	 * Processes command line arguments.
 	 */
 	private void processOptions() {
-
 		try {
-
 			if (maxLinearSolnIter >= 0) {
 				staminaMC.setMaxIters(Options.getMaxIterations());
 			}
-
-			if (solutionMethod != null) {
-
-				if (solutionMethod.equals("power")) {
-					staminaMC.setEngine(Prism.POWER);
-				}
-				else if (solutionMethod.equals("jacobi")) {
-					staminaMC.setEngine(Prism.JACOBI);
-				}
-				else if (solutionMethod.equals("gaussseidel")) {
-					staminaMC.setEngine(Prism.GAUSSSEIDEL);
-				}
-				else if (solutionMethod.equals("bgaussseidel")) {
-					staminaMC.setEngine(Prism.BGAUSSSEIDEL);
-				}
-			}
+			staminaMC.setEngine(Options.getMethod());
 			staminaMC.loadPRISMModel(modulesFile);
 
 		} catch (PrismException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			StaminaLog.errorAndExit(e.getMessage(), StaminaLog.GENERAL_ERROR);
 		}
 	}
 

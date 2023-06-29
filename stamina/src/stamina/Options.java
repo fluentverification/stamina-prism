@@ -63,29 +63,8 @@ public class Options {
 	// Export to MRMC
 	private static boolean mrmc = false;
 
-	public static void setMrmc(boolean m) {
-		mrmc = m;
-	}
-
-	public static boolean getMrmc() {
-		return mrmc;
-	}
-
-	public static void setModelFileName(String model) {
-		modelFileName = model;
-	}
-
-	public static String getModelFileName() {
-		return modelFileName;
-	}
-
-	public static void setPropertyFileName(String prop) {
-		propertyFileName = prop;
-	}
-
-	public static String getPropertyFileName() {
-		return propertyFileName;
-	}
+	// The method to use (see the final ints in Prism.java:116)
+	private static int method = Prism.EXPLICIT;
 
 	/**
 	 * Gets reachability threshold (&kappa;) as double.
@@ -350,5 +329,37 @@ public class Options {
 
 	public static String getUndefinedConstants() {
 		return undefinedConstants;
+	}
+
+	public static void setMrmc(boolean m) {
+		mrmc = m;
+	}
+
+	public static boolean getMrmc() {
+		return mrmc;
+	}
+
+	public static void setModelFileName(String model) {
+		modelFileName = model;
+	}
+
+	public static String getModelFileName() {
+		return modelFileName;
+	}
+
+	public static void setPropertyFileName(String prop) {
+		propertyFileName = prop;
+	}
+
+	public static String getPropertyFileName() {
+		return propertyFileName;
+	}
+
+	public static void setMethod(int mthd) {
+		method = mthd;
+	}
+
+	public static int getMethod() {
+		return method;
 	}
 }

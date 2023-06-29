@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 import java.lang.*;
 
 import prism.PrismLog;
+import prism.Prism;
 
 class ArgumentParser {
 	// The size of the column when printing
@@ -241,9 +242,17 @@ class ArgumentParser {
 			, ArgumentType.STRING
 			, "Method to solve CTMC. Supported methods are 'power', 'jacobi', 'gaussseidel', and 'bgaussseidel'."
 			, (Consumer<String>) method -> {
-				if (method.equals("power") || method.equals("jacobi")
-					|| method.equals("gaussseidel") || method.equals("bgaussseidel")) {
-					// TODO: set method
+				if (method.equals("power")) {
+					Options.setMethod(Prism.POWER);
+				}
+				else if (method.equals("jacobi")) {
+					Options.setMethod(Prism.JACOBI);
+				}
+				else if (method.equals("gaussseidel")) {
+					Options.setMethod(Prism.GAUSSSEIDEL);
+				}
+				else if (method.equals("bgaussseidel")) {
+					Options.setMethod(Prism.BGAUSSSEIDEL);
 				}
 				else {
 					StaminaLog.errorAndExit("Method '" + method + "' is not supported!", 1);
