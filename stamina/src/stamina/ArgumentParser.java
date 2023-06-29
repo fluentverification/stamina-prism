@@ -21,7 +21,7 @@ class ArgumentParser {
 	// E.g. [ARGUMENT] --flag1 --flag2 [FLAG VALUE] [ARGUMENT]
 	private int argIndex;
 	// Default values for flags
-	private int HashMap<String, String> defaults;
+	private HashMap<String, String> defaults;
 	// Flags we support
 	private HashMap<String, Argument<Object>> flags;
 	// The flags we support in order of importance/order printed on --help
@@ -103,6 +103,7 @@ class ArgumentParser {
 	public ArgumentParser() {
 		index = 0;
 		argIndex = 0;
+		defaults = new HashMap<String, String>();
 		flags = new HashMap<String, Argument<Object>>();
 		orderedFlags = new ArrayList<Argument<Object>>();
 		arguments = new ArrayList<Argument<Object>>();
@@ -210,7 +211,8 @@ class ArgumentParser {
 		addFlag(
 			"noPropRefine"
 			, ArgumentType.NONE
-			, "Do not use property based refinement. If given, model exploration method will reduce the kappa and do the property independent refinement. [default: off]"
+			, "Do not use property based refinement. If given, model exploration method will reduce the"
+				+ " kappa and do the property independent refinement. [default: off]"
 			, p -> { Options.setNoPropRefine(true); }
 		);
 		addFlag("maxApproxCount"
@@ -265,7 +267,8 @@ class ArgumentParser {
 		addFlag(
 			"exportTrans"
 			, ArgumentType.STRING
-			, "Export the list of transitions and actions to a specified file name, or to trans.txt if no file name is specified. Transitions exported in the format srcStateIndex destStateIndex actionLabe"
+			, "Export the list of transitions and actions to a specified file name, or to trans.txt if no file name is "
+				+ "specified. Transitions exported in the format srcStateIndex destStateIndex actionLabel"
 			, (Consumer<String>) filename -> {
 				Options.setExportTransitionsToFile(filename);
 			}
@@ -279,11 +282,30 @@ class ArgumentParser {
 		);
 	}
 
+	/**
+	 * Adds an argument with a name, description and validate/accept lambda. Assumes argument type is string
+	 * since no type is given.
+	 *
+	 * @param name The name of the argument
+	 * @param description The description shown in the --help
+	 * @param validateAndAccept The Consumer lambda which will be called on the value given when this argument is encountered
+	 * */
 	public void addArgument(String name, String description, Consumer<String> validateAndAccept) {
 		arguments.add(new Argument(name, ArgumentType.STRING, description, validateAndAccept));
 	}
 
+	/**
+	 * Adds an argument with a name, description, type and validate/accept lambda.
+	 *
+	 * @param name The name of the argument
+	 * @param type The type of the argument. Does NOT allow for NONE type.
+	 * @param description The description shown in the --help
+	 * @param validateAndAccept The Consumer lambda which will be called on the value given when this argument is encountered
+	 * */
 	public void addArgument(String name, ArgumentType type, String description, Consumer validateAndAccept) {
+		if (type == ArgumentType.NONE) {
+			throw new Exception("Arguments cannot have 'NONE' type! (Flags can, though. Perhaps you meant to add a flag?)");
+		}
 		arguments.add(new Argument(name, type, description, validateAndAccept));
 	}
 
@@ -293,6 +315,14 @@ class ArgumentParser {
 		orderedFlags.add(flag);
 	}
 
+	/**
+	 * Adds a flag with a name, description, type and validate/accept lambda. Flags support NONE type whereas arguments do not
+	 *
+	 * @param name The name of the flag, i.e., the text passed in to invoke it. If a flag's name is `"name"` invoke with `--name`
+	 * @param type The type of the flag
+	 * @param description The description shown in the --help
+	 * @param validateAndAccept The Consumer lambda which will be called on the value given when this flag is encountered
+	 * */
 	public void addFlag(String name, ArgumentType type, String description, Consumer validateAndAccept) {
 		Argument flag = new Argument(name, type, description, validateAndAccept);
 		flags.put(name, flag);
@@ -300,7 +330,7 @@ class ArgumentParser {
 	}
 
 	/**
-	 * Adds a default value for a particular flag
+	 * Adds a default value for a particular flag.
 	 *
 	 * @param flagName The name of the flag to have a default value
 	 * @param value The value (in String format), to give it. Parsing
@@ -312,6 +342,23 @@ class ArgumentParser {
 			return;
 		}
 		defaults.put(flagName, value);
+	}
+
+	/**
+	 * Parses arguments given to the program and calls the parseValidateAndAccept() function on each argument,
+	 * which calls the lambda given to each argument on construction.
+	 *
+	 * @param args The command-line arguments passed into the program
+	 * */
+	public void parseArguments(String [] args) {
+		// Index is updated in parseArgument
+		if (index != 0) {
+			StaminaLog.warning("It appears arguments have already been parsed! Will re-parse with this new list.");
+			index = 0;
+		}
+		while (index < args.length) {
+			parseArgument(args);
+		}
 	}
 
 	/**
@@ -328,17 +375,12 @@ class ArgumentParser {
 			&& args[index + 1].charAt(0) != '-';   // AND it is not a flag
 	}
 
-	public void parseArguments(String [] args) {
-		// Index is updated in parseArgument
-		if (index != 0) {
-			StaminaLog.warning("It appears arguments have already been parsed! Will re-parse with this new list.");
-			index = 0;
-		}
-		while (index < args.length) {
-			parseArgument(args);
-		}
-	}
-
+	/**
+	 * Parses a particular argument (or flag) at the current `index`. Invokes that argument's lambda if
+	 * it finds it.
+	 *
+	 * @param args The array containing the argument list
+	 * */
 	private void parseArgument(String [] args) {
 		String arg = args[index];
 		// Get the switch if it's a switch
@@ -377,6 +419,7 @@ class ArgumentParser {
 			++index;
 			return;
 		}
+		// It is one of our custom flags
 		Argument flagData = flags.get(flag);
 		if (flagData.type == ArgumentType.NONE) {
 			flagData.parseValidateAndAccept(null);
@@ -396,6 +439,9 @@ class ArgumentParser {
 		++index;
 	}
 
+	/**
+	 * Prints the description for STAMINA/PRISM
+	 * */
 	private void printDescription() {
 		StaminaLog.log("STAMINA/PRISM: a PRISM-based infinite CTMC model checker (https://staminachecker.org)");
 		StaminaLog.log("\tAuthors: Thakur Neupane, Riley Roberts, Joshua Jeppson, Zhen Zhang, and others...");
