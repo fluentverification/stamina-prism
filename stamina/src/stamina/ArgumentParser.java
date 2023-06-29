@@ -446,7 +446,6 @@ class ArgumentParser {
 		StaminaLog.log("STAMINA/PRISM: a PRISM-based infinite CTMC model checker (https://staminachecker.org)");
 		StaminaLog.log("\tAuthors: Thakur Neupane, Riley Roberts, Joshua Jeppson, Zhen Zhang, and others...");
 		StaminaLog.log("Version: " + StaminaCL.versionMajor + "." + StaminaCL.versionMinor);
-
 	}
 
 	/**
@@ -483,15 +482,19 @@ class ArgumentParser {
 			int startIndex = 0;
 			while (startIndex < arg.description.length()) {
 				String left = startIndex == 0 ? leftColumn + spaces : blankSpaces;
+				int breakIndex = Math.min(
+					nextSpace(
+						arg.description
+						, startIndex + ArgumentParser.MAX_DESCRIPTION_WIDTH
+					)
+					, arg.description.length()
+				);
 				StaminaLog.log(left + arg.description.substring(
 						startIndex
-						, Math.min(
-							startIndex + ArgumentParser.MAX_DESCRIPTION_WIDTH
-							, arg.description.length()
-						)
+						, breakIndex
 					).trim()
 				);
-				startIndex += ArgumentParser.MAX_DESCRIPTION_WIDTH;
+				startIndex += breakIndex;
 			}
 		}
 		StaminaLog.endSection();
@@ -509,15 +512,19 @@ class ArgumentParser {
 			int startIndex = 0;
 			while (startIndex < flag.description.length()) {
 				String left = startIndex == 0 ? leftColumn + spaces : blankSpaces;
+				int breakIndex = Math.min(
+					nextSpace(
+						flag.description
+						, startIndex + ArgumentParser.MAX_DESCRIPTION_WIDTH
+					)
+					, flag.description.length()
+				);
 				StaminaLog.log(left + flag.description.substring(
 						startIndex
-						, Math.min(
-							startIndex + ArgumentParser.MAX_DESCRIPTION_WIDTH
-							, flag.description.length()
-						)
+						, breakIndex
 					).trim()
 				);
-				startIndex += ArgumentParser.MAX_DESCRIPTION_WIDTH;
+				startIndex += breakIndex;
 			}
 // 			StaminaLog.log(leftColumn + spaces + flag.description);
 		}
@@ -525,6 +532,20 @@ class ArgumentParser {
 		StaminaLog.log("To show this message again, use the '-help'/'--help' flags. To show usage, use the "
 			+ "'-usage'/'--usage' flags. To show an 'about' message, use the '-about'/'--about' flags.");
 		System.exit(0);
+	}
+
+	/**
+	 * Finds the index for the next space in a string of text. Used to print the descriptions without
+	 * word breaks in weird places.
+	 *
+	 * @param text The text to search
+	 * @param index The current index to start searching.
+	 * */
+	private int nextSpace(String text, int index) {
+		while (index < text.length() && text.charAt(index) != ' ') {
+			index++;
+		}
+		return index;
 	}
 
 	/**
