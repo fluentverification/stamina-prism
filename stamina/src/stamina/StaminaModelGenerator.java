@@ -101,7 +101,7 @@ public class StaminaModelGenerator implements ModelGenerator
 		absorbingState = new State(varList.getNumVars());
 		for(int i=0; i<varList.getNumVars();++i) {
 
-			if (varList.getDeclaration(i).getDeclType() instanceof DeclarationBool) {
+			if (varList.getDeclarationType(i) instanceof DeclarationBool) {
 				absorbingState.setValue(i, 0);
 			}
 			else {
@@ -178,16 +178,20 @@ public class StaminaModelGenerator implements ModelGenerator
 	private void initialise() throws PrismLangException {
 		// Evaluate constants on (a copy) of the modules file, insert constant values and optimize arithmetic expressions
 		modulesFile = (ModulesFile) modulesFile.deepCopy().replaceConstants(mfConstants).simplify();
+		try {
+			// Get info
+			varList = modulesFile.createVarList();
+			labelList = modulesFile.getLabelList();
+			labelNames = labelList.getLabelNames();
 
-		// Get info
-		varList = modulesFile.createVarList();
-		labelList = modulesFile.getLabelList();
-		labelNames = labelList.getLabelNames();
-
-		// Create data structures for exploring model
-		updater = new Updater(modulesFile, varList, parent);
-		transitionList = new TransitionList();
-		transitionListBuilt = false;
+			// Create data structures for exploring model
+			updater = new Updater(modulesFile, varList, this.getEvaluator(), parent);
+			transitionList = new TransitionList(this.getEvaluator());
+			transitionListBuilt = false;
+		}
+		catch (PrismException e) {
+			// TODO: handle expression
+		}
 	}
 
 	// Methods for ModelInfo interface
@@ -320,7 +324,6 @@ public class StaminaModelGenerator implements ModelGenerator
 	 * Gets the number of rewards structs.
 	 * @return The number of rewards structs in the PRISM model.
 	 */
-	@Override
 	public int getNumRewardStructs() {
 		return modulesFile.getNumRewardStructs();
 	}
@@ -329,7 +332,6 @@ public class StaminaModelGenerator implements ModelGenerator
 	 * Gets all rewards structure names.
 	 * @return A List of type String with the reward structure names.
 	 */
-	@Override
 	public List<String> getRewardStructNames() {
 		return modulesFile.getRewardStructNames();
 	}
@@ -339,7 +341,6 @@ public class StaminaModelGenerator implements ModelGenerator
 	 * @param name The name of the rewards structure.
 	 * @return The index corresponding to the name.
 	 */
-	@Override
 	public int getRewardStructIndex(String name) {
 		return modulesFile.getRewardStructIndex(name);
 	}
@@ -349,7 +350,6 @@ public class StaminaModelGenerator implements ModelGenerator
 	 * @param i The index of the reward struct desired.
 	 * @return The RewardStruct at index i.
 	 */
-	@Override
 	public RewardStruct getRewardStruct(int i) {
 		return modulesFile.getRewardStruct(i);
 	}
@@ -431,7 +431,6 @@ public class StaminaModelGenerator implements ModelGenerator
 	 * Gets the state the model generator is about to explore.
 	 * @return The state we are about to explore.
 	 */
-	@Override
 	public State getExploreState() {
 		return exploreState;
 	}
@@ -487,7 +486,6 @@ public class StaminaModelGenerator implements ModelGenerator
 	 * @return The transition action in the form of a String.
 	 * @throws PrismException
 	 */
-	@Override
 	public String getTransitionAction(int index) throws PrismException {
 		if (transitionListBuilt) {
 			return transitionList.getTransitionModuleOrAction(index);
@@ -538,14 +536,26 @@ public class StaminaModelGenerator implements ModelGenerator
 	 * @throws PrismException
 	 */
 	@Override
-	public double getTransitionProbability(int index, int offset) throws PrismException {
+	public Double getTransitionProbability(int index, int offset) throws PrismException {
 		if (transitionListBuilt) {
-			return transitionList.getChoice(index).getProbability(offset);
+			Object p = transitionList.getChoice(index).getProbability(offset);
+			if (p instanceof Number) {
+				return ((Number) p).doubleValue();
+			}
+			throw new PrismException("Transition probability should be an instance of `Number`!");
 		}
 		else {
-			return 1.0;
+			return new Double(1.0);
 		}
 	}
+	/**
+	 * Wrapper for `Double getTransitionProbability(int, int)` which converts to a double
+	 * primitive.
+	 * */
+	// public Double getTransitionProbability(int index, int offset) throws PrismException {
+	// 	Double tProb = getTransitionProbability(int index, int offset);
+	// 	return tProb.doubleValue();
+	// }
 
 	/**
 	 * Gets the transition probability using just an index.
@@ -570,7 +580,7 @@ public class StaminaModelGenerator implements ModelGenerator
 	@Override
 	public State computeTransitionTarget(int index, int offset) throws PrismException {
 		if (transitionListBuilt) {
-			State st = transitionList.getChoice(index).computeTarget(offset, exploreState);
+			State st = transitionList.getChoice(index).computeTarget(offset, exploreState, varList);
 			ProbState prbSt = globalStateSet.get(st);
 			if (globalStateSet.get(exploreState).isStateAbsorbing()) return exploreState;
 			else {
@@ -615,7 +625,6 @@ public class StaminaModelGenerator implements ModelGenerator
 	 * @return The total state reward at the given state.
 	 * @throws PrismException
 	 */
-	@Override
 	public double getStateReward(int r, State state) throws PrismException {
 		RewardStruct rewStr = modulesFile.getRewardStruct(r);
 		int n = rewStr.getNumItems();
@@ -643,7 +652,6 @@ public class StaminaModelGenerator implements ModelGenerator
 	 * @return The total reward associated with that state-action combination.
 	 * @throws PrismException
 	 */
-	@Override
 	public double getStateActionReward(int r, State state, Object action) throws PrismException {
 		RewardStruct rewStr = modulesFile.getRewardStruct(r);
 		int n = rewStr.getNumItems();
@@ -667,17 +675,6 @@ public class StaminaModelGenerator implements ModelGenerator
 
 		}
 		return d;
-	}
-
-	/**
-	 * Calculates the state rewards associated with a specific state and store array.
-	 * @param state The state the rewards are associated with
-	 * @param store The array of stored probabilities. TODO: not 100% sure this is correct
-	 * @throws PrismLangException
-	 */
-	//@Override
-	public void calculateStateRewards(State state, double[] store) throws PrismLangException {
-		updater.calculateStateRewards(state, store);
 	}
 
 	/**
@@ -900,7 +897,7 @@ public class StaminaModelGenerator implements ModelGenerator
 							// Look at each transition in the choice
 							int nt = modelGen.getNumTransitions(i);
 							for (int j = 0; j < nt; j++) {
-								exitRateSum += modelGen.getTransitionProbability(i, j);
+								exitRateSum += ((Number) modelGen.getTransitionProbability(i, j)).doubleValue();
 							}
 						}
 						// Now we loop through the transitions again to compute the reachabilities
@@ -918,7 +915,7 @@ public class StaminaModelGenerator implements ModelGenerator
 								if (stateIsExisting) {
 									ProbState nxtProbState = globalStateSet.get(nxtSt);
 
-									double tranRate = modelGen.getTransitionProbability(i, j);
+									double tranRate = ((Number) modelGen.getTransitionProbability(i, j)).doubleValue();
 									double tranProb = tranRate / exitRateSum;
 									double leavingProb = tranProb * curStateReachability;
 									nxtProbState.addToReachability(leavingProb);
@@ -933,7 +930,7 @@ public class StaminaModelGenerator implements ModelGenerator
 								else {
 
 									ProbState nxtProbState = new ProbState(nxtSt);
-									double tranRate = modelGen.getTransitionProbability(i, j);
+									double tranRate = ((Number) modelGen.getTransitionProbability(i, j)).doubleValue();
 									double tranProb = tranRate/exitRateSum;
 									double leavingProb = tranProb*curStateReachability;
 									nxtProbState.addToReachability(leavingProb);

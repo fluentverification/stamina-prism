@@ -425,7 +425,9 @@ public class StaminaModelChecker extends Prism {
 			lf = new File(labelsFile);
 			srf = new File(stateRewardsFile);
 			mf = new File(transFile);
-			super.loadModelFromExplicitFiles(sf, mf, lf, srf, ModelType.CTMC);
+			ArrayList<File> srfl = new ArrayList<File>();
+			srfl.add(srf);
+			super.loadModelFromExplicitFiles(sf, mf, lf, srfl, ModelType.CTMC);
 		} catch (Exception e) {
 			throw new PrismException(e.toString());
 		}
