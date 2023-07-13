@@ -127,7 +127,6 @@ public class StaminaModelChecker extends Prism {
 		super.loadPRISMModel(pModel);
 		if (getPRISMModel() == null) { StaminaLog.log("it's null here."); }
 
-
 		// Time bounds
 		double lTime, uTime;
 
@@ -247,8 +246,6 @@ public class StaminaModelChecker extends Prism {
 					// If there is no absorbing state, we know the solution exactly.
 					ansMax = ansMin;
 				}
-
-
 
 				timer = System.currentTimeMillis() - timer;
 				StaminaLog.log("Time for model checking: " + timer / 1000.0 + " seconds.");

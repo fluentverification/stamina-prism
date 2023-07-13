@@ -844,7 +844,6 @@ public class StaminaModelGenerator implements ModelGenerator
 
 				// Explore all choices/transitions from this state
 				modelGen.exploreState(curProbState);
-
 				// This if block implements the property-guided state truncation
 				// If we already know how the property evaluates in this state, we don't
 				// need it's succesors, we just continue.

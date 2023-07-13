@@ -84,11 +84,11 @@ class ArgumentParser {
 			switch (this.type) {
 				case DOUBLE:
 					// Call validateAndAccept
-					((Consumer<Double>) this.validateAndAccept).accept(new Double(input));
+					((Consumer<Double>) this.validateAndAccept).accept(new Double(Double.parseDouble(input)));
 					break;
 				case INTEGER:
 					// Call validateAndAccept
-					((Consumer<Integer>) this.validateAndAccept).accept(new Integer(input));
+					((Consumer<Integer>) this.validateAndAccept).accept(new Integer(Integer.parseInt(input)));
 					break;
 				case STRING:
 					// Call validateAndAccept
