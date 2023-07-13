@@ -10,7 +10,7 @@ import prism.ModelType;
 import prism.*;
 
 import common.IterableStateSet;
-import common.iterable.IterableInt;
+// import common.iterable.IterableInt;
 import common.iterable.MappingIterator;
 import parser.VarList;
 import explicit.*;
@@ -120,8 +120,13 @@ public class StaminaModelChecker extends Prism {
 		double reachTh = Options.getReachabilityThreshold();
 
 		// Instantiate and load model generator
+		ModulesFile pModel = getPRISMModel();
 		infModelGen = new StaminaModelGenerator(getPRISMModel(), this);
+		// For some reason this sets the prism model to null
 		super.loadModelGenerator(infModelGen);
+		super.loadPRISMModel(pModel);
+		if (getPRISMModel() == null) { StaminaLog.log("it's null here."); }
+
 
 		// Time bounds
 		double lTime, uTime;
