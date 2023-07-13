@@ -106,10 +106,8 @@ public class StaminaModelGenerator implements ModelGenerator
 			}
 			else {
 				absorbingState.setValue(i, varList.getLow(i) - 1);
-
 			}
 		}
-
 	}
 
 	/**
@@ -799,7 +797,7 @@ public class StaminaModelGenerator implements ModelGenerator
 
 		// VarList varList = modelGen.createVarList();
 		if (modelGen.containsUnboundedVariables())
-			parent.getLog().printWarning("Infinite State system: Reachability analysis based on reachabilityThreshold=" + reachabilityThreshold);
+			StaminaLog.warning("Infinite State system: Reachability analysis based on reachabilityThreshold = " + reachabilityThreshold);
 
 		ProgressDisplay progress = new ProgressDisplay(parent.getLog());
 		progress.start();
@@ -824,7 +822,6 @@ public class StaminaModelGenerator implements ModelGenerator
 			probInitState.setCurReachabilityProb(1.0);
 			// Add initial state(s) to 'explore', 'states' and to the model
 			globalStateSet.put(initState, probInitState);
-
 		}
 		// Add state to exploration queue
 
@@ -847,9 +844,7 @@ public class StaminaModelGenerator implements ModelGenerator
 				ProbState curProbState = exploredK.removeFirst();
 				//statesK.remove(curProbState);
 
-				//System.out.println("\nExplored exactly one time\n");
 				// Explore all choices/transitions from this state
-				//double trackPrismTime = System.currentTimeMillis();
 				modelGen.exploreState(curProbState);
 
 				// This if block implements the property-guided state truncation
