@@ -160,7 +160,6 @@ public class StaminaCL {
 								definedPFConstants = undefinedConstants[j].getPFConstantValues();
 								propertiesFile.setSomeUndefinedConstants(definedPFConstants);
 							}
-
 							res = staminaMC.modelCheckStamina(propertiesFile, propertiesToCheck.get(j));
 
 
@@ -205,9 +204,14 @@ public class StaminaCL {
 			StaminaLog.log("STAMINA\n=====\nVersion: " + Integer.toString(versionMajor) + "." + Integer.toString(versionMinor) + "\n");
 			// Initialise PRISM engine
 			staminaMC = new StaminaModelChecker();
+			// Parse and load a PRISM model from a file
+			modulesFile = staminaMC.parseModelFile(new File(Options.getModelFileName()));
+			staminaMC.loadPRISMModel(modulesFile);
 			staminaMC.initialise();
 		} catch (PrismException e) {
 			StaminaLog.errorAndExit(e.getMessage(), StaminaLog.GENERAL_ERROR);
+		} catch (FileNotFoundException e) {
+			StaminaLog.errorAndExit("Model file did not exist.", StaminaLog.GENERAL_ERROR);
 		}
 	}
 
@@ -234,8 +238,6 @@ public class StaminaCL {
 	void parseModelProperties(){
 		propertiesToCheck = new ArrayList<Property>();
 		try {
-			// Parse and load a PRISM model from a file
-			modulesFile = staminaMC.parseModelFile(new File(Options.getModelFileName()));
 
 			// Parse and load a properties model for the model
 			propertiesFile = staminaMC.parsePropertiesFile(modulesFile, new File(Options.getPropertyFileName()));

@@ -30,6 +30,7 @@ class StaminaLog {
 
 	public static void error(String message) {
 		err.println("[STAMINA:ERROR]: " + message);
+		flushLogs();
 	}
 
 	public static void errorAndExit(String message, int exitCode) {

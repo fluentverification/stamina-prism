@@ -191,6 +191,7 @@ public class StaminaModelGenerator implements ModelGenerator
 		}
 		catch (PrismException e) {
 			// TODO: handle expression
+			System.out.println("error in initialise()");
 		}
 	}
 
