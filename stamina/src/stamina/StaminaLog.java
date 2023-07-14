@@ -25,16 +25,16 @@ class StaminaLog {
 
 	public static void warning(String message) {
 		// Use PrismLog.printWarning?
-		err.println("[STAMINA:WARNING]: " + message);
+		out.println("[STAMINA:WARNING]: " + message);
 	}
 
 	public static void error(String message) {
-		err.println("[STAMINA:ERROR]: " + message);
+		out.println("[STAMINA:ERROR]: " + message);
 		flushLogs();
 	}
 
 	public static void errorAndExit(String message, int exitCode) {
-		err.println("[STAMINA:ERROR]: (Unrecoverable) " + message);
+		out.println("[STAMINA:ERROR]: (Unrecoverable) " + message);
 		flushLogs();
 		System.exit(exitCode);
 	}
@@ -45,7 +45,7 @@ class StaminaLog {
 	}
 
 	public static void info(String message) {
-		err.println("[STAMINA:LOG]: " + message);
+		out.println("[STAMINA:LOG]: " + message);
 	}
 
 	public static void log(String message) {

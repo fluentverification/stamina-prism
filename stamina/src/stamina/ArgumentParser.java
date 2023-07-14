@@ -368,6 +368,10 @@ class ArgumentParser {
 		while (index < args.length) {
 			parseArgument(args);
 		}
+		// Make sure all args have been provided
+		if (argIndex < arguments.size()) {
+			StaminaLog.errorAndExit("Too few arguments!", StaminaLog.GENERAL_ERROR);
+		}
 	}
 
 	/**
@@ -397,8 +401,10 @@ class ArgumentParser {
 		// If it's not a flag, it is a generic argument
 		if (!isFlag) {
 			if (argIndex >= arguments.size()) {
-				StaminaLog.log("Too many arguments");
+				StaminaLog.log("Too many arguments. Discarding argument '" + args[index] + "' (index: " + index + ")");
 				printUsage();
+				index++;
+				return;
 			}
 			Argument currentArg = arguments.get(argIndex);
 			currentArg.parseValidateAndAccept(arg);
@@ -424,7 +430,7 @@ class ArgumentParser {
 			System.exit(0);
 		}
 		if (!flags.containsKey(flag)) {
-			StaminaLog.error("Argument '" + flag + "' not supported! (Ignoring)");
+			StaminaLog.error("Flag '--" + flag + "' not supported! (Ignoring)");
 			++index;
 			return;
 		}
