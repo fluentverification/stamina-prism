@@ -124,7 +124,6 @@ public class StaminaModelChecker extends Prism {
 		infModelGen = new StaminaModelGenerator(getPRISMModel(), this);
 		// For some reason this sets the prism model to null
 		super.loadModelGenerator(infModelGen);
-		super.loadPRISMModel(pModel);
 		if (getPRISMModel() == null) { StaminaLog.log("it's null here."); }
 
 		// Time bounds
