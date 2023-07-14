@@ -688,22 +688,6 @@ public class StaminaModelGenerator implements ModelGenerator
 		return varList;
 	}
 
-	// Miscellaneous (unused?) methods
-	/**
-	 * Gets a random initial state given a random number generator.
-	 * @param rng The RandomNumberGenerator to pass into the method.
-	 * @param initialState A pointer to the current initial state.
-	 * @throws PrismException Multiple initial states not yet supported.
-	 */
-	//@Override
-	public void getRandomInitialState(RandomNumberGenerator rng, State initialState) throws PrismException {
-		if (modulesFile.getInitialStates() == null) {
-			initialState.copy(modulesFile.getDefaultInitialState());
-		} else {
-			throw new PrismException("Random choice of multiple initial states not yet supported");
-		}
-	}
-
 	// Local utility methods
 	/**
 	 * Determines if a rewards structure at a specific index has transition rewards.
@@ -834,10 +818,6 @@ public class StaminaModelGenerator implements ModelGenerator
 		double perimReachability = 1;
 		// State Search
 		while(perimReachability >= Options.getProbErrorWindow()/Options.getMispredictionFactor()) {
-			/*double startTime = System.currentTimeMillis();
-			double predMapTime = 0;// Explore...
-			double prismTime = 0.0;
-			double propCheckTime = 0.0;*/
 			while (!exploredK.isEmpty()) {
 				ProbState curProbState = exploredK.removeFirst();
 				//statesK.remove(curProbState);
@@ -984,21 +964,7 @@ public class StaminaModelGenerator implements ModelGenerator
 			// Reduce the threshold for the next iteration
 			reachabilityThreshold /= Options.getKappaReductionFactor();
 
-			// TODO: I'm not sure what this is, it may still need to be implemented
-			/*if (Options.getRankTransitions()) {
-				exploredK.sort(new Comparator<ProbState>() {
-					@Override
-					public int compare(ProbState l, ProbState r) {
-						if (r.getCurReachabilityProb() > l.getCurReachabilityProb()) {
-							return 1;
-						} else if (r.getCurReachabilityProb() < l.getCurReachabilityProb()) {
-							return -1;
-						} else {
-							return 0;
-						}
-					}
-				});
-			}*/
+			// TODO: Implement rank transitions
 		}
 
 		// At this point in the loop, we want to update the globally accessible threshold
