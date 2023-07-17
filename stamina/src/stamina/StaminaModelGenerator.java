@@ -428,6 +428,10 @@ public class StaminaModelGenerator implements ModelGenerator
 		}
 	}
 
+	public ModulesFile getPRISMModel() {
+		return modulesFile;
+	}
+
 	/**
 	 * Gets the state the model generator is about to explore.
 	 * @return The state we are about to explore.

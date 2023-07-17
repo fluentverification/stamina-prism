@@ -51,7 +51,7 @@ public class StaminaModelChecker extends Prism {
 
 				Expression newOp1 = new ExpressionBinaryOp(((ExpressionBinaryOp) expr).getOperator(), ((ExpressionBinaryOp) expr).getOperand1(), ((ExpressionBinaryOp) expr).getOperand2());
 
-				Expression abs = new ExpressionBinaryOp(ExpressionBinaryOp.EQ, ((ExpressionBinaryOp) expr).getOperand1(), new ExpressionLiteral(TypeInt.getInstance(), absSt.varValues[getPRISMModel().getVarIndex(varName)]));
+				Expression abs = new ExpressionBinaryOp(ExpressionBinaryOp.EQ, ((ExpressionBinaryOp) expr).getOperand1(), new ExpressionLiteral(TypeInt.getInstance(), absSt.varValues[getPRISMModelStamina().getVarIndex(varName)]));
 
 				if (isMin) {
 					Expression newOp2 = new ExpressionUnaryOp(ExpressionUnaryOp.PARENTH, new ExpressionUnaryOp(ExpressionUnaryOp.NOT, abs));
@@ -85,6 +85,24 @@ public class StaminaModelChecker extends Prism {
 		}
 
 		//return expr;
+	}
+
+	/**
+	 * Get the currently stored (parsed) PRISM model from either the
+	 */
+	public ModulesFile getPRISMModelStamina()
+	{
+		ModulesFile mFile = super.getPRISMModel();
+		if (mFile != null) {
+			return mFile;
+		}
+		try {
+			return ((StaminaModelGenerator) getModelGenerator()).getPRISMModel();
+		}
+		catch (PrismException e) {
+			// Do nothing
+		}
+		return null;
 	}
 
 	/**
