@@ -69,6 +69,7 @@ echo $SHELL # Will give you /usr/bin/bash or /bin/bash if on bash, and /usr/bin/
 echo "export PATH=\$PATH:$(pwd)/stamina/bin" >> .zshrc
 # For bash users (Default on most Linux distributions)
 echo "export PATH=\$PATH:$(pwd)/stamina/bin" >> .bashrc
+# If you're on fish, dash, etc., we assume you know enough about your shell's .*rc file to modify the commands above as needed
 ```
 
 ## All command line options
