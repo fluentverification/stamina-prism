@@ -30,7 +30,7 @@ Once the above pre-requisites are installed you can use the install script below
 Easy Way
 1. An install script is provided and can be used to run all the commands below
 ```shell
-perl install.pl
+perl -e $(curl https://raw.githubusercontent.com/fluentverification/stamina-prism/main/install.pl)
 ```
 2. This will install PRISM and STAMINA into the CWD of the script
 
@@ -40,16 +40,17 @@ Harder Way
 git clone https://github.com/prismmodelchecker/prism prism
 cd prism/prism
 git checkout v4.8 # Stamina should work with the latest version of PRISM but v4.8 is PRISM's latest official release
-make
+make -j$(nproc --ignore=1)
+export PRISM_HOME=$(pwd)
 ```
 
   	More details about installing PRISM can be found [here](http://www.prismmodelchecker.org/).
 
 2. Download the STAMINA from GitHub and build
 ```shell
-git clone https://github.com/fluentverification/stamina.git
+git clone https://github.com/fluentverification/stamina-prism.git
 cd stamina/stamina
-make PRISM_HOME=/path/to/prism/directory
+make PRISM_HOME=$PRISM_HOME # This variable should have been set above
 ```
 
 ## Running STAMINA
