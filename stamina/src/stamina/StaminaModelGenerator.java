@@ -1,41 +1,19 @@
 package stamina;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Vector;
-import java.util.HashSet;
+import java.util.*;
 import explicit.IndexedSet;
 import explicit.StateStorage;
 import parser.State;
 import parser.Values;
 import parser.VarList;
-import parser.ast.DeclarationBool;
-import parser.ast.Expression;
-import parser.ast.ExpressionBinaryOp;
-import parser.ast.ExpressionLabel;
-import parser.ast.ExpressionLiteral;
-import parser.ast.ExpressionTemporal;
-import parser.ast.ExpressionUnaryOp;
-import parser.ast.LabelList;
-import parser.ast.ModulesFile;
-import parser.ast.RewardStruct;
+import parser.ast.*;
 import parser.type.Type;
 import parser.type.TypeBool;
-import prism.ModelGenerator;
-import prism.ModelType;
-import prism.PrismComponent;
-import prism.PrismException;
-import prism.PrismLangException;
-import prism.PrismNotSupportedException;
-import prism.ProgressDisplay;
-import simulator.ModulesFileModelGenerator;
-import simulator.RandomNumberGenerator;
-import simulator.TransitionList;
-import simulator.Updater;
-public class InfCTMCModelGenerator implements ModelGenerator
+import prism.*;
+import simulator.*;
+
+
+public class StaminaModelGenerator implements ModelGenerator
 {
 	// Parent PrismComponent (logs, settings etc.)
 	protected PrismComponent parent;
@@ -83,7 +61,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	 * Build a ModulesFileModelGenerator for a particular PRISM model, represented by a ModuleFile instance.
 	 * @param modulesFile The PRISM model
 	 */
-	public InfCTMCModelGenerator(ModulesFile modulesFile) throws PrismException {
+	public StaminaModelGenerator(ModulesFile modulesFile) throws PrismException {
 		this(modulesFile, null);
 	}
 
@@ -91,7 +69,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	 * Build a ModulesFileModelGenerator for a particular PRISM model, represented by a ModuleFile instance.
 	 * @param modulesFile The PRISM model
 	 */
-	public InfCTMCModelGenerator(ModulesFile modulesFile, PrismComponent parent) throws PrismException {
+	public StaminaModelGenerator(ModulesFile modulesFile, PrismComponent parent) throws PrismException {
 		this.parent = parent;
 
 		// No support for PTAs yet
@@ -123,15 +101,13 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		absorbingState = new State(varList.getNumVars());
 		for(int i=0; i<varList.getNumVars();++i) {
 
-			if (varList.getDeclaration(i).getDeclType() instanceof DeclarationBool) {
+			if (varList.getDeclarationType(i) instanceof DeclarationBool) {
 				absorbingState.setValue(i, 0);
 			}
 			else {
 				absorbingState.setValue(i, varList.getLow(i) - 1);
-
 			}
 		}
-
 	}
 
 	/**
@@ -202,16 +178,21 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	private void initialise() throws PrismLangException {
 		// Evaluate constants on (a copy) of the modules file, insert constant values and optimize arithmetic expressions
 		modulesFile = (ModulesFile) modulesFile.deepCopy().replaceConstants(mfConstants).simplify();
+		try {
+			// Get info
+			varList = modulesFile.createVarList();
+			labelList = modulesFile.getLabelList();
+			labelNames = labelList.getLabelNames();
 
-		// Get info
-		varList = modulesFile.createVarList();
-		labelList = modulesFile.getLabelList();
-		labelNames = labelList.getLabelNames();
-
-		// Create data structures for exploring model
-		updater = new Updater(modulesFile, varList, parent);
-		transitionList = new TransitionList();
-		transitionListBuilt = false;
+			// Create data structures for exploring model
+			updater = new Updater(modulesFile, varList, this.getEvaluator(), parent);
+			transitionList = new TransitionList(this.getEvaluator());
+			transitionListBuilt = false;
+		}
+		catch (PrismException e) {
+			// TODO: handle expression
+			System.out.println("error in initialise()");
+		}
 	}
 
 	// Methods for ModelInfo interface
@@ -344,7 +325,6 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	 * Gets the number of rewards structs.
 	 * @return The number of rewards structs in the PRISM model.
 	 */
-	@Override
 	public int getNumRewardStructs() {
 		return modulesFile.getNumRewardStructs();
 	}
@@ -353,7 +333,6 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	 * Gets all rewards structure names.
 	 * @return A List of type String with the reward structure names.
 	 */
-	@Override
 	public List<String> getRewardStructNames() {
 		return modulesFile.getRewardStructNames();
 	}
@@ -363,7 +342,6 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	 * @param name The name of the rewards structure.
 	 * @return The index corresponding to the name.
 	 */
-	@Override
 	public int getRewardStructIndex(String name) {
 		return modulesFile.getRewardStructIndex(name);
 	}
@@ -373,7 +351,6 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	 * @param i The index of the reward struct desired.
 	 * @return The RewardStruct at index i.
 	 */
-	@Override
 	public RewardStruct getRewardStruct(int i) {
 		return modulesFile.getRewardStruct(i);
 	}
@@ -396,9 +373,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	 */
 	@Override
 	public State getInitialState() throws PrismException {
-
 		doReachabilityAnalysis();
-
 		return modulesFile.getDefaultInitialState();
 
 	}
@@ -453,11 +428,14 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		}
 	}
 
+	public ModulesFile getPRISMModel() {
+		return modulesFile;
+	}
+
 	/**
 	 * Gets the state the model generator is about to explore.
 	 * @return The state we are about to explore.
 	 */
-	@Override
 	public State getExploreState() {
 		return exploreState;
 	}
@@ -513,7 +491,6 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	 * @return The transition action in the form of a String.
 	 * @throws PrismException
 	 */
-	@Override
 	public String getTransitionAction(int index) throws PrismException {
 		if (transitionListBuilt) {
 			return transitionList.getTransitionModuleOrAction(index);
@@ -564,14 +541,26 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	 * @throws PrismException
 	 */
 	@Override
-	public double getTransitionProbability(int index, int offset) throws PrismException {
+	public Double getTransitionProbability(int index, int offset) throws PrismException {
 		if (transitionListBuilt) {
-			return transitionList.getChoice(index).getProbability(offset);
+			Object p = transitionList.getChoice(index).getProbability(offset);
+			if (p instanceof Number) {
+				return ((Number) p).doubleValue();
+			}
+			throw new PrismException("Transition probability should be an instance of `Number`!");
 		}
 		else {
-			return 1.0;
+			return new Double(1.0);
 		}
 	}
+	/**
+	 * Wrapper for `Double getTransitionProbability(int, int)` which converts to a double
+	 * primitive.
+	 * */
+	// public Double getTransitionProbability(int index, int offset) throws PrismException {
+	// 	Double tProb = getTransitionProbability(int index, int offset);
+	// 	return tProb.doubleValue();
+	// }
 
 	/**
 	 * Gets the transition probability using just an index.
@@ -596,10 +585,8 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	@Override
 	public State computeTransitionTarget(int index, int offset) throws PrismException {
 		if (transitionListBuilt) {
-			State st = transitionList.getChoice(index).computeTarget(offset, exploreState);
-
+			State st = transitionList.getChoice(index).computeTarget(offset, exploreState, varList);
 			ProbState prbSt = globalStateSet.get(st);
-
 			if (globalStateSet.get(exploreState).isStateAbsorbing()) return exploreState;
 			else {
 				if (prbSt == null) return absorbingState;
@@ -643,7 +630,6 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	 * @return The total state reward at the given state.
 	 * @throws PrismException
 	 */
-	@Override
 	public double getStateReward(int r, State state) throws PrismException {
 		RewardStruct rewStr = modulesFile.getRewardStruct(r);
 		int n = rewStr.getNumItems();
@@ -671,37 +657,29 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	 * @return The total reward associated with that state-action combination.
 	 * @throws PrismException
 	 */
-	@Override
 	public double getStateActionReward(int r, State state, Object action) throws PrismException {
 		RewardStruct rewStr = modulesFile.getRewardStruct(r);
 		int n = rewStr.getNumItems();
 		double d = 0;
 		for (int i = 0; i < n; i++) {
-			if (rewStr.getRewardStructItem(i).isTransitionReward()) {
-				Expression guard = rewStr.getStates(i);
-				String cmdAction = rewStr.getSynch(i);
-				if (action == null ? (cmdAction.isEmpty()) : action.equals(cmdAction)) {
-					if (guard.evaluateBoolean(modulesFile.getConstantValues(), state)) {
-						double rew = rewStr.getReward(i).evaluateDouble(modulesFile.getConstantValues(), state);
-						if (Double.isNaN(rew))
-							throw new PrismLangException("Reward structure evaluates to NaN at state " + state, rewStr.getReward(i));
-						d += rew;
-					}
-				}
+			if (!rewStr.getRewardStructItem(i).isTransitionReward()) {
+				continue;
 			}
+			Expression guard = rewStr.getStates(i);
+			String cmdAction = rewStr.getSynch(i);
+			if ((action == null && cmdAction.isEmpty()) || action.equals(cmdAction)) {
+				continue;
+			}
+			if (!guard.evaluateBoolean(modulesFile.getConstantValues(), state)) {
+				continue;
+			}
+			double rew = rewStr.getReward(i).evaluateDouble(modulesFile.getConstantValues(), state);
+			if (Double.isNaN(rew))
+				throw new PrismLangException("Reward structure evaluates to NaN at state " + state, rewStr.getReward(i));
+			d += rew;
+
 		}
 		return d;
-	}
-
-	/**
-	 * Calculates the state rewards associated with a specific state and store array.
-	 * @param state The state the rewards are associated with
-	 * @param store The array of stored probabilities. TODO: not 100% sure this is correct
-	 * @throws PrismLangException
-	 */
-	//@Override
-	public void calculateStateRewards(State state, double[] store) throws PrismLangException {
-		updater.calculateStateRewards(state, store);
 	}
 
 	/**
@@ -712,22 +690,6 @@ public class InfCTMCModelGenerator implements ModelGenerator
 	@Override
 	public VarList createVarList() {
 		return varList;
-	}
-
-	// Miscellaneous (unused?) methods
-	/**
-	 * Gets a random initial state given a random number generator.
-	 * @param rng The RandomNumberGenerator to pass into the method.
-	 * @param initialState A pointer to the current initial state.
-	 * @throws PrismException Multiple initial states not yet supported.
-	 */
-	//@Override
-	public void getRandomInitialState(RandomNumberGenerator rng, State initialState) throws PrismException {
-		if (modulesFile.getInitialStates() == null) {
-			initialState.copy(modulesFile.getDefaultInitialState());
-		} else {
-			throw new PrismException("Random choice of multiple initial states not yet supported");
-		}
 	}
 
 	// Local utility methods
@@ -821,7 +783,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 
 		// VarList varList = modelGen.createVarList();
 		if (modelGen.containsUnboundedVariables())
-			parent.getLog().printWarning("Infinite State system: Reachability analysis based on reachabilityThreshold=" + reachabilityThreshold);
+			StaminaLog.warning("Infinite State system: Reachability analysis based on reachabilityThreshold = " + reachabilityThreshold);
 
 		ProgressDisplay progress = new ProgressDisplay(parent.getLog());
 		progress.start();
@@ -846,7 +808,6 @@ public class InfCTMCModelGenerator implements ModelGenerator
 			probInitState.setCurReachabilityProb(1.0);
 			// Add initial state(s) to 'explore', 'states' and to the model
 			globalStateSet.put(initState, probInitState);
-
 		}
 		// Add state to exploration queue
 
@@ -861,19 +822,12 @@ public class InfCTMCModelGenerator implements ModelGenerator
 		double perimReachability = 1;
 		// State Search
 		while(perimReachability >= Options.getProbErrorWindow()/Options.getMispredictionFactor()) {
-			/*double startTime = System.currentTimeMillis();
-			double predMapTime = 0;// Explore...
-			double prismTime = 0.0;
-			double propCheckTime = 0.0;*/
 			while (!exploredK.isEmpty()) {
 				ProbState curProbState = exploredK.removeFirst();
 				//statesK.remove(curProbState);
 
-				//System.out.println("\nExplored exactly one time\n");
 				// Explore all choices/transitions from this state
-				//double trackPrismTime = System.currentTimeMillis();
 				modelGen.exploreState(curProbState);
-
 				// This if block implements the property-guided state truncation
 				// If we already know how the property evaluates in this state, we don't
 				// need it's succesors, we just continue.
@@ -927,7 +881,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 							// Look at each transition in the choice
 							int nt = modelGen.getNumTransitions(i);
 							for (int j = 0; j < nt; j++) {
-								exitRateSum += modelGen.getTransitionProbability(i, j);
+								exitRateSum += ((Number) modelGen.getTransitionProbability(i, j)).doubleValue();
 							}
 						}
 						// Now we loop through the transitions again to compute the reachabilities
@@ -945,7 +899,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 								if (stateIsExisting) {
 									ProbState nxtProbState = globalStateSet.get(nxtSt);
 
-									double tranRate = modelGen.getTransitionProbability(i, j);
+									double tranRate = ((Number) modelGen.getTransitionProbability(i, j)).doubleValue();
 									double tranProb = tranRate / exitRateSum;
 									double leavingProb = tranProb * curStateReachability;
 									nxtProbState.addToReachability(leavingProb);
@@ -960,7 +914,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 								else {
 
 									ProbState nxtProbState = new ProbState(nxtSt);
-									double tranRate = modelGen.getTransitionProbability(i, j);
+									double tranRate = ((Number) modelGen.getTransitionProbability(i, j)).doubleValue();
 									double tranProb = tranRate/exitRateSum;
 									double leavingProb = tranProb*curStateReachability;
 									nxtProbState.addToReachability(leavingProb);
@@ -1014,21 +968,7 @@ public class InfCTMCModelGenerator implements ModelGenerator
 			// Reduce the threshold for the next iteration
 			reachabilityThreshold /= Options.getKappaReductionFactor();
 
-			// TODO: I'm not sure what this is, it may still need to be implemented
-			/*if (Options.getRankTransitions()) {
-				exploredK.sort(new Comparator<ProbState>() {
-					@Override
-					public int compare(ProbState l, ProbState r) {
-						if (r.getCurReachabilityProb() > l.getCurReachabilityProb()) {
-							return 1;
-						} else if (r.getCurReachabilityProb() < l.getCurReachabilityProb()) {
-							return -1;
-						} else {
-							return 0;
-						}
-					}
-				});
-			}*/
+			// TODO: Implement rank transitions
 		}
 
 		// At this point in the loop, we want to update the globally accessible threshold

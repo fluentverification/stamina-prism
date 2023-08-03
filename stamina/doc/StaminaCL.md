@@ -6,11 +6,11 @@ This is the main class which takes arguments via the command line and instantiat
 Entry point to program. It creates a shutdown hook, and then instantiates an instance of `StaminaCL` (its own class as it is a `static` method), which it calls the `run()` method of.
 
 ### `run(String[])`
-This function is called by `main()`. The command line arguments are passed in as a parameter, and this method initializes the model, parses properties, and sets constants. This method will read as many models as are passed in. This is also the catching point for any `PrismException` thrown by `InfCTMCModelGenerator` and its methods.
+This function is called by `main()`. The command line arguments are passed in as a parameter, and this method initializes the model, parses properties, and sets constants. This method will read as many models as are passed in. This is also the catching point for any `PrismException` thrown by `StaminaModelGenerator` and its methods.
 
 ### `initializeSTAMINA()`
 Called by `run()`, this method creates a `PrismFileLog` for logging messages and initializes the stored instance of `StaminaModelChecker`.
-<!-- 
+<!--
 ### `processOptions()`
 Processes command line options to be passed into STAMINA. -->
 

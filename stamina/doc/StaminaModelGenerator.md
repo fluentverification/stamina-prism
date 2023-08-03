@@ -1,6 +1,6 @@
 # The Infinite CTMC Model Generator
 
-The Infinite CTMC (Continuous Time Markov Chain) Model Generator is implemented in class `InfCTMCModelGenerator`, and generates an infinite Continuous Time Markov Chain which is then used in the PRISM model checker. It implements the `ModelChecker` abstract class (Interface in Java) from the PRISM API. It has the following public methods:
+The Infinite CTMC (Continuous Time Markov Chain) Model Generator is implemented in class `StaminaModelGenerator`, and generates an infinite Continuous Time Markov Chain which is then used in the PRISM model checker. It implements the `ModelChecker` abstract class (Interface in Java) from the PRISM API. It has the following public methods:
 
 ## Built in methods
 
@@ -147,7 +147,7 @@ Given an index, returns whether or not the `State` at that index has transition 
 Given an expression, replaces the label of it. Handles instances of `ExpressionUnaryOp` which has only one operand, `ExpressionBinaryOp`, which has two operands, and `ExpressionTemporal`, which also has two operands. Returns the modified expression.
 
 ### `doReachabilityAnalysis()`
-This method is the heart and soul of this class. It performs a reachability analysis, based on the initial state of the CTMC, to all other states. This method *does not support* anything other than CTMCs. This method performs a breadth first traversal of the state tree, keeping track of the transition probabilities to each state, and setting each probability as it reaches each state. When enough of the probability mass has been found, the state space is truncated. 
+This method is the heart and soul of this class. It performs a reachability analysis, based on the initial state of the CTMC, to all other states. This method *does not support* anything other than CTMCs. This method performs a breadth first traversal of the state tree, keeping track of the transition probabilities to each state, and setting each probability as it reaches each state. When enough of the probability mass has been found, the state space is truncated.
 
 The reachability analysis is where the reachability threshold (&kappa;, passed into STAMINA using`-kappa`) and the kappa reduction factor come into play. If the reachability threshold is lower, or the reduction factor is higher, then more states are explored. For full details, please read https://digitalcommons.usu.edu/cgi/viewcontent.cgi?article=8740&context=etd.
 
