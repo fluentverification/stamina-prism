@@ -39,7 +39,7 @@ Harder Way
 ```shell
 git clone https://github.com/prismmodelchecker/prism prism
 cd prism/prism
-git checkout v4.5
+git checkout v4.8 # Stamina should work with the latest version of PRISM but v4.8 is PRISM's latest official release
 make
 ```
 
@@ -54,12 +54,22 @@ make PRISM_HOME=/path/to/prism/directory
 
 ## Running STAMINA
 
-``stamina/stamina/bin`` contains the executable `pstamina`. You can run STAMINA using following command:
+``./stamina/bin`` contains the executable `pstamina`. You can run STAMINA using following command:
 
-`/path/to/stamina/executable [MODEL FILE] [PROPERTIES FILE] [OPTIONS...]`. Please refer to the following section for details about all the options. Please see the [Prism Language Manual page](https://www.prismmodelchecker.org/manual/ThePRISMLanguage/Introduction) for information about how to create Prism model files and the [Property Specification Manual page](https://www.prismmodelchecker.org/manual/PropertySpecification/Introduction) for information about how to create property files.
+`pstamina [MODEL FILE] [PROPERTIES FILE] [OPTIONS...]`. Please refer to the following section for details about all the options. Please see the [Prism Language Manual page](https://www.prismmodelchecker.org/manual/ThePRISMLanguage/Introduction) for information about how to create Prism model files and the [Property Specification Manual page](https://www.prismmodelchecker.org/manual/PropertySpecification/Introduction) for information about how to create property files.
 
 Currently, STAMINA does not inherit options in PRISM. To customize the maximum heap size for Java, use command such as `export _JAVA_OPTIONS=-Xmx12g` to set it to be 12G.
 
+You can add `pstamina` to your `PATH` (Linux and MacOS) using the following command:
+
+```bash
+# Find out what shell you are using via:
+echo $SHELL # Will give you /usr/bin/bash or /bin/bash if on bash, and /usr/bin/zsh or /bin/zsh if on zsh
+# For zsh users (MacOS default and many Linux distributions)
+echo "export PATH=\$PATH:$(pwd)/stamina/bin" >> .zshrc
+# For bash users (Default on most Linux distributions)
+echo "export PATH=\$PATH:$(pwd)/stamina/bin" >> .bashrc
+```
 
 ## All command line options
 

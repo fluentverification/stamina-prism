@@ -2,8 +2,8 @@
 
 ##########################################
 # DEPRICATED INSTALL SCRIPT
-# 
-# Rather than using this script, use the install.py script
+#
+# Rather than using this script, use the install.sh script
 # included in this directory
 ##########################################
 
@@ -14,10 +14,11 @@ my $originalCwd = cwd;
 installPrism($originalCwd);
 installStamina($originalCwd);
 setEnvVariable();
+my PRISM_TAG = "v4.8";
 
 sub installPrism($originalCwd) {
     my @command = (
-        "cd $originalCwd && rm -rf prism && git clone https://github.com/prismmodelchecker/prism prism && cd prism/prism && git checkout v4.5 && make -j4",
+        "cd $originalCwd && rm -rf prism && git clone https://github.com/prismmodelchecker/prism prism && cd prism/prism && git checkout v$PRISM_TAG && make -j4",
     );
     system(shift @command);
 }

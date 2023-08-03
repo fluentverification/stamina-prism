@@ -2,11 +2,13 @@
 
 set -e
 
+export PRISM_TAG="v4.8"
+
 installPrism() {
 	rm -rf prism
 	git clone https://github.com/prismmodelchecker/prism prism
 	cd prism/prism
-	git checkout v4.5
+	git checkout $PRISM_TAG
 	make -j$(nproc --all)
 	make install
 	echo "[INFO]: Finished installing PRISM"
