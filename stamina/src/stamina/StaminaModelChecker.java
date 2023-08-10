@@ -138,12 +138,13 @@ public class StaminaModelChecker extends Prism {
 		double reachTh = Options.getReachabilityThreshold();
 
 		// Instantiate and load model generator
-		ModulesFile pModel = getPRISMModel();
-		infModelGen = new StaminaModelGenerator(getPRISMModel(), this);
-		// For some reason this sets the prism model to null
-		super.loadModelGenerator(infModelGen);
-		if (getPRISMModel() == null) { StaminaLog.log("it's null here."); }
-
+		if (infModelGen == null) {
+			ModulesFile pModel = getPRISMModel();
+			infModelGen = new StaminaModelGenerator(getPRISMModel(), this);
+			// For some reason this sets the prism model to null
+			super.loadModelGenerator(infModelGen);
+			if (getPRISMModel() == null) { StaminaLog.log("it's null here."); }
+		}
 		// Time bounds
 		double lTime, uTime;
 

@@ -5,7 +5,7 @@ STAMINA is an infinite-state CTMC model-checker integrated with the PRISM probab
 
 ## Parent Repository
 
-To get both STAMINA/PRISM and STAMINA/STORM, please clone the parent repository, at [https://github.com/fluentverification/stamina-prism](https://github.com/fluentverification/stamina-prism)
+To get both STAMINA/PRISM and STAMINA/STORM, please clone the parent repository, at [https://github.com/fluentverification/stamina](https://github.com/fluentverification/stamina)
 
 ##### Contact: Riley Roberts (riley.roberts@usu.edu) and Zhen Zhang (zhen.zhang@usu.edu)
 
